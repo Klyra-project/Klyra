@@ -18,6 +18,14 @@ pub enum Args {
     Delete,
     #[structopt(about = "create user credentials for the klyra platform")]
     Auth(AuthArgs),
+    #[structopt(about = "login to the klyra platform")]
+    Login(LoginArgs),
+}
+
+#[derive(StructOpt)]
+pub struct LoginArgs {
+    #[structopt(long, about = "api key for the klyra platform")]
+    pub api_key: Option<String>,
 }
 
 #[derive(StructOpt)]
