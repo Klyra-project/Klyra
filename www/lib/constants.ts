@@ -1,4 +1,4 @@
-export const APP_NAME = 'Klyra'
+export const APP_NAME = 'klyra'
 
 export const SITE_TITLE = 'Deploy Rust apps with a single Cargo command'
 
