@@ -18,9 +18,11 @@ COPY . .
 RUN cargo build --bin api
 
 FROM runtime
-RUN echo "[patch.crates-io]\nunveil-service = { path = \"/app/service\" }" > $CARGO_HOME/config.toml
-COPY --from=builder /app/target/debug/api /usr/local/bin/unveil-backend
+
+RUN echo "[patch.crates-io]\nklyra-service = { path = \"/app/service\" }" > $CARGO_HOME/config.toml
+COPY --from=builder /app/target/debug/api /usr/local/bin/klyra-backend
 COPY --from=builder /app/service /app/service
+
 COPY docker/entrypoint.sh /bin/entrypoint.sh
 COPY docker/supervisord.conf /usr/share/supervisord/supervisord.conf
 ENTRYPOINT ["/bin/entrypoint.sh"]

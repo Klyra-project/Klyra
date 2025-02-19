@@ -152,7 +152,7 @@ impl Api {
             "-e",
             "API_PORT=8001",
             "-e",
-            "UNVEIL_USERS_TOML=/config/users.toml",
+            "klyra_USERS_TOML=/config/users.toml",
             "-v",
             &format!(
                 "{}/users.toml:/config/users.toml",
@@ -193,16 +193,16 @@ impl Api {
 
         let mut build = Command::new("cargo");
         build
-            .args(["build", "--bin", "cargo-unveil"])
+            .args(["build", "--bin", "cargo-klyra"])
             .current_dir("../");
         spawn_and_log(&mut build, client_target.as_str(), Color::White)
             .wait()
-            .ensure_success("failed to build `cargo-unveil`");
+            .ensure_success("failed to build `cargo-klyra`");
 
-        let mut run = Command::new("../../../target/debug/cargo-unveil");
+        let mut run = Command::new("../../../target/debug/cargo-klyra");
         run.args(args)
             .current_dir(path)
-            .env("UNVEIL_API", format!("http://{}", self.api_addr));
+            .env("klyra_API", format!("http://{}", self.api_addr));
         spawn_and_log(&mut run, client_target, self.color)
     }
 

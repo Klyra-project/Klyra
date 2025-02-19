@@ -64,7 +64,7 @@ resource "aws_ecs_task_definition" "api" {
       environment = [
         {
           name = "CRATES_PATH"
-          value = "/opt/unveil/crates"
+          value = "/opt/klyra/crates"
         },
         {
           name = "API_PORT",
@@ -79,8 +79,8 @@ resource "aws_ecs_task_definition" "api" {
           value = tostring(var.postgres_container_port)
         },
         {
-          name = "UNVEIL_USERS_TOML",
-          value = "/opt/unveil/users/users.toml"
+          name = "klyra_USERS_TOML",
+          value = "/opt/klyra/users/users.toml"
         },
         {
           name = "PG_PASSWORD",
@@ -88,7 +88,7 @@ resource "aws_ecs_task_definition" "api" {
         },
         {
           name = "PG_DATA",
-          value = "/opt/unveil/postgres"
+          value = "/opt/klyra/postgres"
         }
       ]
 
@@ -124,11 +124,11 @@ resource "aws_ecs_task_definition" "api" {
       mountPoints = [
         {
           sourceVolume = "user-data"
-          containerPath = "/opt/unveil/"
+          containerPath = "/opt/klyra/"
         },
         {
           sourceVolume = "postgres-conf"
-          containerPath = "/etc/postgresql/11/unveil/"
+          containerPath = "/etc/postgresql/11/klyra/"
         }
       ]
     }

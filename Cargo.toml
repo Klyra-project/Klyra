@@ -2,8 +2,8 @@
 members = [
   "api",
   "service",
-  "cargo-unveil",
-  "lib",
+  "cargo-klyra",
+    "common",
   "e2e"
 ]
 exclude = [

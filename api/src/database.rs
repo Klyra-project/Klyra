@@ -1,9 +1,9 @@
 use lazy_static::lazy_static;
-use lib::DatabaseReadyInfo;
+use klyra_common::DatabaseReadyInfo;
 use rand::Rng;
 use sqlx::postgres::{PgPool, PgPoolOptions};
 
-use lib::project::ProjectConfig;
+use klyra_common::project::ProjectConfig;
 
 lazy_static! {
     static ref SUDO_POSTGRES_CONNECTION_STRING: String = format!(
