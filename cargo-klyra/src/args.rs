@@ -12,10 +12,18 @@ use structopt::StructOpt;
 pub enum Args {
     #[structopt(about = "deploy an klyra project")]
     Deploy(DeployArgs),
-    #[structopt(about = "view the status of an klyra deployment")]
+    #[structopt(about = "view the status of an klyra project")]
     Status,
-    #[structopt(about = "view the status of an klyra deployment")]
+    #[structopt(about = "delete the latest deployment for a klyra project")]
     Delete,
+    #[structopt(about = "create user credentials for the klyra platform")]
+    Auth(AuthArgs),
+}
+
+#[derive(StructOpt)]
+pub struct AuthArgs {
+    #[structopt(about = "the desired username for the klyra platform")]
+    pub username: String,
 }
 
 #[derive(StructOpt)]
