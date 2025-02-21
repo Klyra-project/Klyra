@@ -2491,9 +2491,11 @@ dependencies = [
 
 [[package]]
 name = "klyra-service"
-version = "0.2.4"
+version = "0.2.5"
 dependencies = [
  "async-trait",
+ "libloading",
+ "portpicker",
  "rocket",
  "sqlx",
  "thiserror",
