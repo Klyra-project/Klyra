@@ -42,7 +42,7 @@ export default function Hero() {
               </div>
             </div>
             <div className="hidden md:flex flex-col justify-center items-center">
-              <Code code="cargo install cargo-klyra" />
+              <Code id="cargo-install-cargo-klyra" code="cargo install cargo-klyra" />
             </div>
 
             <div className="flex gap-4 justify-center">
