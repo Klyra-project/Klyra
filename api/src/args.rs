@@ -1,6 +1,7 @@
-use klyra_common::Port;
 use std::net::IpAddr;
 use std::path::PathBuf;
+
+use klyra_common::Port;
 use structopt::StructOpt;
 
 #[derive(StructOpt)]

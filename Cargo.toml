@@ -4,6 +4,7 @@ members = [
   "service",
   "cargo-klyra",
   "common",
+  "codegen",
   "e2e"
 ]
 exclude = [

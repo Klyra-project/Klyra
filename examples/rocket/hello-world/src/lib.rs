@@ -3,16 +3,14 @@ extern crate rocket;
 
 use rocket::{Build, Rocket};
 
-#[macro_use]
-extern crate klyra_service;
-
 #[get("/")]
 fn index() -> &'static str {
     "Hello, world!"
 }
 
-fn rocket() -> Rocket<Build> {
-    rocket::build().mount("/hello", routes![index])
-}
+#[klyra_service::main]
+async fn rocket() -> Result<Rocket<Build>, klyra_service::Error> {
+    let rocket = rocket::build().mount("/hello", routes![index]);
 
-declare_service!(Rocket<Build>, rocket);
+    Ok(rocket)
+}
