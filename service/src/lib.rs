@@ -16,7 +16,7 @@
 //! Depend on `klyra-service` in `Cargo.toml`:
 //!
 //! ```toml
-//! klyra-service = "0.2"
+//! klyra-service = { version = "0.2", features = ["web-rocket"] }
 //! ```
 //!
 //! and make sure your crate has a `cdylib` output target:
@@ -26,7 +26,7 @@
 //! crate-type = ["cdylib"]
 //! ```
 //!
-//! See the [klyra_service::main][main] macro for more information on how to implement a service. Here's a simple example using [rocket][rocket] to get you started:
+//! See the [klyra_service::main][main] macro for more information on supported services - like Axum. Here's a simple example using [rocket](https://docs.rs/rocket) to get you started:
 //!
 //! ```rust,no_run
 //! #[macro_use]
@@ -81,6 +81,12 @@
 //! ## Using `sqlx`
 //!
 //! Here is a quick example to deploy a service which uses a postgres database and [sqlx](http://docs.rs/sqlx):
+//!
+//! Depend on `klyra-service` in `Cargo.toml`:
+//!
+//! ```toml
+//! klyra-service = { version = "0.2", features = ["web-rocket", "sqlx-postgres"] }
+//! ```
 //!
 //! ```rust,no_run
 //! #[macro_use]
@@ -179,11 +185,13 @@ extern crate klyra_codegen;
 /// ```
 ///
 /// ## klyra supported services
-/// The following type can take the place of the `Ok` type and enjoy first class service support in klyra.
+/// The following type can take the place of the `Ok` type and enjoy first class service support in klyra. Be sure to also enable the feature on
+/// `klyra-service` in `Cargo.toml` for the type to be recognized.
 ///
-/// | Ok type           | Service  |
-/// | ----------------- | -------- |
-/// | [`Rocket<Build>`] | [rocket] |
+/// | Ok type                                                                        | Feature flag | Service                                     | Version    | Example                                                                             |
+/// | ------------------------------------------------------------------------------ | ------------ | ------------------------------------------- | ---------- | ----------------------------------------------------------------------------------- |
+/// | [`Rocket<Build>`](https://docs.rs/rocket/0.5.0-rc.1/rocket/struct.Rocket.html) | web-rocket   | [rocket](https://docs.rs/rocket/0.5.0-rc.1) | 0.5.0-rc.1 | [GitHub](https://github.com/getsynth/klyra/tree/main/examples/rocket/hello-world) |
+/// | [`SyncWrapper<Router>`](https://docs.rs/axum/0.5/axum/struct.Router.html)      | web-axum     | [axum](https://docs.rs/axum/0.5)            | 0.5        | [GitHub](https://github.com/getsynth/klyra/tree/main/examples/axum/hello-world)   |
 ///
 /// # Getting klyra managed services
 /// The klyra is able to manage service dependencies for you. These services are passed in as inputs to your main function:
@@ -203,11 +211,11 @@ extern crate klyra_codegen;
 /// ```
 ///
 /// ## klyra managed dependencies
-/// The following dependencies can be managed by klyra:
+/// The following dependencies can be managed by klyra - remember to enable their feature flags for the `klyra-service` dependency in `Cargo.toml`:
 ///
-/// | Argument type      | Dependency                                                         |
-/// | ------------------ | ------------------------------------------------------------------ |
-/// | [`PgPool`](https://docs.rs/sqlx/latest/sqlx/type.PgPool.html) | A PostgresSql instance accessed using [sqlx](https://docs.rs/sqlx) |
+/// | Argument type                                                 | Feature flag  | Dependency                                                         | Example                                                                          |
+/// | ------------------------------------------------------------- | ------------- | ------------------------------------------------------------------ | -------------------------------------------------------------------------------- |
+/// | [`PgPool`](https://docs.rs/sqlx/latest/sqlx/type.PgPool.html) | sqlx-postgres | A PostgresSql instance accessed using [sqlx](https://docs.rs/sqlx) | [GitHub](https://github.com/getsynth/klyra/tree/main/examples/rocket/postgres) |
 pub use klyra_codegen::main;
 
 #[cfg(feature = "loader")]
