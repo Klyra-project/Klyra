@@ -1,1 +1,2 @@
-api_fqdn = "api.klyra.rs"
+api_fqdn   = "api.klyra.rs"
+proxy_fqdn = "klyraapp.rs"

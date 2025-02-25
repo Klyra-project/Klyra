@@ -1,12 +1,12 @@
 data "aws_route53_zone" "user" {
-  name = "klyraapp.rs."
+  name = "${var.proxy_fqdn}."
 }
 
 resource "aws_acm_certificate" "user" {
-  domain_name = "klyraapp.rs"
+  domain_name = var.proxy_fqdn
 
   subject_alternative_names = [
-    "*.klyraapp.rs"
+    "*.${var.proxy_fqdn}"
   ]
 
   validation_method = "DNS"

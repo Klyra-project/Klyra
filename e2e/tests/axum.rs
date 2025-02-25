@@ -9,7 +9,7 @@ fn hello_world() {
 
     let request_text = client
         .get("hello")
-        .header("Host", "hello-world-axum-app.klyraapp.rs")
+        .header("Host", "hello-world-axum-app.klyraapp.test")
         .send()
         .unwrap()
         .text()

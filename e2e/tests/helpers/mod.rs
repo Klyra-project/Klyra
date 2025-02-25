@@ -158,6 +158,8 @@ impl Api {
             "-e",
             "API_PORT=8001",
             "-e",
+            "PROXY_FQDN=klyraapp.test",
+            "-e",
             "klyra_USERS_TOML=/config/users.toml",
             "-v",
             &format!(
