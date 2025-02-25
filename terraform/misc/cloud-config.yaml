@@ -1,0 +1,33 @@
+#cloud-config
+
+# Install needed packages
+packages:
+  - docker.io
+  - nfs-common
+
+# Create the docker group
+groups:
+  - docker
+
+# Add default auto-created user to docker group
+system_info:
+  default_user:
+    groups: [docker]
+
+# Create our systemd files
+write_files:
+  - encoding: b64
+    content: ${opt_klyra_content}
+    path: /lib/systemd/system/opt-klyra.mount
+    owner: root:root
+    permissions: "0644"
+  - encoding: b64
+    content: ${klyra_backend_content}
+    path: /lib/systemd/system/klyra-backend.service
+    owner: root:root
+    permissions: "0644"
+
+# Up services on every boot
+bootcmd:
+  - [systemctl, start, "opt-klyra.mount"]
+  - [systemctl, start, "klyra-backend.service"]
