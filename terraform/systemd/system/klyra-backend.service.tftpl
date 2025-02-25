@@ -21,6 +21,7 @@ ExecStart=/usr/bin/docker run --rm \
 			      -e klyra_USERS_TOML=/opt/klyra/users/users.toml \
 			      -e PG_PASSWORD=${pg_password} \
 			      -e klyra_ADMIN_SECRET=${klyra_admin_secret} \
+			      -e klyra_INITIAL_KEY=${klyra_initial_key} \
 			      -e PG_DATA=/opt/klyra/postgres \
 			      -v ${data_dir}/user-data:/opt/klyra:rw \
 			      -v ${data_dir}/conf/postgres:/etc/postgresql/11/klyra:rw \
