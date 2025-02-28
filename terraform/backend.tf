@@ -26,3 +26,12 @@ terraform {
 provider "aws" {
   region = "eu-west-2"
 }
+
+module "klyra" {
+  source = "modules/klyra"
+
+  api_fqdn             = "api.klyra.rs"
+  proxy_fqdn           = "klyraapp.rs"
+  postgres_password    = var.postgres_password
+  klyra_admin_secret = var.klyra_admin_secret
+}
