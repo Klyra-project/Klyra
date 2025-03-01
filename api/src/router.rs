@@ -1,6 +1,7 @@
+use std::collections::HashMap;
+
 use rocket::tokio::sync::RwLock;
 use klyra_common::{DeploymentId, Host};
-use std::collections::HashMap;
 
 #[derive(Default)]
 /// Deployment router which figures out which `DeploymentId`

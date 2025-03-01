@@ -1,27 +1,26 @@
-use crate::{build::Build, BuildSystem, KlyraFactory};
-use anyhow::{anyhow, Context as AnyhowContext};
 use core::default::Default;
-use futures::prelude::*;
-use libloading::Library;
-use rocket::data::ByteUnit;
-use rocket::tokio;
-use rocket::Data;
-use klyra_common::{
-    project::ProjectName, DeploymentApiError, DeploymentId, DeploymentMeta, DeploymentStateMeta,
-    Host, Port,
-};
-use klyra_service::loader::{Loader, ServeHandle};
 use std::collections::HashMap;
 use std::fs::DirEntry;
 use std::io::Write;
 use std::net::{Ipv4Addr, SocketAddr, SocketAddrV4, TcpListener};
 use std::path::{Path, PathBuf};
 use std::sync::Arc;
-use tokio::sync::mpsc;
-use tokio::sync::RwLock;
 
-use crate::database;
+use anyhow::{anyhow, Context as AnyhowContext};
+use futures::prelude::*;
+use libloading::Library;
+use rocket::data::ByteUnit;
+use rocket::{tokio, Data};
+use klyra_common::project::ProjectName;
+use klyra_common::{
+    DeploymentApiError, DeploymentId, DeploymentMeta, DeploymentStateMeta, Host, Port,
+};
+use klyra_service::loader::{Loader, ServeHandle};
+use tokio::sync::{mpsc, RwLock};
+
+use crate::build::Build;
 use crate::router::Router;
+use crate::{database, BuildSystem, KlyraFactory};
 
 // This controls the maximum number of deploys an api instance can run
 // This is mainly needed because tokio::task::spawn_blocking keeps an internal pool for the number of blocking threads

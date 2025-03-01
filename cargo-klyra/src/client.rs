@@ -1,11 +1,14 @@
+use std::fs::File;
+use std::io::Read;
+use std::time::Duration;
+
 use anyhow::{anyhow, Context, Result};
 use reqwest::{Response, StatusCode};
 use reqwest_middleware::{ClientBuilder, ClientWithMiddleware};
-use reqwest_retry::{policies::ExponentialBackoff, RetryTransientMiddleware};
-
+use reqwest_retry::policies::ExponentialBackoff;
+use reqwest_retry::RetryTransientMiddleware;
 use klyra_common::project::ProjectName;
 use klyra_common::{ApiKey, ApiUrl, DeploymentMeta, DeploymentStateMeta, klyra_PROJECT_HEADER};
-use std::{fs::File, io::Read, time::Duration};
 use tokio::time::sleep;
 
 pub(crate) async fn auth(api_url: ApiUrl, username: String) -> Result<ApiKey> {

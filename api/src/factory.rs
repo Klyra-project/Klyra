@@ -1,6 +1,7 @@
-use crate::database;
 use async_trait::async_trait;
 use klyra_service::Factory;
+
+use crate::database;
 
 pub(crate) struct KlyraFactory<'a> {
     database: &'a mut database::State,
