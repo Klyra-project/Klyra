@@ -17,8 +17,9 @@ use klyra_common::project::ProjectName;
 use klyra_common::{
     DeploymentApiError, DeploymentId, DeploymentMeta, DeploymentStateMeta, Host, LogItem, Port,
 };
-use klyra_service::loader::{Loader, ServeHandle};
+use klyra_service::loader::Loader;
 use klyra_service::logger::Log;
+use klyra_service::ServeHandle;
 use tokio::sync::{mpsc, RwLock};
 
 use crate::build::Build;
@@ -522,9 +523,17 @@ impl DeploymentSystem {
                 let mut lock = deployment.state.write().await;
                 if let DeploymentState::Deployed(DeployedState { so, handle, .. }) = lock.take() {
                     handle.abort();
+
                     tokio::spawn(async move {
                         so.close().unwrap();
                     });
+
+                    match handle.await {
+                        Err(err) if err.is_cancelled() => {}
+                        other => other
+                            .map_err(|e| DeploymentApiError::Internal(e.to_string()))?
+                            .map_err(|e| DeploymentApiError::Internal(e.to_string()))?,
+                    };
                 }
 
                 let _ = self.router.remove(&meta.host);
