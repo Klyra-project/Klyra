@@ -53,10 +53,12 @@ fn parse_working_directory(working_directory: &OsStr) -> Result<PathBuf, OsStrin
 
 #[derive(StructOpt)]
 pub enum Command {
-    #[structopt(about = "deploy an klyra project")]
+    #[structopt(about = "deploy a klyra project")]
     Deploy(DeployArgs),
-    #[structopt(about = "view the status of an klyra project")]
+    #[structopt(about = "view the status of a klyra project")]
     Status,
+    #[structopt(about = "view the logs of a klyra project")]
+    Logs,
     #[structopt(about = "delete the latest deployment for a klyra project")]
     Delete,
     #[structopt(about = "create user credentials for the klyra platform")]

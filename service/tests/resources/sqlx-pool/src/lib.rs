@@ -1,4 +1,5 @@
 use klyra_service::error::CustomError;
+use klyra_service::logger::Logger;
 use klyra_service::{Factory, IntoService, Service};
 use sqlx::PgPool;
 use tokio::runtime::Runtime;
@@ -55,10 +56,15 @@ impl Service for PoolService {
     fn build(
         &mut self,
         factory: &mut dyn klyra_service::Factory,
+        logger: Logger,
     ) -> Result<(), klyra_service::Error> {
-        let pool = self
-            .runtime
-            .block_on(get_postgres_connection_pool(factory))?;
+        let pool = self.runtime.block_on(async move {
+            log::set_boxed_logger(Box::new(logger))
+                .map(|()| log::set_max_level(log::LevelFilter::Info))
+                .expect("logger set should succeed");
+
+            get_postgres_connection_pool(factory).await
+        })?;
 
         self.pool = Some(pool);
 
