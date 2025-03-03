@@ -1,6 +1,6 @@
 [package]
 name = "cargo-klyra"
-version = "0.2.6"
+version = "0.3.0"
 edition = "2021"
 license = "Apache-2.0"
 description = "A cargo command for the klyra platform (https://www.klyra.rs/)"
@@ -25,7 +25,7 @@ structopt = "0.3.26"
 cargo_metadata = "0.14.2"
 webbrowser = "0.6"
 
-klyra-common = { version = "0.2.6", path = "../common" }
+klyra-common = { version = "0.3.0", path = "../common" }
 
 [dev-dependencies]
 assert_cmd = "2.0.4"

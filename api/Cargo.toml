@@ -29,5 +29,5 @@ toml = "0.5.8"
 base64 = "0.13.0"
 rand = "0.8.5"
 
-klyra-common = { version = "0.2.6", path = "../common" }
-klyra-service = { version = "0.2.6", path = "../service", features = [ "loader", "secrets" ] }
+klyra-common = { version = "0.3.0", path = "../common" }
+klyra-service = { version = "0.3.0", path = "../service", features = [ "loader", "secrets" ] }
