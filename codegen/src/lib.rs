@@ -15,11 +15,13 @@ pub fn main(_attr: TokenStream, item: TokenStream) -> TokenStream {
         #[no_mangle]
         pub extern "C" fn _create_service() -> *mut dyn klyra_service::Service {
             // Ensure constructor returns concrete type.
-            let constructor: fn(
-                &mut dyn klyra_service::Factory,
+            let constructor: for <'a> fn(
+                &'a mut dyn klyra_service::Factory,
+                &'a klyra_service::Runtime,
+                klyra_service::Logger,
             ) -> std::pin::Pin<
-                Box<dyn std::future::Future<Output = Result<_, klyra_service::Error>> + Send + '_>,
-            > = |factory| Box::pin(__klyra_wrapper(factory));
+                Box<dyn std::future::Future<Output = Result<_, klyra_service::Error>> + Send + 'a>,
+            > = |factory, runtime, logger| Box::pin(__klyra_wrapper(factory, runtime, logger));
 
             let obj = klyra_service::IntoService::into_service((constructor));
             let boxed: Box<dyn klyra_service::Service> = Box::new(obj);
@@ -84,10 +86,21 @@ impl ToTokens for Wrapper {
         let wrapper = quote! {
             async fn __klyra_wrapper(
                 #factory_ident: &mut dyn klyra_service::Factory,
+                runtime: &klyra_service::Runtime,
+                logger: klyra_service::Logger,
             ) #fn_output {
                 #extra_imports
-                #(let #fn_inputs = #factory_ident.get_resource().await?;)*
-                #fn_ident(#(#fn_inputs),*).await
+
+                runtime.spawn_blocking(move || {
+                    klyra_service::log::set_boxed_logger(Box::new(logger))
+                        .map(|()| klyra_service::log::set_max_level(klyra_service::log::LevelFilter::Info))
+                        .expect("logger set should succeed");
+                }).await.unwrap();
+
+
+                #(let #fn_inputs = #factory_ident.get_resource(runtime).await?;)*
+
+                runtime.spawn(#fn_ident(#(#fn_inputs),*)).await.unwrap()
             }
         };
 
@@ -129,8 +142,16 @@ mod tests {
         let expected = quote! {
             async fn __klyra_wrapper(
                 _factory: &mut dyn klyra_service::Factory,
+                runtime: &klyra_service::Runtime,
+                logger: klyra_service::Logger,
             ) {
-                simple().await
+                runtime.spawn_blocking(move || {
+                    klyra_service::log::set_boxed_logger(Box::new(logger))
+                        .map(|()| klyra_service::log::set_max_level(klyra_service::log::LevelFilter::Info))
+                        .expect("logger set should succeed");
+                }).await.unwrap();
+
+                runtime.spawn(simple()).await.unwrap()
             }
         };
 
@@ -164,8 +185,16 @@ mod tests {
         let expected = quote! {
             async fn __klyra_wrapper(
                 _factory: &mut dyn klyra_service::Factory,
+                runtime: &klyra_service::Runtime,
+                logger: klyra_service::Logger,
             ) -> Result<(), Box<dyn std::error::Error> > {
-                complex().await
+                runtime.spawn_blocking(move || {
+                    klyra_service::log::set_boxed_logger(Box::new(logger))
+                        .map(|()| klyra_service::log::set_max_level(klyra_service::log::LevelFilter::Info))
+                        .expect("logger set should succeed");
+                }).await.unwrap();
+
+                runtime.spawn(complex()).await.unwrap()
             }
         };
 
@@ -200,11 +229,21 @@ mod tests {
         let expected = quote! {
             async fn __klyra_wrapper(
                 factory: &mut dyn klyra_service::Factory,
+                runtime: &klyra_service::Runtime,
+                logger: klyra_service::Logger,
             ) -> Result<(), Box<dyn std::error::Error> > {
                 use klyra_service::GetResource;
-                let pool = factory.get_resource().await?;
-                let redis = factory.get_resource().await?;
-                complex(pool, redis).await
+
+                runtime.spawn_blocking(move || {
+                    klyra_service::log::set_boxed_logger(Box::new(logger))
+                        .map(|()| klyra_service::log::set_max_level(klyra_service::log::LevelFilter::Info))
+                        .expect("logger set should succeed");
+                }).await.unwrap();
+
+                let pool = factory.get_resource(runtime).await?;
+                let redis = factory.get_resource(runtime).await?;
+
+                runtime.spawn(complex(pool, redis)).await.unwrap()
             }
         };
 

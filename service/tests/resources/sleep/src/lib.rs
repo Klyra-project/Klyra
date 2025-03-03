@@ -1,7 +1,6 @@
 use std::{thread::sleep, time::Duration};
 
-use klyra_service::{IntoService, ServeHandle, Service};
-use tokio::runtime::Runtime;
+use klyra_service::{IntoService, Runtime, ServeHandle, Service};
 
 #[macro_use]
 extern crate klyra_service;
