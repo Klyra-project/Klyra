@@ -1,7 +1,9 @@
 version: "3"
 services:
   app:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
     ports:
       - "8001:8001"
       - "8000:8000"
@@ -11,3 +13,4 @@ services:
     environment:
       - klyra_USERS_TOML=/config/users.toml
       - klyra_ADMIN_SECRET=admin-pass
+      - PROXY_FQDN=teste.rs
