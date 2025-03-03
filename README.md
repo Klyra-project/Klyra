@@ -55,7 +55,7 @@ crate-type = ["cdylib"]
 
 [dependencies]
 rocket = "0.5.0-rc.1"
-klyra-service = { version = "0.2", features = ["web-rocket"] }
+klyra-service = { version = "0.3", features = ["web-rocket"] }
 ```
 
 

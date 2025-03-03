@@ -16,7 +16,7 @@
 //! Depend on `klyra-service` in `Cargo.toml`:
 //!
 //! ```toml
-//! klyra-service = { version = "0.2", features = ["web-rocket"] }
+//! klyra-service = { version = "0.3", features = ["web-rocket"] }
 //! ```
 //!
 //! and make sure your crate has a `cdylib` output target:
@@ -32,7 +32,7 @@
 //! #[macro_use]
 //! extern crate rocket;
 //!
-//! use rocket::{Build, Rocket};
+//! use klyra_service::KlyraRocket;
 //!
 //! #[get("/hello")]
 //! fn hello() -> &'static str {
@@ -40,7 +40,7 @@
 //! }
 //!
 //! #[klyra_service::main]
-//! async fn init() -> Result<Rocket<Build>, klyra_service::Error> {
+//! async fn init() -> KlyraRocket {
 //!     let rocket = rocket::build().mount("/", routes![hello]);
 //!
 //!     Ok(rocket)
@@ -85,15 +85,16 @@
 //! Depend on `klyra-service` in `Cargo.toml`:
 //!
 //! ```toml
-//! klyra-service = { version = "0.2", features = ["web-rocket", "sqlx-postgres"] }
+//! klyra-service = { version = "0.3", features = ["web-rocket", "sqlx-postgres"] }
 //! ```
 //!
 //! ```rust,no_run
 //! #[macro_use]
 //! extern crate rocket;
 //!
-//! use rocket::{Build, Rocket};
+//! use rocket::State;
 //! use sqlx::PgPool;
+//! use klyra_service::KlyraRocket;
 //!
 //! struct MyState(PgPool);
 //!
@@ -104,7 +105,7 @@
 //! }
 //!
 //! #[klyra_service::main]
-//! async fn rocket(pool: PgPool) -> Result<Rocket<Build>, klyra_service::Error> {
+//! async fn rocket(pool: PgPool) -> KlyraRocket {
 //!     let state = MyState(pool);
 //!     let rocket = rocket::build().manage(state).mount("/", routes![hello]);
 //!
@@ -191,10 +192,10 @@ extern crate klyra_codegen;
 /// The simplest usage is when your service does not require any klyra managed resources, so you only need to return a klyra supported service:
 ///
 /// ```rust,no_run
-/// use rocket::{Build, Rocket};
+/// use klyra_service::KlyraRocket;
 ///
 /// #[klyra_service::main]
-/// async fn rocket() -> Result<Rocket<Build>, klyra_service::Error> {
+/// async fn rocket() -> KlyraRocket {
 ///     let rocket = rocket::build();
 ///
 ///     Ok(rocket)
@@ -214,13 +215,13 @@ extern crate klyra_codegen;
 /// # Getting klyra managed services
 /// The klyra is able to manage service dependencies for you. These services are passed in as inputs to your main function:
 /// ```rust,no_run
-/// use rocket::{Build, Rocket};
 /// use sqlx::PgPool;
+/// use klyra_service::KlyraRocket;
 ///
 /// struct MyState(PgPool);
 ///
 /// #[klyra_service::main]
-/// async fn rocket(pool: PgPool) -> Result<Rocket<Build>, klyra_service::Error> {
+/// async fn rocket(pool: PgPool) -> KlyraRocket {
 ///     let state = MyState(pool);
 ///     let rocket = rocket::build().manage(state);
 ///
