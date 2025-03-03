@@ -28,10 +28,12 @@ provider "aws" {
 }
 
 module "klyra" {
-  source = "modules/klyra"
+  source = "./modules/klyra"
 
   api_fqdn             = "api.klyra.rs"
+  pg_fqdn              = "pg.klyra.rs"
   proxy_fqdn           = "klyraapp.rs"
   postgres_password    = var.postgres_password
   klyra_admin_secret = var.klyra_admin_secret
+  instance_type        = "c6g.4xlarge"
 }

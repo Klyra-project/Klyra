@@ -12,6 +12,7 @@ module "klyra" {
   source = "github.com/klyra-hq/klyra/terraform/modules/klyra"
 
   api_fqdn             = "api.test.klyra.rs"
+  pg_fqdn              = "pg.test.klyra.rs"
   proxy_fqdn           = "test.klyraapp.rs"
   postgres_password    = "password"
   klyra_admin_secret = "12345"
@@ -19,6 +20,10 @@ module "klyra" {
 
 output "api_name_servers" {
   value = module.klyra.api_name_servers
+}
+
+output "pg_name_servers" {
+  value = module.klyra.pg_name_servers
 }
 
 output "user_name_servers" {
@@ -36,10 +41,27 @@ The klyra api will be reachable at `api_fqdn` while hosted services will be subd
 Just running `terraform apply` for the first time will fail since SSl certificates will be created for the api and proxy domains which will be verified. This verification will fail since it uses DNS that will be missing on first setup. So for first setups rather run the following:
 
 ``` sh
-terraform apply --target module.klyra.aws_route53_zone.user --target module.klyra.aws_route53_zone.api
+terraform apply --target module.klyra.aws_route53_zone.user --target module.klyra.aws_route53_zone.api --target module.klyra.aws_route53_zone.pg
 ```
 
-This command will create just the DNS zones needed for the api and proxy. Now use the `api_name_servers` and `user_name_servers` outputs from this module to manually add NS records for `api_fqdn` and `proxy_fqdn` in your DNS provider respectively.
+This command will create just the DNS zones needed for the api and proxy. Now use the `api_name_servers`, `pg_name_servers` and `user_name_servers` outputs from this module to manually add NS records for `api_fqdn`, `pg_fqdn` and `proxy_fqdn` in your DNS provider respectively.
 
 Once these records have propagated, a `terraform apply` command will succeed.
+
+## Allowing outside connections to the shared PostgresDB instance
+Currently, the shared DB is started within a Docker container with a default configuration. This configuration does not allow external connections. Therefore you will need to manually whitelist external IP addresses which should be allowed to connect to the instance.
+
+First login to the VM instance, then edit the file at `/opt/klyra/conf/postgres/pg_hba.conf` by adding a line similar to the following.
+
+```
+host    all             all             0.0.0.0/0               md5
+```
+
+The `0.0.0.0/0` address can be replaced with a more target IP subset.
+
+Finally, restart the klyra service using
+
+``` sh
+sudo systemctl status klyra-backend.service
+```
 
