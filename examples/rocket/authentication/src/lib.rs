@@ -1,7 +1,6 @@
 use rocket::http::Status;
 use rocket::response::status::Custom;
 use rocket::serde::json::Json;
-use rocket::{Build, Rocket};
 use serde::{Deserialize, Serialize};
 
 mod claims;
@@ -71,7 +70,7 @@ fn login(login: Json<LoginRequest>) -> Result<Json<LoginResponse>, Custom<String
 }
 
 #[klyra_service::main]
-async fn rocket() -> Result<Rocket<Build>, klyra_service::Error> {
+async fn rocket() -> klyra_service::KlyraRocket {
     let rocket = rocket::build().mount("/", routes![public, private, login]);
 
     Ok(rocket)

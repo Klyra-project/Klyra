@@ -6,7 +6,7 @@ async fn hello_world() -> &'static str {
 }
 
 #[klyra_service::main]
-async fn axum() -> Result<SyncWrapper<Router>, klyra_service::Error> {
+async fn axum() -> klyra_service::KlyraAxum {
     let router = Router::new().route("/hello", get(hello_world));
     let sync_wrapper = SyncWrapper::new(router);
 

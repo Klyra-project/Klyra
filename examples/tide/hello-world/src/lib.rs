@@ -1,5 +1,5 @@
 #[klyra_service::main]
-async fn tide() -> Result<tide::Server<()>, klyra_service::Error> {
+async fn tide() -> klyra_service::KlyraTide<()> {
     let mut app = tide::new();
     app.with(tide::log::LogMiddleware::new());
 
