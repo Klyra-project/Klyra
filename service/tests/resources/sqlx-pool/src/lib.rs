@@ -1,5 +1,5 @@
 use klyra_service::error::CustomError;
-use klyra_service::{GetResource, IntoService, Logger, Runtime, ServeHandle, Service};
+use klyra_service::{log, GetResource, IntoService, Runtime, ServeHandle, Service};
 use sqlx::PgPool;
 
 #[macro_use]
@@ -53,11 +53,11 @@ impl Service for PoolService {
     async fn build(
         &mut self,
         factory: &mut dyn klyra_service::Factory,
-        logger: Logger,
+        logger: Box<dyn log::Log>,
     ) -> Result<(), klyra_service::Error> {
         self.runtime
             .spawn_blocking(move || {
-                klyra_service::log::set_boxed_logger(Box::new(logger))
+                klyra_service::log::set_boxed_logger(logger)
                     .map(|()| {
                         klyra_service::log::set_max_level(klyra_service::log::LevelFilter::Info)
                     })
