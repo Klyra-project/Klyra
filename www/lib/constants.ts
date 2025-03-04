@@ -1,9 +1,9 @@
 export const APP_NAME = "klyra";
 
-export const SITE_TITLE = "Deploy Rust apps with a single Cargo command";
+export const SITE_TITLE = "Stateful Serverless for Rust";
 
 export const SITE_DESCRIPTION =
-  "Klyra is a crate that uses traits and annotations to configure your backend deployment - including databases.";
+  "Klyra is a web application platform that uses traits and annotations to configure your backend deployment - including databases.";
 
 export const SITE_URL = "https://klyra.rs/";
 
