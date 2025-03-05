@@ -1,0 +1,25 @@
+[Unit]
+Description=maintains the klyra provisioner which creates and manages resources
+After=docker.socket
+After=opt-klyra.mount
+
+[Service]
+Type=simple
+User=ubuntu
+RestartSec=30
+Restart=always
+ExecStartPre=/usr/bin/docker pull ${docker_image}:latest
+ExecStart=/usr/bin/docker run --rm \
+			      --network klyra-net \
+			      --name provisioner \
+			      -e PG_PORT=5432 \
+			      -p 5432:5432 \
+			      -e PORT=5001 \
+			      -e PG_PASSWORD=${pg_password} \
+			      -e PG_DATA=/opt/klyra/postgres \
+			      -v ${data_dir}/conf/postgres:/etc/postgresql/11/klyra:rw \
+			      -v ${data_dir}/user-data/postgres:/opt/klyra/postgres:rw \
+			      ${docker_image}:latest
+
+[Install]
+WantedBy=multi-user.target
