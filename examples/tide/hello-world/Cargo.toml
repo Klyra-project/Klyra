@@ -10,4 +10,4 @@ crate-type = ["cdylib"]
 
 [dependencies]
 tide = "0.16.0"
-klyra-service = { version = "0.3.1", features = ["web-tide"] }
+klyra-service = { version = "0.3.2", features = ["web-tide"] }

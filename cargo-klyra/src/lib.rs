@@ -268,7 +268,10 @@ impl Klyra {
         let current_klyra_version = &cargo_doc["dependencies"]["klyra-service"]["version"];
         let service_semver = Version::parse(current_klyra_version.as_str().unwrap())?;
         let server_version = client::klyra_version(self.ctx.api_url()).await?;
-        let server_semver = VersionReq::parse(&server_version)?;
+        let server_version = Version::parse(&server_version)?;
+
+        let version_required = format!("{}.{}", server_version.major, server_version.minor);
+        let server_semver = VersionReq::parse(&version_required)?;
 
         if server_semver.matches(&service_semver) {
             Ok(())
