@@ -12,21 +12,36 @@
 //! Klyra is an open-source app platform that uses traits and annotations to configure your backend deployments.
 //!
 //! ## Usage
+//! Start by installing the [`cargo klyra`](https://docs.rs/crate/cargo-klyra/latest) subcommand by runnning the following in a terminal:
 //!
-//! Depend on `klyra-service` in `Cargo.toml`:
-//!
-//! ```toml
-//! klyra-service = { version = "0.3", features = ["web-rocket"] }
+//! ```bash
+//! $ cargo install cargo-klyra
 //! ```
 //!
-//! and make sure your crate has a `cdylib` output target:
+//! Now that klyra is installed, you can create your first project using:
+//!
+//! ```bash
+//! cargo klyra init my-rocket-app
+//! ```
+//!
+//! By looking at the `Cargo.toml` file of the created project you will see the crate has a `cdylib` type.
+//! This is because all klyra projects are loaded by klyra during runtime as dynamic libraries.
+//! Thus, you can convert any library crate to a klyra project by adding these lines to `Cargo.toml`.
 //!
 //! ```toml
 //! [lib]
 //! crate-type = ["cdylib"]
 //! ```
 //!
-//! See the [klyra_service::main][main] macro for more information on supported services - like Axum. Here's a simple example using [rocket](https://docs.rs/rocket) to get you started:
+//! Another piece needed for a klyra project is the `klyra-service` dependency.
+//! Go ahead and update the `klyra-service` dependency inside `Cargo.toml` to prepare this crate as a rocket project
+//! by adding the `web-rocket` feature on the `klyra-service` dependency.
+//!
+//! ```toml
+//! klyra-service = { version = "0.3", features = ["web-rocket"] }
+//! ```
+//!
+//! Now replace `src/lib.rs` with the following content.
 //!
 //! ```rust,no_run
 //! #[macro_use]
@@ -47,17 +62,12 @@
 //! }
 //! ```
 //!
-//! Complete examples can be found [in the repository](https://github.com/getsynth/klyra/tree/main/examples/rocket).
+//! See the [klyra_service::main][main] macro for more information on supported services - like Axum.
+//! Or look at more complete examples [in the repository](https://github.com/getsynth/klyra/tree/main/examples), but
+//! take note that the examples may update before official releases.
 //!
 //! ## Running locally
-//! To test your app locally before deploying, use the [`cargo klyra`](https://docs.rs/crate/cargo-klyra/latest) subcommand.
-//! To install klyra, run the following in a terminal:
-//!
-//! ```bash
-//! $ cargo install cargo-klyra
-//! ```
-//!
-//! After the install, run the following to run your app locally:
+//! To test your app locally before deploying, use:
 //!
 //! ```bash
 //! $ cargo klyra run
@@ -72,8 +82,8 @@
 //!
 //! ## Deploying
 //!
-//! You can deploy your service with the [`cargo klyra`](https://docs.rs/crate/cargo-klyra/latest) subcommand.
-//! Once installed, you will need to authenticate with the klyra service first using:
+//! You can deploy your service with the [`cargo klyra`](https://docs.rs/crate/cargo-klyra/latest) subcommand too.
+//! But, you will need to authenticate with the klyra service first using:
 //!
 //! ```bash
 //! $ cargo klyra login
@@ -90,7 +100,7 @@
 //! Your service will immediately be available at `{crate_name}.klyraapp.rs`. For example:
 //!
 //! ```bash
-//! $ curl https://hello-world-rocket-app.klyraapp.rs/hello
+//! $ curl https://my-rocket-app.klyraapp.rs/hello
 //! Hello, world!
 //! ```
 //!
@@ -98,11 +108,13 @@
 //!
 //! Here is a quick example to deploy a service which uses a postgres database and [sqlx](http://docs.rs/sqlx):
 //!
-//! Depend on `klyra-service` in `Cargo.toml`:
+//! Add the `sqlx-postgres` feature to the `klyra-service` dependency inside `Cargo.toml`:
 //!
 //! ```toml
 //! klyra-service = { version = "0.3", features = ["web-rocket", "sqlx-postgres"] }
 //! ```
+//!
+//! Now update the `#[klyra_service::main]` function to take in a `PgPool`:
 //!
 //! ```rust,no_run
 //! #[macro_use]
@@ -129,21 +141,15 @@
 //! }
 //! ```
 //!
+//! For a local run, klyra will automatically provision a Postgres instance inside a [Docker](https://www.docker.com/) container on your machine and connect it to the `PgPool`.
+//!
+//! For deploys, klyra will provision a database for your application and connect it to the `PgPool` on your behalf.
+//!
 //! To learn more about klyra managed services, see [klyra_service::main][main#getting-klyra-managed-services].
 //!
 //! ## Configuration
 //!
 //! The `cargo klyra` command can be customised by creating a `Klyra.toml` in the same location as your `Cargo.toml`.
-//!
-//! ## Getting API keys
-//!
-//! After you've installed the [cargo-klyra](https://docs.rs/crate/cargo-klyra/latest) command, run:
-//!
-//! ```bash
-//! $ cargo klyra login
-//! ```
-//!
-//! this will open a browser window and prompt you to connect using your GitHub account.
 //!
 //! ##### Change the name of your service
 //!
@@ -160,6 +166,34 @@
 //! ```bash
 //! cargo klyra deploy --name=$PROJECT_NAME
 //! ```
+//!
+//! ##### Using Podman instead of Docker
+//! If you are using [Podman](https://podman.io/) instead of Docker, then `cargo klyra run` will give
+//! `got unexpected error while inspecting docker container: error trying to connect: No such file or directory` error.
+//!
+//! To fix this error you will need to expose a rootless socket for Podman first. This can be done using:
+//!
+//! ```bash
+//! podman system service --time=0 unix:///tmp/podman.sock
+//! ```
+//!
+//! Now set the `DOCKER_HOST` environment variable to point to this socket using:
+//!
+//! ```bash
+//! export DOCKER_HOST=unix:///tmp/podman.sock
+//! ```
+//!
+//! Now all `cargo klyra run` commands will work against Podman.
+//!
+//! ## Getting API keys
+//!
+//! After you've installed the [cargo-klyra](https://docs.rs/crate/cargo-klyra/latest) command, run:
+//!
+//! ```bash
+//! $ cargo klyra login
+//! ```
+//!
+//! this will open a browser window and prompt you to connect using your GitHub account.
 //!
 //! ## We're in alpha 🤗
 //!
@@ -218,17 +252,18 @@ extern crate klyra_codegen;
 /// ```
 ///
 /// ## klyra supported services
-/// The following type can take the place of the `Ok` type and enjoy first class service support in klyra. Be sure to also enable the feature on
+/// The following types can be returned from a `#[klyra_service::main]` function and enjoy first class service support in klyra. Be sure to also enable the correct feature on
 /// `klyra-service` in `Cargo.toml` for the type to be recognized.
 ///
-/// | Ok type                                                                        | Feature flag | Service                                     | Version    | Example                                                                             |
-/// | ------------------------------------------------------------------------------ | ------------ | ------------------------------------------- | ---------- | ----------------------------------------------------------------------------------- |
-/// | [`Rocket<Build>`](https://docs.rs/rocket/0.5.0-rc.1/rocket/struct.Rocket.html) | web-rocket   | [rocket](https://docs.rs/rocket/0.5.0-rc.1) | 0.5.0-rc.1 | [GitHub](https://github.com/getsynth/klyra/tree/main/examples/rocket/hello-world) |
-/// | [`SyncWrapper<Router>`](https://docs.rs/axum/0.5/axum/struct.Router.html)      | web-axum     | [axum](https://docs.rs/axum/0.5)            | 0.5        | [GitHub](https://github.com/getsynth/klyra/tree/main/examples/axum/hello-world)   |
-/// | [`Server<T>`](https://docs.rs/tide/latest/tide/struct.Server.html)             | web-tide     | [tide](https://docs.rs/tide/0.16.0)         | 0.16.0     | [GitHub](https://github.com/getsynth/klyra/tree/main/examples/tide/hello-world)   |
+/// | Return type                           | Feature flag | Service                                     | Version    | Example                                                                             |
+/// | ------------------------------------- | ------------ | ------------------------------------------- | ---------- | ----------------------------------------------------------------------------------- |
+/// | `KlyraRocket`                       | web-rocket   | [rocket](https://docs.rs/rocket/0.5.0-rc.2) | 0.5.0-rc.2 | [GitHub](https://github.com/getsynth/klyra/tree/main/examples/rocket/hello-world) |
+/// | `KlyraAxum`                         | web-axum     | [axum](https://docs.rs/axum/0.5)            | 0.5        | [GitHub](https://github.com/getsynth/klyra/tree/main/examples/axum/hello-world)   |
+/// | `KlyraTide`                         | web-tide     | [tide](https://docs.rs/tide/0.16.0)         | 0.16.0     | [GitHub](https://github.com/getsynth/klyra/tree/main/examples/tide/hello-world)   |
+/// | `Result<T, klyra_service::Error>`   | web-tower    | [tower](https://docs.rs/tower/0.4.12)       | 0.14.12    | [GitHub](https://github.com/getsynth/klyra/tree/main/examples/tower/hello-world)  |
 ///
 /// # Getting klyra managed services
-/// The klyra is able to manage service dependencies for you. These services are passed in as inputs to your main function:
+/// Klyra is able to manage service dependencies for you. These are passed in as inputs to your `#[klyra_service::main]` function:
 /// ```rust,no_run
 /// use sqlx::PgPool;
 /// use klyra_service::KlyraRocket;

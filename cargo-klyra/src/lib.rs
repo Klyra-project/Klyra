@@ -11,8 +11,8 @@ use std::net::{Ipv4Addr, SocketAddr};
 use std::rc::Rc;
 
 use anyhow::{anyhow, Context, Result};
-pub use args::{Args, Command, InitArgs, ProjectArgs, RunArgs};
-use args::{AuthArgs, DeployArgs, LoginArgs};
+pub use args::{Args, Command, DeployArgs, InitArgs, ProjectArgs, RunArgs};
+use args::{AuthArgs, LoginArgs};
 use cargo::core::compiler::CompileMode;
 use cargo::core::resolver::CliFeatures;
 use cargo::core::Workspace;
@@ -101,10 +101,10 @@ impl Klyra {
         cargo_doc["lib"] = Item::Table(lib_table);
 
         // Fetch the latest klyra-service version from crates.io
-        let manifest_path = find(&Some(args.path)).unwrap();
+        let manifest_path = find(Some(&args.path)).unwrap();
         let url = registry_url(manifest_path.as_path(), None).expect("Could not find registry URL");
         let latest_klyra_service =
-            get_latest_dependency("klyra-service", false, &manifest_path, &Some(url))
+            get_latest_dependency("klyra-service", false, &manifest_path, Some(&url))
                 .expect("Could not query the latest version of klyra-service");
         let klyra_version = latest_klyra_service
             .version()
@@ -293,6 +293,7 @@ impl Klyra {
             list: false,
             check_metadata: true,
             allow_dirty,
+            keep_going: false,
             verify: false,
             jobs: None,
             to_package: Packages::Default,

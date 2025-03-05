@@ -1,3 +1,5 @@
+mod deploy;
+mod init;
 mod run;
 
 use cargo_klyra::{Args, Command, ProjectArgs, Klyra};
