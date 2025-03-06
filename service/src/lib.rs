@@ -38,7 +38,7 @@
 //! by adding the `web-rocket` feature on the `klyra-service` dependency.
 //!
 //! ```toml
-//! klyra-service = { version = "0.3.2", features = ["web-rocket"] }
+//! klyra-service = { version = "0.3.3", features = ["web-rocket"] }
 //! ```
 //!
 //! Now replace `src/lib.rs` with the following content.
@@ -111,7 +111,7 @@
 //! Add the `sqlx-postgres` feature to the `klyra-service` dependency inside `Cargo.toml`:
 //!
 //! ```toml
-//! klyra-service = { version = "0.3.2", features = ["web-rocket", "sqlx-postgres"] }
+//! klyra-service = { version = "0.3.3", features = ["web-rocket", "sqlx-postgres"] }
 //! ```
 //!
 //! Now update the `#[klyra_service::main]` function to take in a `PgPool`:
