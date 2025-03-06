@@ -24,16 +24,8 @@
 //! cargo klyra init my-rocket-app
 //! ```
 //!
-//! By looking at the `Cargo.toml` file of the created project you will see the crate has a `cdylib` type.
-//! This is because all klyra projects are loaded by klyra during runtime as dynamic libraries.
-//! Thus, you can convert any library crate to a klyra project by adding these lines to `Cargo.toml`.
-//!
-//! ```toml
-//! [lib]
-//! crate-type = ["cdylib"]
-//! ```
-//!
-//! Another piece needed for a klyra project is the `klyra-service` dependency.
+//! By looking at the `Cargo.toml` file of the generated `my-rocket-app` project you will see it has been made to
+//! be a library crate with a `klyra-service` dependency.
 //! Go ahead and update the `klyra-service` dependency inside `Cargo.toml` to prepare this crate as a rocket project
 //! by adding the `web-rocket` feature on the `klyra-service` dependency.
 //!
