@@ -281,7 +281,11 @@ impl Klyra {
         let cargo_path = project_args.working_directory.join("Cargo.toml");
         let cargo_doc = read_to_string(cargo_path.clone())?.parse::<Document>()?;
         let current_klyra_version = &cargo_doc["dependencies"]["klyra-service"]["version"];
-        let service_semver = Version::parse(current_klyra_version.as_str().unwrap())?;
+        let service_semver = match Version::parse(current_klyra_version.as_str().unwrap()) {
+            Ok(version) => version,
+            Err(error) => return Err(anyhow!("Your klyra-service version ({}) is invalid and should follow the MAJOR.MINOR.PATCH semantic versioning format. Error given: {:?}", current_klyra_version.as_str().unwrap(), error.to_string())),
+        };
+
         let server_version = client::klyra_version(self.ctx.api_url()).await?;
         let server_version = Version::parse(&server_version)?;
 
