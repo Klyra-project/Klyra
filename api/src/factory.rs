@@ -1,8 +1,8 @@
 use async_trait::async_trait;
-use proto::provisioner::{
+use klyra_common::{project::ProjectName, DatabaseReadyInfo};
+use klyra_proto::provisioner::{
     database_request::DbType, provisioner_client::ProvisionerClient, DatabaseRequest,
 };
-use klyra_common::{project::ProjectName, DatabaseReadyInfo};
 use klyra_service::{database::Type, Factory};
 use tonic::{transport::Channel, Request};
 

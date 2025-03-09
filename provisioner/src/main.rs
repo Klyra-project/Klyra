@@ -1,7 +1,7 @@
 use std::net::SocketAddr;
 
 use clap::Parser;
-use provisioner::{Args, MyProvisioner, ProvisionerServer};
+use klyra_provisioner::{Args, MyProvisioner, ProvisionerServer};
 use tonic::transport::Server;
 
 #[tokio::main]

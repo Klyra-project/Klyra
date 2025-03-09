@@ -10,13 +10,13 @@ use anyhow::{anyhow, Context as AnyhowContext};
 use chrono::{DateTime, Utc};
 use futures::prelude::*;
 use libloading::Library;
-use proto::provisioner::provisioner_client::ProvisionerClient;
 use rocket::data::ByteUnit;
 use rocket::{tokio, Data};
 use klyra_common::project::ProjectName;
 use klyra_common::{
     DeploymentApiError, DeploymentId, DeploymentMeta, DeploymentStateMeta, Host, LogItem, Port,
 };
+use klyra_proto::provisioner::provisioner_client::ProvisionerClient;
 use klyra_service::loader::Loader;
 use klyra_service::logger::Log;
 use klyra_service::ServeHandle;

@@ -126,30 +126,21 @@ resource "aws_instance" "backend" {
 }
 
 locals {
-  opt_klyra_content = templatefile(
-    "${path.module}/systemd/system/opt-klyra.mount.tftpl",
+  storage_mount_content = templatefile(
+    "${path.module}/systemd/system/storage.mount.tftpl",
     {
       dns_name = aws_efs_file_system.user_data.dns_name,
       data_dir = local.data_dir
     }
   )
-  klyra_backend_content = templatefile(
-    "${path.module}/systemd/system/klyra-backend.service.tftpl",
+  klyra_platform_service_content = templatefile(
+    "${path.module}/systemd/system/klyra-platform.service.tftpl",
     {
       data_dir             = local.data_dir,
       docker_image         = local.docker_backend_image,
       klyra_admin_secret = var.klyra_admin_secret,
       proxy_fqdn           = var.proxy_fqdn,
       klyra_initial_key  = random_string.initial_key.result
-    }
-  )
-  klyra_provisioner_content = templatefile(
-    "${path.module}/systemd/system/klyra-provisioner.service.tftpl",
-    {
-      data_dir     = local.data_dir,
-      docker_image = local.docker_provisioner_image,
-      pg_password  = var.postgres_password,
-      fqdn         = var.pg_fqdn
     }
   )
 }
@@ -163,9 +154,8 @@ data "cloudinit_config" "backend" {
     content = templatefile(
       "${path.module}/misc/cloud-config.yaml",
       {
-        opt_klyra_content         = base64encode(local.opt_klyra_content),
-        klyra_backend_content     = base64encode(local.klyra_backend_content)
-        klyra_provisioner_content = base64encode(local.klyra_provisioner_content)
+        storage_mount_content                = base64encode(local.storage_mount_content),
+        klyra_platform_service_content     = base64encode(local.klyra_platform_service_content)
       }
     )
     filename = "cloud-config.yaml"
