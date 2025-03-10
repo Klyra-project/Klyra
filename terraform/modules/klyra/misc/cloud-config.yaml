@@ -46,13 +46,23 @@ cloud_final_modules:
 # Create our systemd files
 write_files:
   - encoding: b64
-    content: ${storage_mount_content}
-    path: /lib/systemd/system/storage.mount
+    content: ${opt_klyra_content}
+    path: /lib/systemd/system/opt-klyra.mount
     owner: root:root
     permissions: "0644"
   - encoding: b64
-    content: ${klyra_platform_service_content}
-    path: /lib/systemd/system/klyra-platform.service
+    content: ${klyra_backend_content}
+    path: /lib/systemd/system/klyra-backend.service
+    owner: root:root
+    permissions: "0644"
+  - encoding: b64
+    content: ${klyra_provisioner_content}
+    path: /lib/systemd/system/klyra-provisioner.service
+    owner: root:root
+    permissions: "0644"
+  - encoding: b64
+    content: ${klyra_db_content}
+    path: /lib/systemd/system/klyra-db.service
     owner: root:root
     permissions: "0644"
 
@@ -62,7 +72,8 @@ power_state:
 # Up services on every boot
 runcmd:
   - docker network inspect klyra-net || docker network create --driver bridge klyra-net
-  - docker volume inspect klyra-vol || docker volume create klyra-vol
   - [systemctl, daemon-reload]
-  - [systemctl, enable, "storage.mount"]
-  - [systemctl, enable, "klyra-platform.service"]
+  - [systemctl, enable, "opt-klyra.mount"]
+  - [systemctl, enable, "klyra-db.service"]
+  - [systemctl, enable, "klyra-provisioner.service"]
+  - [systemctl, enable, "klyra-backend.service"]
