@@ -1,46 +1,26 @@
 use std::time::Duration;
 
-use klyra_service::{IntoService, ServeHandle, Service};
-use tokio::{runtime::Runtime, time::sleep};
-
-#[macro_use]
-extern crate klyra_service;
-
-struct Wait(u64);
+use klyra_service::Service;
+use tokio::time::sleep;
 
 struct SleepService {
     duration: u64,
-    runtime: Runtime,
 }
 
-fn simple() -> Wait {
-    Wait(10)
+#[klyra_service::main]
+async fn simple() -> Result<SleepService, klyra_service::Error> {
+    Ok(SleepService { duration: 10 })
 }
 
-impl IntoService for Wait {
-    type Service = SleepService;
-
-    fn into_service(self) -> Self::Service {
-        SleepService {
-            duration: self.0,
-            runtime: Runtime::new().unwrap(),
-        }
-    }
-}
-
+#[klyra_service::async_trait]
 impl Service for SleepService {
-    fn bind(
-        &mut self,
+    async fn bind(
+        mut self: Box<Self>,
         _: std::net::SocketAddr,
-    ) -> Result<ServeHandle, klyra_service::error::Error> {
+    ) -> Result<(), klyra_service::error::Error> {
         let duration = Duration::from_secs(self.duration);
-        let handle = self.runtime.spawn(async move {
-            sleep(duration).await;
-            Ok(())
-        });
 
-        Ok(handle)
+        sleep(duration).await;
+        Ok(())
     }
 }
-
-declare_service!(Wait, simple);

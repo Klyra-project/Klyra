@@ -1,45 +1,18 @@
-use async_trait::async_trait;
+use klyra_service::Service;
 
-use klyra_service::{Error, Factory, IntoService, Runtime, ServeHandle, Service};
+struct MyService;
 
-#[macro_use]
-extern crate klyra_service;
-
-#[derive(Default)]
-struct Builder;
-
-impl IntoService for Builder {
-    type Service = MyService;
-
-    fn into_service(self) -> Self::Service {
-        MyService {
-            runtime: Runtime::new().unwrap(),
-        }
-    }
-}
-
-struct MyService {
-    runtime: Runtime,
-}
-
-#[async_trait]
+#[klyra_service::async_trait]
 impl Service for MyService {
-    async fn build(
-        &mut self,
-        _factory: &mut dyn Factory,
-        _logger: Box<dyn log::Log>,
-    ) -> Result<(), Error> {
-        panic!("panic in build");
-    }
-
-    fn bind(
-        &mut self,
+    async fn bind(
+        mut self: Box<Self>,
         _: std::net::SocketAddr,
-    ) -> Result<ServeHandle, klyra_service::error::Error> {
-        let handle = self.runtime.spawn(async move { Ok(()) });
-
-        Ok(handle)
+    ) -> Result<(), klyra_service::Error> {
+        Ok(())
     }
 }
 
-declare_service!(Builder, Builder::default);
+#[klyra_service::main]
+async fn build_panic() -> Result<MyService, klyra_service::Error> {
+    panic!("panic in build");
+}
