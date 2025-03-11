@@ -1,26 +1,27 @@
 use std::path::Path;
 
-use cargo_klyra::{Args, Command, DeployArgs, ProjectArgs, Klyra};
-use futures::Future;
+use cargo_klyra::{Args, Command, CommandOutcome, DeployArgs, ProjectArgs, Klyra};
 use reqwest::StatusCode;
 use test_context::test_context;
 use tokiotest_httpserver::{handler::HandlerBuilder, HttpTestContext};
 
 /// creates a `cargo-klyra` deploy instance with some reasonable defaults set.
-fn cargo_klyra_deploy(path: &str, api_url: String) -> impl Future<Output = anyhow::Result<()>> {
+async fn cargo_klyra_deploy(path: &str, api_url: String) -> anyhow::Result<CommandOutcome> {
     let working_directory = Path::new(path).to_path_buf();
 
-    Klyra::new().run(Args {
-        api_url: Some(api_url),
-        project_args: ProjectArgs {
-            working_directory,
-            name: None,
-        },
-        cmd: Command::Deploy(DeployArgs {
-            allow_dirty: false,
-            no_test: false,
-        }),
-    })
+    Klyra::new()
+        .run(Args {
+            api_url: Some(api_url),
+            project_args: ProjectArgs {
+                working_directory,
+                name: None,
+            },
+            cmd: Command::Deploy(DeployArgs {
+                allow_dirty: false,
+                no_test: false,
+            }),
+        })
+        .await
 }
 
 #[should_panic(

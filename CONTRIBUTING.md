@@ -8,32 +8,61 @@ Raising [issues](https://github.com/klyra-hq/klyra/issues) is encouraged. We hav
 You can use Docker and docker-compose to test klyra locally during development. See the [Docker install](https://docs.docker.com/get-docker/)
 and [docker-compose install](https://docs.docker.com/compose/install/) instructions if you do not have them installed already.
 
-You should now be set to run klyra locally as follow:
+You should now be ready to setup a local environment to test code changes to core `klyra` packages as follows:
+
+Build the required images with:
 
 ```bash
-# clone the repo
-git clone git@github.com:klyra-hq/klyra.git
+$ docker-compose -f docker-compose.yml -f docker-compose.dev.yml build
+```
 
-# cd into the repo
-cd klyra
+The images get built with [cargo-chef](https://github.com/LukeMathWalker/cargo-chef) and therefore support incremental builds (most of the time). So they will be much faster to re-build after an incremental change in your code - should you wish to deploy it locally straightaway.
 
-# start the klyra services
-docker-compose up --build
+Create a docker persistent volume with:
 
-# login to klyra service in a new terminal window
-cd path/to/klyra/repo
-cargo run --bin cargo-klyra -- login --api-key "ci-test"
+```bash
+$ docker volume create klyra-backend-vol
+```
 
-# cd into one of the examples
+Finally, you can start a local deployment of klyra with:
+
+```bash
+$ docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d
+```
+
+The API is now accessible on `localhost:8000` (for app proxies) and `localhost:8001` (for the control plane). When running `cargo run --bin cargo-klyra` (in a debug build), the CLI will point itself to `localhost` for its API calls. The deployment parameters can be tweaked by changing values in the [.env](./.env) file.
+
+In order to test local changes to the `klyra-service` crate, you may want to add the below to a `.cargo/config.toml` file. (See [Overriding Dependencies](https://doc.rust-lang.org/cargo/reference/overriding-dependencies.html) for more)
+
+``` toml
+[patch.crates-io]
+klyra-service = { path = "[base]/klyra/service" }
+```
+
+Login to klyra service in a new terminal window from the main klyra directory:
+
+```bash
+cargo run --bin cargo-klyra -- login --api-key "test-key"
+```
+
+cd into one of the examples:
+
+```bash
 cd examples/rocket/hello-world/
+```
 
-# deploy the example
+Deploy the example:
+
+```bash
 # the --manifest-path is used to locate the root of the klyra workspace
 cargo run --manifest-path ../../../Cargo.toml --bin cargo-klyra -- deploy
+```
 
-# test if the deploy is working
+Test if the deploy is working:
+
+```bash
 # (the Host header should match the Host from the deploy output)
-curl --header "Host: hello-world-rocket-app.teste.rs" localhost:8000/hello
+curl --header "Host: {app}.localhost.local" localhost:8000/hello
 ```
 ### Using Podman instead of Docker
 If you are using Podman over Docker, then expose a rootless socket of Podman using the following command:

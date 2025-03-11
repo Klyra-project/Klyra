@@ -24,21 +24,13 @@
 //! cargo klyra init my-rocket-app
 //! ```
 //!
-//! By looking at the `Cargo.toml` file of the created project you will see the crate has a `cdylib` type.
-//! This is because all klyra projects are loaded by klyra during runtime as dynamic libraries.
-//! Thus, you can convert any library crate to a klyra project by adding these lines to `Cargo.toml`.
-//!
-//! ```toml
-//! [lib]
-//! crate-type = ["cdylib"]
-//! ```
-//!
-//! Another piece needed for a klyra project is the `klyra-service` dependency.
+//! By looking at the `Cargo.toml` file of the generated `my-rocket-app` project you will see it has been made to
+//! be a library crate with a `klyra-service` dependency.
 //! Go ahead and update the `klyra-service` dependency inside `Cargo.toml` to prepare this crate as a rocket project
 //! by adding the `web-rocket` feature on the `klyra-service` dependency.
 //!
 //! ```toml
-//! klyra-service = { version = "0.3.3", features = ["web-rocket"] }
+//! klyra-service = { version = "0.4.0", features = ["web-rocket"] }
 //! ```
 //!
 //! Now replace `src/lib.rs` with the following content.
@@ -106,12 +98,13 @@
 //!
 //! ## Using `sqlx`
 //!
-//! Here is a quick example to deploy a service which uses a postgres database and [sqlx](http://docs.rs/sqlx):
+//! Here is a quick example to deploy a service that uses a postgres database and [sqlx](http://docs.rs/sqlx):
 //!
-//! Add the `sqlx-postgres` feature to the `klyra-service` dependency inside `Cargo.toml`:
+//! Add the `sqlx-postgres` feature to the `klyra-service` dependency, and add `sqlx` as a dependency with the `runtime-tokio-native-tls` and `postgres` features inside `Cargo.toml`:
 //!
 //! ```toml
-//! klyra-service = { version = "0.3.3", features = ["web-rocket", "sqlx-postgres"] }
+//! klyra-service = { version = "0.4.0", features = ["web-rocket", "sqlx-postgres"] }
+//! sqlx = { version = "0.5", features = ["runtime-tokio-native-tls", "postgres"] }
 //! ```
 //!
 //! Now update the `#[klyra_service::main]` function to take in a `PgPool`:
@@ -133,7 +126,7 @@
 //! }
 //!
 //! #[klyra_service::main]
-//! async fn rocket(pool: PgPool) -> KlyraRocket {
+//! async fn rocket(#[shared::Postgres] pool: PgPool) -> KlyraRocket {
 //!     let state = MyState(pool);
 //!     let rocket = rocket::build().manage(state).mount("/", routes![hello]);
 //!
@@ -216,7 +209,7 @@ use std::future::Future;
 use std::net::SocketAddr;
 use std::pin::Pin;
 
-use async_trait::async_trait;
+pub use async_trait::async_trait;
 
 // Pub uses by `codegen`
 pub use log;
@@ -227,10 +220,22 @@ pub use error::Error;
 
 pub mod logger;
 
+pub use klyra_common::database;
+
+#[cfg(feature = "sqlx-postgres")]
+pub mod shared;
+
 #[cfg(feature = "secrets")]
 pub mod secrets;
 #[cfg(feature = "secrets")]
 pub use secrets::SecretStore;
+
+#[cfg(any(
+    feature = "sqlx-aws-mariadb",
+    feature = "sqlx-aws-mysql",
+    feature = "sqlx-aws-postgres"
+))]
+pub mod aws;
 
 #[cfg(feature = "codegen")]
 extern crate klyra_codegen;
@@ -263,7 +268,7 @@ extern crate klyra_codegen;
 /// | `Result<T, klyra_service::Error>`   | web-tower    | [tower](https://docs.rs/tower/0.4.12)       | 0.14.12    | [GitHub](https://github.com/getsynth/klyra/tree/main/examples/tower/hello-world)  |
 ///
 /// # Getting klyra managed services
-/// Klyra is able to manage service dependencies for you. These are passed in as inputs to your `#[klyra_service::main]` function:
+/// Klyra is able to manage service dependencies for you. These services are passed in as inputs to your `#[klyra_service::main]` function and are configured using attributes:
 /// ```rust,no_run
 /// use sqlx::PgPool;
 /// use klyra_service::KlyraRocket;
@@ -271,7 +276,7 @@ extern crate klyra_codegen;
 /// struct MyState(PgPool);
 ///
 /// #[klyra_service::main]
-/// async fn rocket(pool: PgPool) -> KlyraRocket {
+/// async fn rocket(#[shared::Postgres] pool: PgPool) -> KlyraRocket {
 ///     let state = MyState(pool);
 ///     let rocket = rocket::build().manage(state);
 ///
@@ -280,11 +285,14 @@ extern crate klyra_codegen;
 /// ```
 ///
 /// ## klyra managed dependencies
-/// The following dependencies can be managed by klyra - remember to enable their feature flags for the `klyra-service` dependency in `Cargo.toml`:
+/// The following dependencies can be managed by klyra - remember to enable their feature flags for the `klyra-service` dependency in `Cargo.toml` and configure them using an attribute annotation:
 ///
-/// | Argument type                                                 | Feature flag  | Dependency                                                         | Example                                                                          |
-/// | ------------------------------------------------------------- | ------------- | ------------------------------------------------------------------ | -------------------------------------------------------------------------------- |
-/// | [`PgPool`](https://docs.rs/sqlx/latest/sqlx/type.PgPool.html) | sqlx-postgres | A PostgresSql instance accessed using [sqlx](https://docs.rs/sqlx) | [GitHub](https://github.com/getsynth/klyra/tree/main/examples/rocket/postgres) |
+/// | Argument type                                                       | Feature flag      | Attribute            | Dependency                                                                                         | Example                                                                          |
+/// | ------------------------------------------------------------------- | ----------------- | -------------------- | -------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+/// | [`PgPool`](https://docs.rs/sqlx/latest/sqlx/type.PgPool.html)       | sqlx-postgres     | `shared::Postgres`   | A shared PostgresSql instance accessed using [sqlx](https://docs.rs/sqlx)                          | [GitHub](https://github.com/getsynth/klyra/tree/main/examples/rocket/postgres) |
+/// | [`MySqlPool`](https://docs.rs/sqlx/latest/sqlx/type.MySqlPool.html) | sqlx-aws-mariadb  | `aws::rds::MariaDB`  | An AWS RDS MariaDB instance tied to your instance and accessed using [sqlx](https://docs.rs/sqlx)  |                                                                                  |
+/// | [`MySqlPool`](https://docs.rs/sqlx/latest/sqlx/type.MySqlPool.html) | sqlx-aws-mysql    | `aws::rds::MySql`    | An AWS RDS MySql instance tied to your instance and accessed using [sqlx](https://docs.rs/sqlx)    |                                                                                  |
+/// | [`PgPool`](https://docs.rs/sqlx/latest/sqlx/type.PgPool.html)       | sqlx-aws-postgres | `aws::rds::Postgres` | An AWS RDS Postgres instance tied to your instance and accessed using [sqlx](https://docs.rs/sqlx) | [GitHub](https://github.com/getsynth/klyra/tree/main/examples/tide/postgres)   |
 pub use klyra_codegen::main;
 use tokio::task::JoinHandle;
 
@@ -295,13 +303,16 @@ pub mod loader;
 ///
 /// An instance of factory is passed by the deployer as an argument to [Service::build][Service::build] in the initial phase of deployment.
 ///
-/// Also see the [declare_service!][declare_service] macro.
+/// Also see the [main][main] macro.
 #[async_trait]
 pub trait Factory: Send + Sync {
     /// Declare that the [Service][Service] requires a Postgres database.
     ///
     /// Returns the connection string to the provisioned database.
-    async fn get_sql_connection_string(&mut self) -> Result<String, crate::Error>;
+    async fn get_sql_connection_string(
+        &mut self,
+        db_type: database::Type,
+    ) -> Result<String, crate::Error>;
 }
 
 /// Used to get resources of type `T` from factories.
@@ -310,73 +321,31 @@ pub trait Factory: Send + Sync {
 /// Some resources cannot cross the boundary between the api runtime and the runtime of services. These resources
 /// should be created on the passed in runtime.
 #[async_trait]
-pub trait GetResource<T> {
-    async fn get_resource(self, runtime: &Runtime) -> Result<T, crate::Error>;
-}
-
-/// Get an `sqlx::PgPool` from any factory
-#[cfg(feature = "sqlx-postgres")]
-#[async_trait]
-impl GetResource<sqlx::PgPool> for &mut dyn Factory {
-    async fn get_resource(self, runtime: &Runtime) -> Result<sqlx::PgPool, crate::Error> {
-        use error::CustomError;
-
-        let connection_string = self.get_sql_connection_string().await?;
-
-        // A sqlx Pool cannot cross runtime boundaries, so make sure to create the Pool on the service end
-        let pool = runtime
-            .spawn(async move {
-                sqlx::postgres::PgPoolOptions::new()
-                    .min_connections(1)
-                    .max_connections(5)
-                    .connect(&connection_string)
-                    .await
-            })
-            .await
-            .map_err(CustomError::new)?
-            .map_err(CustomError::new)?;
-
-        Ok(pool)
-    }
+pub trait ResourceBuilder<T> {
+    fn new() -> Self;
+    async fn build(self, factory: &mut dyn Factory, runtime: &Runtime) -> Result<T, crate::Error>;
 }
 
 /// A tokio handle the service was started on
-pub type ServeHandle = JoinHandle<Result<(), anyhow::Error>>;
+pub type ServeHandle = JoinHandle<Result<(), error::Error>>;
 
 /// The core trait of the klyra platform. Every crate deployed to klyra needs to implement this trait.
 ///
-/// Use the [declare_service!][crate::declare_service] macro to expose your implementation to the deployment backend.
+/// Use the [main][main] macro to expose your implementation to the deployment backend.
+//
+// TODO: our current state machine in the api crate stores this service and can move it across
+// threads (handlers) causing `Service` to need `Sync`. We should remove this restriction
 #[async_trait]
 pub trait Service: Send + Sync {
-    /// This function is run exactly once on each instance of a deployment, prior to calling [bind][Service::bind].
-    ///
-    /// The passed [Factory][Factory] can be used to configure additional resources (like databases).
-    /// And the logger is for logging all runtime events
-    ///
-    /// The default is a noop that returns `Ok(())`.
-    async fn build(
-        &mut self,
-        _: &mut dyn Factory,
-        _logger: Box<dyn log::Log>,
-    ) -> Result<(), Error> {
-        Ok(())
-    }
-
     /// This function is run exactly once on each instance of a deployment.
     ///
     /// The deployer expects this instance of [Service][Service] to bind to the passed [SocketAddr][SocketAddr].
-    fn bind(&mut self, addr: SocketAddr) -> Result<ServeHandle, error::Error>;
+    async fn bind(mut self: Box<Self>, addr: SocketAddr) -> Result<(), error::Error>;
 }
 
-/// A convenience trait for handling out of the box conversions into [Service][Service] instances.
-pub trait IntoService {
-    /// The [Service][Service] instance this converts to.
-    type Service: Service;
-
-    /// Convert into a [Service][Service] instance.
-    fn into_service(self) -> Self::Service;
-}
-
+/// This function is generated by our codegen. It uses the factory to get other services and instantiate them on
+/// the correct tokio runtime. This function also sets the runtime logger. The output is a future where `T`
+/// should implement [Service].
 pub type StateBuilder<T> =
     for<'a> fn(
         &'a mut dyn Factory,
@@ -384,52 +353,67 @@ pub type StateBuilder<T> =
         Box<dyn log::Log>,
     ) -> Pin<Box<dyn Future<Output = Result<T, Error>> + Send + 'a>>;
 
-/// A wrapper that takes a user's future, gives the future a factory, and takes the returned service from the future
-/// The returned service will be deployed by klyra
-pub struct SimpleService<T> {
-    service: Option<T>,
-    builder: Option<StateBuilder<T>>,
-    runtime: Runtime,
+/// This function is generated by codegen to ensure binding happens on the other side of the FFI and on the correct
+/// tokio runtime.
+pub type Binder = for<'a> fn(Box<dyn Service>, SocketAddr, &'a Runtime) -> ServeHandle;
+
+#[allow(dead_code)]
+pub struct Bootstrapper {
+    service: Option<Box<dyn Service>>,
+    builder: Option<StateBuilder<Box<dyn Service>>>,
+    binder: Binder,
+    // Do you have time on your hands? If yes, then move this field higher and spend endless hours debugging the segmentation fault
+    // It seems that the [Runtime] changes in size when crossing the FFI which misaligns all fields after it
+    runtime: Option<Runtime>,
 }
 
-impl<T> IntoService
-    for for<'a> fn(
-        &'a mut dyn Factory,
-        &'a Runtime,
-        Box<dyn log::Log>,
-    ) -> Pin<Box<dyn Future<Output = Result<T, Error>> + Send + 'a>>
-where
-    SimpleService<T>: Service,
-{
-    type Service = SimpleService<T>;
-
-    fn into_service(self) -> Self::Service {
-        SimpleService {
+impl Bootstrapper {
+    pub fn new(builder: StateBuilder<Box<dyn Service>>, binder: Binder, runtime: Runtime) -> Self {
+        Self {
             service: None,
-            builder: Some(self),
-            runtime: Runtime::new().unwrap(),
+            builder: Some(builder),
+            binder,
+            runtime: Some(runtime),
+        }
+    }
+
+    #[cfg(feature = "loader")]
+    async fn bootstrap(
+        &mut self,
+        factory: &mut dyn Factory,
+        logger: Box<dyn log::Log>,
+    ) -> Result<(), Error> {
+        if let Some(builder) = self.builder.take() {
+            let service = builder(factory, self.runtime.as_ref().unwrap(), logger).await?;
+            self.service = Some(service);
+        }
+
+        Ok(())
+    }
+
+    #[cfg(feature = "loader")]
+    fn into_handle(mut self, addr: SocketAddr) -> Result<ServeHandle, Error> {
+        let service = self.service.take().expect("service has already been bound");
+
+        let handle = (self.binder)(service, addr, self.runtime.as_ref().unwrap());
+
+        Ok(handle)
+    }
+}
+
+impl Drop for Bootstrapper {
+    fn drop(&mut self) {
+        if let Some(runtime) = self.runtime.take() {
+            // TODO: find a way to drop the runtime
+            std::mem::forget(runtime);
         }
     }
 }
 
 #[cfg(feature = "web-rocket")]
 #[async_trait]
-impl Service for SimpleService<rocket::Rocket<rocket::Build>> {
-    async fn build(
-        &mut self,
-        factory: &mut dyn Factory,
-        logger: Box<dyn log::Log>,
-    ) -> Result<(), Error> {
-        if let Some(builder) = self.builder.take() {
-            let rocket = builder(factory, &self.runtime, logger).await?;
-            self.service = Some(rocket);
-        }
-
-        Ok(())
-    }
-
-    fn bind(&mut self, addr: SocketAddr) -> Result<ServeHandle, error::Error> {
-        let rocket = self.service.take().expect("service has already been bound");
+impl Service for rocket::Rocket<rocket::Build> {
+    async fn bind(mut self: Box<Self>, addr: SocketAddr) -> Result<(), error::Error> {
         let shutdown = rocket::config::Shutdown {
             ctrlc: false,
             ..rocket::config::Shutdown::default()
@@ -442,95 +426,56 @@ impl Service for SimpleService<rocket::Rocket<rocket::Build>> {
             shutdown,
             ..Default::default()
         };
-        let launched = rocket.configure(config).launch();
-        let handle = self.runtime.spawn(async {
-            let _rocket = launched.await.map_err(error::CustomError::new)?;
+        let _rocket = self
+            .configure(config)
+            .launch()
+            .await
+            .map_err(error::CustomError::new)?;
 
-            Ok(())
-        });
-        Ok(handle)
+        Ok(())
     }
 }
 
-#[allow(dead_code)]
 #[cfg(feature = "web-rocket")]
 pub type KlyraRocket = Result<rocket::Rocket<rocket::Build>, Error>;
 
 #[cfg(feature = "web-axum")]
 #[async_trait]
-impl Service for SimpleService<sync_wrapper::SyncWrapper<axum::Router>> {
-    async fn build(
-        &mut self,
-        factory: &mut dyn Factory,
-        logger: Box<dyn log::Log>,
-    ) -> Result<(), Error> {
-        if let Some(builder) = self.builder.take() {
-            let axum = builder(factory, &self.runtime, logger).await?;
-            self.service = Some(axum);
-        }
+impl Service for sync_wrapper::SyncWrapper<axum::Router> {
+    async fn bind(mut self: Box<Self>, addr: SocketAddr) -> Result<(), error::Error> {
+        let router = self.into_inner();
+
+        axum::Server::bind(&addr)
+            .serve(router.into_make_service())
+            .await
+            .map_err(error::CustomError::new)?;
 
         Ok(())
     }
-
-    fn bind(&mut self, addr: SocketAddr) -> Result<ServeHandle, error::Error> {
-        let axum = self
-            .service
-            .take()
-            .expect("service has already been bound")
-            .into_inner();
-
-        let handle = self.runtime.spawn(async move {
-            axum::Server::bind(&addr)
-                .serve(axum.into_make_service())
-                .await
-                .map_err(error::CustomError::new)
-        });
-
-        Ok(handle)
-    }
 }
 
-#[allow(dead_code)]
 #[cfg(feature = "web-axum")]
 pub type KlyraAxum = Result<sync_wrapper::SyncWrapper<axum::Router>, Error>;
 
 #[cfg(feature = "web-tide")]
 #[async_trait]
-impl<T> Service for SimpleService<tide::Server<T>>
+impl<T> Service for tide::Server<T>
 where
     T: Clone + Send + Sync + 'static,
 {
-    async fn build(
-        &mut self,
-        factory: &mut dyn Factory,
-        logger: Box<dyn log::Log>,
-    ) -> Result<(), Error> {
-        if let Some(builder) = self.builder.take() {
-            let tide = builder(factory, &self.runtime, logger).await?;
-            self.service = Some(tide);
-        }
+    async fn bind(mut self: Box<Self>, addr: SocketAddr) -> Result<(), error::Error> {
+        self.listen(addr).await.map_err(error::CustomError::new)?;
 
         Ok(())
     }
-
-    fn bind(&mut self, addr: SocketAddr) -> Result<ServeHandle, error::Error> {
-        let tide = self.service.take().expect("service has already been bound");
-
-        let handle = self
-            .runtime
-            .spawn(async move { tide.listen(addr).await.map_err(error::CustomError::new) });
-
-        Ok(handle)
-    }
 }
 
-#[allow(dead_code)]
 #[cfg(feature = "web-tide")]
 pub type KlyraTide<T> = Result<tide::Server<T>, Error>;
 
 #[cfg(feature = "web-tower")]
 #[async_trait]
-impl<T> Service for SimpleService<T>
+impl<T> Service for T
 where
     T: tower::Service<hyper::Request<hyper::Body>, Response = hyper::Response<hyper::Body>>
         + Clone
@@ -540,120 +485,15 @@ where
     T::Error: std::error::Error + Send + Sync,
     T::Future: std::future::Future + Send + Sync,
 {
-    async fn build(
-        &mut self,
-        factory: &mut dyn Factory,
-        logger: Box<dyn log::Log>,
-    ) -> Result<(), Error> {
-        if let Some(builder) = self.builder.take() {
-            let tower = builder(factory, &self.runtime, logger).await?;
-            self.service = Some(tower);
-        }
+    async fn bind(mut self: Box<Self>, addr: SocketAddr) -> Result<(), error::Error> {
+        let shared = tower::make::Shared::new(self);
+        hyper::Server::bind(&addr)
+            .serve(shared)
+            .await
+            .map_err(error::CustomError::new)?;
 
         Ok(())
-    }
-
-    fn bind(&mut self, addr: SocketAddr) -> Result<ServeHandle, error::Error> {
-        let service = self.service.take().expect("service has already been bound");
-
-        let handle = self.runtime.spawn(async move {
-            let shared = tower::make::Shared::new(service);
-            hyper::Server::bind(&addr)
-                .serve(shared)
-                .await
-                .map_err(error::CustomError::new)?;
-
-            Ok(())
-        });
-
-        Ok(handle)
     }
 }
 
 pub const VERSION: &str = env!("CARGO_PKG_VERSION");
-
-/// Helper macro that generates the entrypoint required of any service.
-///
-/// Can be used in one of two ways:
-///
-/// ## Without a state
-///
-/// If your service does not require a state (like a database connection pool), just pass a type and a constructor function:
-///
-/// ```rust,no_run
-/// #[macro_use]
-/// extern crate klyra_service;
-///
-/// use rocket::{Rocket, Build};
-///
-/// fn rocket() -> Rocket<Build> {
-///     rocket::build()
-/// }
-///
-/// declare_service!(Rocket<Build>, rocket);
-/// ```
-///
-/// The constructor function must return an instance of the type passed as first argument. Furthermore, the type must implement [IntoService][IntoService].
-///
-/// ## With a state
-///
-/// If your service requires a state, pass a type, a constructor and a state builder:
-///
-/// ```rust,no_run
-/// use rocket::{Rocket, Build};
-/// use sqlx::PgPool;
-///
-/// #[macro_use]
-/// extern crate klyra_service;
-/// use klyra_service::{Factory, Error};
-///
-/// struct MyState(PgPool);
-///
-/// async fn state(factory: &mut dyn Factory) -> Result<MyState, klyra_service::Error> {
-///    let pool = sqlx::postgres::PgPoolOptions::new()
-///        .connect(&factory.get_sql_connection_string().await?)
-///        .await?;
-///    Ok(MyState(pool))
-/// }
-///
-/// fn rocket() -> Rocket<Build> {
-///     rocket::build()
-/// }
-///
-/// declare_service!(Rocket<Build>, rocket, state);
-/// ```
-///
-/// The state builder will be called when the deployer calls [Service::build][Service::build].
-///
-#[macro_export]
-macro_rules! declare_service {
-    ($service_type:ty, $constructor:path) => {
-        #[no_mangle]
-        pub extern "C" fn _create_service() -> *mut dyn $crate::Service {
-            // Ensure constructor returns concrete type.
-            let constructor: fn() -> $service_type = $constructor;
-
-            let obj = $crate::IntoService::into_service(constructor());
-            let boxed: Box<dyn $crate::Service> = Box::new(obj);
-            Box::into_raw(boxed)
-        }
-    };
-    ($service_type:ty, $constructor:path, $state_builder:path) => {
-        #[no_mangle]
-        pub extern "C" fn _create_service() -> *mut dyn $crate::Service {
-            // Ensure constructor returns concrete type.
-            let constructor: fn() -> $service_type = $constructor;
-
-            // Ensure state builder is a function
-            let state_builder: fn(
-                &mut dyn $crate::Factory,
-            ) -> std::pin::Pin<
-                Box<dyn std::future::Future<Output = Result<_, $crate::Error>> + Send + '_>,
-            > = |factory| Box::pin($state_builder(factory));
-
-            let obj = $crate::IntoService::into_service((constructor(), state_builder));
-            let boxed: Box<dyn $crate::Service> = Box::new(obj);
-            Box::into_raw(boxed)
-        }
-    };
-}

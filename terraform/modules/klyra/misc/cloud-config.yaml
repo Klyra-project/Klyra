@@ -60,6 +60,11 @@ write_files:
     path: /lib/systemd/system/klyra-provisioner.service
     owner: root:root
     permissions: "0644"
+  - encoding: b64
+    content: ${klyra_db_content}
+    path: /lib/systemd/system/klyra-db.service
+    owner: root:root
+    permissions: "0644"
 
 power_state:
   mode: reboot
@@ -69,5 +74,6 @@ runcmd:
   - docker network inspect klyra-net || docker network create --driver bridge klyra-net
   - [systemctl, daemon-reload]
   - [systemctl, enable, "opt-klyra.mount"]
-  - [systemctl, enable, "klyra-backend.service"]
+  - [systemctl, enable, "klyra-db.service"]
   - [systemctl, enable, "klyra-provisioner.service"]
+  - [systemctl, enable, "klyra-backend.service"]

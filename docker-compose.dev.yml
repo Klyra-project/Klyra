@@ -1,0 +1,59 @@
+version: "3"
+
+services:
+  api:
+    entrypoint:
+      - /bin/bash
+      - -c
+      - |
+        mkdir -p /var/lib/klyra/crates
+
+        cat<<EOF > /var/lib/klyra/users.toml
+        [test-key]
+        name = "tester"
+        projects = []
+        EOF
+
+        mkdir -p $$CARGO_HOME
+        cat<<EOF > $$CARGO_HOME/config.toml
+        [patch.crates-io]
+        klyra-service = { path = "/usr/src/klyra/service" }
+        EOF
+
+        until </dev/tcp/provisioner/8000
+        do
+          >&2 echo "provisioner is not available yet - sleeping"
+          sleep 1
+        done
+
+        exec /usr/local/bin/service "$${@:0}"
+    volumes:
+      - .:/usr/src/klyra
+
+    build:
+      context: .
+      dockerfile: Containerfile
+      args:
+        crate: klyra-api
+    image: "${CONTAINER_REGISTRY}/backend:dev"
+
+  provisioner:
+    entrypoint:
+      - /bin/bash
+      - -c
+      - |
+        until </dev/tcp/db/5432
+        do
+          >&2 echo "DB is not available yet - sleeping"
+          sleep 1
+        done
+
+        >&2 echo "DB is available - starting provisioner"
+
+        exec /usr/local/bin/service "$${@:0}"
+    build:
+      context: .
+      dockerfile: Containerfile
+      args:
+        crate: klyra-provisioner
+    image: "${CONTAINER_REGISTRY}/provisioner:dev"
