@@ -54,7 +54,7 @@ edition = "2021"
 
 [dependencies]
 rocket = "0.5.0-rc.1"
-klyra-service = { version = "0.3.3", features = ["web-rocket"] }
+klyra-service = { version = "0.4.0", features = ["web-rocket"] }
 ```
 
 

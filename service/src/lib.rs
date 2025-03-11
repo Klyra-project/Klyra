@@ -30,7 +30,7 @@
 //! by adding the `web-rocket` feature on the `klyra-service` dependency.
 //!
 //! ```toml
-//! klyra-service = { version = "0.3.3", features = ["web-rocket"] }
+//! klyra-service = { version = "0.4.0", features = ["web-rocket"] }
 //! ```
 //!
 //! Now replace `src/lib.rs` with the following content.
@@ -103,7 +103,7 @@
 //! Add the `sqlx-postgres` feature to the `klyra-service` dependency, and add `sqlx` as a dependency with the `runtime-tokio-native-tls` and `postgres` features inside `Cargo.toml`:
 //!
 //! ```toml
-//! klyra-service = { version = "0.3.3", features = ["web-rocket", "sqlx-postgres"] }
+//! klyra-service = { version = "0.4.0", features = ["web-rocket", "sqlx-postgres"] }
 //! sqlx = { version = "0.5", features = ["runtime-tokio-native-tls", "postgres"] }
 //! ```
 //!
