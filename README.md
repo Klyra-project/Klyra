@@ -100,7 +100,7 @@ For the full documentation, visit [docs.rs/klyra-service](https://docs.rs/klyra-
 
 ## Contributing to klyra
 
-If you want to setup a local environment to test code changes to core `klyra` packages, or want to contribute to the project see [CONTRIBUTING.md](https://github.com/klyra-hq/klyra/blob/main/CONTRIBUTING.md)
+If you want to setup a local environment to test code changes to core `klyra` packages, or want to contribute to the project see [CONTRIBUTING.md](./CONTRIBUTING.md)
 
 ## Roadmap
 
