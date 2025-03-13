@@ -155,6 +155,49 @@ impl KlyraInit for KlyraInitTide {
     }
 }
 
+pub struct KlyraInitPoem;
+
+impl KlyraInit for KlyraInitPoem {
+    fn set_cargo_dependencies(
+        &self,
+        dependencies: &mut Table,
+        manifest_path: &Path,
+        url: &Url,
+        get_dependency_version_fn: GetDependencyVersionFn,
+    ) {
+        set_inline_table_dependency_features(
+            "klyra-service",
+            dependencies,
+            vec!["web-poem".to_string()],
+        );
+
+        set_key_value_dependency_version(
+            "poem",
+            dependencies,
+            manifest_path,
+            url,
+            get_dependency_version_fn,
+        );
+    }
+
+    fn get_boilerplate_code_for_framework(&self) -> &'static str {
+        indoc! {r#"
+        use poem::{get, handler, Route};
+
+        #[handler]
+        fn hello_world() -> &'static str {
+            "Hello, world!"
+        }
+
+        #[klyra_service::main]
+        async fn poem() -> klyra_service::KlyraPoem<impl poem::Endpoint> {
+            let app = Route::new().at("/hello", get(hello_world));
+    
+            Ok(app)
+        }"#}
+    }
+}
+
 pub struct KlyraInitTower;
 
 impl KlyraInit for KlyraInitTower {
@@ -265,6 +308,10 @@ pub fn get_framework(init_args: &InitArgs) -> Box<dyn KlyraInit> {
 
     if init_args.tower {
         return Box::new(KlyraInitTower);
+    }
+
+    if init_args.poem {
+        return Box::new(KlyraInitPoem);
     }
 
     Box::new(KlyraInitNoOp)
@@ -405,6 +452,7 @@ mod klyra_init_tests {
             rocket: false,
             tide: false,
             tower: false,
+            poem: false,
             path: PathBuf::new(),
         };
 
@@ -413,6 +461,7 @@ mod klyra_init_tests {
             "rocket" => init_args.rocket = true,
             "tide" => init_args.tide = true,
             "tower" => init_args.tower = true,
+            "poem" => init_args.poem = true,
             _ => unreachable!(),
         }
 
@@ -437,12 +486,13 @@ mod klyra_init_tests {
 
     #[test]
     fn test_get_framework_via_get_boilerplate_code() {
-        let frameworks = vec!["axum", "rocket", "tide", "tower"];
+        let frameworks = vec!["axum", "rocket", "tide", "tower", "poem"];
         let framework_inits: Vec<Box<dyn KlyraInit>> = vec![
             Box::new(KlyraInitAxum),
             Box::new(KlyraInitRocket),
             Box::new(KlyraInitTide),
             Box::new(KlyraInitTower),
+            Box::new(KlyraInitPoem),
         ];
 
         for (framework, expected_framework_init) in frameworks.into_iter().zip(framework_inits) {
@@ -640,6 +690,37 @@ mod klyra_init_tests {
             klyra-service = { version = "1.0", features = ["web-tower"] }
             tower = { version = "1.0", features = ["full"] }
             hyper = { version = "1.0", features = ["full"] }
+        "#};
+
+        assert_eq!(cargo_toml.to_string(), expected);
+    }
+
+    #[test]
+    fn test_set_cargo_dependencies_poem() {
+        let mut cargo_toml = cargo_toml_factory();
+        let dependencies = cargo_toml["dependencies"].as_table_mut().unwrap();
+        let manifest_path = PathBuf::new();
+        let url = Url::parse("https://klyra.rs").unwrap();
+
+        set_inline_table_dependency_version(
+            "klyra-service",
+            dependencies,
+            &manifest_path,
+            &url,
+            mock_get_latest_dependency_version,
+        );
+
+        KlyraInitPoem.set_cargo_dependencies(
+            dependencies,
+            &manifest_path,
+            &url,
+            mock_get_latest_dependency_version,
+        );
+
+        let expected = indoc! {r#"
+            [dependencies]
+            klyra-service = { version = "1.0", features = ["web-poem"] }
+            poem = "1.0"
         "#};
 
         assert_eq!(cargo_toml.to_string(), expected);
