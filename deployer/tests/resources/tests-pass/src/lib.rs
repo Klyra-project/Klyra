@@ -15,7 +15,7 @@ async fn rocket() -> klyra_service::KlyraRocket {
 #[cfg(test)]
 mod tests {
     #[test]
-    fn this_fails() {
+    fn this_passes() {
         assert_eq!(super::index(), "Hello, world!");
     }
 }
