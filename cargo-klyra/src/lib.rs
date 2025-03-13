@@ -2,6 +2,7 @@ mod args;
 mod client;
 pub mod config;
 mod factory;
+mod init;
 mod print;
 
 use std::fs::{read_to_string, File};
@@ -17,15 +18,14 @@ use args::{AuthArgs, LoginArgs};
 use cargo::core::compiler::CompileMode;
 use cargo::core::resolver::CliFeatures;
 use cargo::core::Workspace;
-use cargo::ops::{CompileOptions, NewOptions, PackageOpts, Packages, TestOptions};
-use cargo_edit::{find, get_latest_dependency, registry_url};
+use cargo::ops::{CompileOptions, PackageOpts, Packages, TestOptions};
 use colored::Colorize;
 use config::RequestContext;
 use factory::LocalFactory;
 use semver::{Version, VersionReq};
 use klyra_service::loader::{build_crate, Loader};
 use tokio::sync::mpsc;
-use toml_edit::{value, Document, Item, Table};
+use toml_edit::Document;
 use uuid::Uuid;
 
 #[macro_use]
@@ -82,53 +82,19 @@ impl Klyra {
 
     async fn init(&self, args: InitArgs) -> Result<()> {
         // Interface with cargo to initialize new lib package for klyra
-        let opts = NewOptions::new(None, false, true, args.path.clone(), None, None, None)?;
-        let cargo_config = cargo::util::config::Config::default()?;
-        let init_result = cargo::ops::init(&opts, &cargo_config)?;
-        // Mimick `cargo init` behavior and log status or error to shell
-        cargo_config
-            .shell()
-            .status("Created", format!("{} (klyra) package", init_result))?;
+        let path = args.path.clone();
+        init::cargo_init(path.clone())?;
 
-        // Read Cargo.toml into a `Document`
-        let cargo_path = args.path.join("Cargo.toml");
-        let mut cargo_doc = read_to_string(cargo_path.clone())?.parse::<Document>()?;
-
-        // Remove empty dependencies table to re-insert after the lib table is inserted
-        cargo_doc.remove("dependencies");
-
-        // Create an empty `[lib]` table
-        cargo_doc["lib"] = Item::Table(Table::new());
-
-        // Fetch the latest klyra-service version from crates.io
-        let manifest_path = find(Some(&args.path)).unwrap();
-        let url = registry_url(manifest_path.as_path(), None).expect("Could not find registry URL");
-        let latest_klyra_service =
-            get_latest_dependency("klyra-service", false, &manifest_path, Some(&url))
-                .expect("Could not query the latest version of klyra-service");
-        let klyra_version = latest_klyra_service
-            .version()
-            .expect("No latest klyra-service version available");
-
-        // Insert klyra-service to `[dependencies]` table
-        let mut dep_table = Table::new();
-        dep_table["klyra-service"]["version"] = value(klyra_version);
-        cargo_doc["dependencies"] = Item::Table(dep_table);
-
-        // Truncate Cargo.toml and write the updated `Document` to it
-        let mut cargo_toml = File::create(cargo_path)?;
-        cargo_toml.write_all(cargo_doc.to_string().as_bytes())?;
+        let framework = init::get_framework(&args);
+        init::cargo_klyra_init(path, framework)?;
 
         Ok(())
     }
 
     fn find_root_directory(dir: &Path) -> Option<PathBuf> {
-        for ancestor in dir.ancestors() {
-            if ancestor.join("Cargo.toml").exists() {
-                return Some(ancestor.to_path_buf());
-            }
-        }
-        None
+        dir.ancestors()
+            .find(|ancestor| ancestor.join("Cargo.toml").exists())
+            .map(|path| path.to_path_buf())
     }
 
     pub fn load_project(&mut self, project_args: &mut ProjectArgs) -> Result<()> {

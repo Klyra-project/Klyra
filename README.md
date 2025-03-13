@@ -39,10 +39,15 @@ First download the Klyra cargo extension and login:
 ```bash
 $ cargo install cargo-klyra
 $ cargo klyra login
-$ cargo init --lib hello-world
 ```
 
-Update your `Cargo.toml`:
+Create your first klyra app with `rocket` framework:
+
+```bash
+$ cargo klyra init --rocket hello-world
+```
+
+Your `Cargo.toml` should look like:
 
 ```toml
 [package]
@@ -53,18 +58,16 @@ edition = "2021"
 [lib]
 
 [dependencies]
-rocket = "0.5.0-rc.1"
 klyra-service = { version = "0.4.0", features = ["web-rocket"] }
+rocket = "0.4.11"
 ```
 
 
-Create your first klyra app in `lib.rs`:
+Your klyra app in `lib.rs` should look like:
 
 ```rust
 #[macro_use]
 extern crate rocket;
-
-use rocket::{Build, Rocket};
 
 #[get("/")]
 fn index() -> &'static str {
@@ -72,7 +75,7 @@ fn index() -> &'static str {
 }
 
 #[klyra_service::main]
-async fn rocket() -> Result<Rocket<Build>,klyra_service::Error> {
+async fn rocket() -> klyra_service::KlyraRocket {
     let rocket = rocket::build().mount("/hello", routes![index]);
 
     Ok(rocket)
@@ -97,7 +100,7 @@ For the full documentation, visit [docs.rs/klyra-service](https://docs.rs/klyra-
 
 ## Contributing to klyra
 
-If you want to setup a local environment to test code changes to core `klyra` packages, or want to contribute to the project see [CONTRIBUTING.md](https://github.com/klyra-hq/klyra/blob/main/CONTRIBUTING.md)
+If you want to setup a local environment to test code changes to core `klyra` packages, or want to contribute to the project see [CONTRIBUTING.md](./CONTRIBUTING.md)
 
 ## Roadmap
 

@@ -1,12 +1,12 @@
 use anyhow::Result;
 use cargo_klyra::{Args, CommandOutcome, Klyra};
-use structopt::StructOpt;
+use clap::Parser;
 
 #[tokio::main]
 async fn main() -> Result<()> {
     env_logger::init();
 
-    let result = Klyra::new().run(Args::from_args()).await;
+    let result = Klyra::new().run(Args::parse()).await;
 
     if matches!(result, Ok(CommandOutcome::DeploymentFailure)) {
         // Deployment failure results in a shell error exit code being returned (this allows
