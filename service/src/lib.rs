@@ -21,7 +21,7 @@
 //! Now that klyra is installed, you can create your first project using:
 //!
 //! ```bash
-//! cargo klyra init --rocket my-rocket-app
+//! $ cargo klyra init --rocket my-rocket-app
 //! ```
 //!
 //! By looking at the `Cargo.toml` file of the generated `my-rocket-app` project you will see it has been made to
