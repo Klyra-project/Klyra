@@ -2,11 +2,14 @@ version: "3"
 volumes:
   klyra-backend-vol:
     external: true
+  klyra-cargo-registry-vol:
+    external: true
 services:
-  api:
-    image: "${CONTAINER_REGISTRY}/api:${BACKEND_TAG}"
+  deployer:
+    image: "${CONTAINER_REGISTRY}/deployer:${BACKEND_TAG}"
     volumes:
-      - klyra-backend-vol:/var/lib/klyra/
+      - klyra-backend-vol:/tmp/klyra-builds/
+      - klyra-cargo-registry-vol:/usr/local/cargo/registry/
     depends_on:
       - provisioner
     ports:
@@ -18,8 +21,9 @@ services:
         delay: 5s
         max_attempts: 3
     environment:
-      - klyra_USERS_TOML=/var/lib/klyra/users.toml
       - RUST_LOG=${RUST_LOG}
+      - CARGO_HOME=/usr/local/cargo
+      - GATEWAY_SECRET=tmp
     command:
       - "--path=/var/lib/klyra/crates"
       - "--bind-addr=0.0.0.0"
