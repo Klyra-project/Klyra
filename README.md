@@ -9,8 +9,8 @@
   <a href="https://github.com/getsynth/klyra/search?l=rust">
     <img alt="language" src="https://img.shields.io/badge/language-Rust-orange.svg">
   </a>
-  <a href="https://github.com/getsynth/klyra/actions">
-    <img alt="build status" src="https://img.shields.io/github/workflow/status/getsynth/klyra/cargo-test"/>
+  <a href="https://circleci.com/gh/klyra-hq/klyra/">
+    <img alt="build status" src="https://circleci.com/gh/klyra-hq/klyra.svg?style=shield"/>
   </a>
   <a href="https://discord.gg/H33rRDTm3p">
     <img alt="discord" src="https://img.shields.io/discord/803236282088161321?logo=discord"/>
