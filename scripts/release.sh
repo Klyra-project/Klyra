@@ -22,7 +22,12 @@ function update-examples-versions()
     for d in examples/*/*/;
     do
         cd "$d"
-        cargo add klyra-service@$version
+
+        if [[ -f Cargo.toml ]]
+        then
+            cargo add klyra-service@$version
+        fi
+
         cd ../../../
     done
 
