@@ -31,7 +31,7 @@ impl KlyraFactory {
 
 #[async_trait]
 impl Factory for KlyraFactory {
-    async fn get_sql_connection_string(
+    async fn get_db_connection_string(
         &mut self,
         db_type: Type,
     ) -> Result<String, klyra_service::Error> {
