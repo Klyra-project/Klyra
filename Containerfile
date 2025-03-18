@@ -1,5 +1,5 @@
 #syntax=docker/dockerfile-upstream:1.4.0-rc1
-FROM rust:buster as klyra-build
+FROM rust:1.63.0-buster as klyra-build
 RUN apt-get update &&\
     apt-get install -y curl protobuf-compiler
 RUN cargo install cargo-chef
@@ -21,7 +21,7 @@ COPY --from=cache /build .
 ARG crate
 RUN cargo build --bin ${crate}
 
-FROM rust:buster as klyra-common
+FROM rust:1.63.0-buster as klyra-common
 RUN apt-get update &&\
     apt-get install -y curl
 COPY --from=cache /build/ /usr/src/klyra/
