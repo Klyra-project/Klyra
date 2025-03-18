@@ -50,27 +50,24 @@ Run `cargo-klyra --help` to see the basic usage:
 USAGE:
     cargo-klyra [OPTIONS] <SUBCOMMAND>
 
-FLAGS:
-    -h, --help       Prints help information
-    -V, --version    Prints version information
-
 OPTIONS:
-        --api-url <api-url>
-            Run this command against the api at the supplied url [env: klyra_API=]
-
-        --name <name>                              Specify the name of the project (overrides crate name)
-        --working-directory <working-directory>    Specify the working directory [default: .]
+        --api-url <API_URL>                        run this command against the api at the supplied url (allows targeting a custom deployed instance for this command only) [env: klyra_API=]
+    -h, --help                                     Print help information
+        --name <NAME>                              Specify the name of the project (overrides crate name)
+    -V, --version                                  Print version information
+        --working-directory <WORKING_DIRECTORY>    Specify the working directory [default: .]
 
 SUBCOMMANDS:
-    auth      create user credentials for the klyra platform
-    delete    delete the latest deployment for a klyra project
-    deploy    deploy a klyra project
-    help      Prints this message or the help of the given subcommand(s)
-    init      create a new klyra project
-    login     login to the klyra platform
-    logs      view the logs of a klyra project
-    run       run a klyra project locally
-    status    view the status of a klyra project
+    auth          create user credentials for the klyra platform
+    delete        delete this klyra service
+    deploy        deploy a klyra service
+    deployment    manage deployments of a klyra service
+    help          Print this message or the help of the given subcommand(s)
+    init          create a new klyra service
+    login         login to the klyra platform
+    logs          view the logs of a deployment in this klyra service
+    run           run a klyra service locally
+    status        view the status of a klyra service
 ```
 
 ### Subcommand: `init`
