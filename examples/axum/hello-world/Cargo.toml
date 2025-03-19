@@ -7,5 +7,5 @@ edition = "2021"
 
 [dependencies]
 axum = "0.5"
-klyra-service = { version = "0.4.1", features = ["web-axum"] }
+klyra-service = { version = "0.5.0", features = ["web-axum"] }
 sync_wrapper = "0.1"

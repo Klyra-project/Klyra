@@ -31,9 +31,10 @@ module "klyra" {
   source = "./modules/klyra"
 
   api_fqdn             = "api.klyra.rs"
-  pg_fqdn              = "pg.klyra.rs"
+  db_fqdn              = "db.klyra.rs"
   proxy_fqdn           = "klyraapp.rs"
   postgres_password    = var.postgres_password
+  mongodb_password     = var.mongodb_password
   klyra_admin_secret = var.klyra_admin_secret
   instance_type        = "c6g.4xlarge"
 }

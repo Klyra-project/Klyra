@@ -75,6 +75,12 @@ resource "aws_lb_target_group_attachment" "postgres" {
   port             = var.postgres_container_port
 }
 
+resource "aws_lb_target_group_attachment" "mongodb" {
+  target_group_arn = aws_lb_target_group.mongodb.arn
+  target_id        = aws_instance.backend.id
+  port             = var.mongodb_container_port
+}
+
 data "aws_ami" "ubuntu" {
   most_recent = true
 
@@ -145,16 +151,24 @@ locals {
   klyra_provisioner_content = templatefile(
     "${path.module}/systemd/system/klyra-provisioner.service.tftpl",
     {
-      docker_image = local.docker_provisioner_image,
-      fqdn         = var.pg_fqdn,
-      pg_password  = var.postgres_password,
+      docker_image     = local.docker_provisioner_image,
+      fqdn             = var.db_fqdn,
+      pg_password      = var.postgres_password,
+      mongodb_password = var.mongodb_password,
     }
   )
-  klyra_db_content = templatefile(
-    "${path.module}/systemd/system/klyra-db.service.tftpl",
+  klyra_pg_content = templatefile(
+    "${path.module}/systemd/system/klyra-pg.service.tftpl",
     {
       data_dir    = local.data_dir,
       pg_password = var.postgres_password,
+    }
+  )
+  klyra_mongodb_content = templatefile(
+    "${path.module}/systemd/system/klyra-mongodb.service.tftpl",
+    {
+      data_dir         = local.data_dir,
+      mongodb_password = var.mongodb_password,
     }
   )
 }
@@ -171,7 +185,8 @@ data "cloudinit_config" "backend" {
         opt_klyra_content         = base64encode(local.opt_klyra_content),
         klyra_backend_content     = base64encode(local.klyra_backend_content)
         klyra_provisioner_content = base64encode(local.klyra_provisioner_content)
-        klyra_db_content          = base64encode(local.klyra_db_content)
+        klyra_pg_content          = base64encode(local.klyra_pg_content)
+        klyra_mongodb_content     = base64encode(local.klyra_mongodb_content)
       }
     )
     filename = "cloud-config.yaml"

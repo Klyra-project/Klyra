@@ -25,3 +25,6 @@ e2e/users.toml
 
 # direnv cache directory
 .direnv/
+
+.klyra-*
+docker-compose.rendered.yml
