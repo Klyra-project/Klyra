@@ -69,6 +69,8 @@ pub enum Command {
     },
     /// delete this klyra service
     Delete,
+    /// manage secrets for this klyra service
+    Secrets,
     /// create user credentials for the klyra platform
     Auth(AuthArgs),
     /// login to the klyra platform
