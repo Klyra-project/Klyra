@@ -24,6 +24,7 @@ use config::RequestContext;
 use factory::LocalFactory;
 use semver::{Version, VersionReq};
 use klyra_service::loader::{build_crate, Loader};
+use klyra_service::{Factory, SecretStore};
 use tokio::sync::mpsc;
 use toml_edit::Document;
 use uuid::Uuid;
@@ -192,6 +193,23 @@ impl Klyra {
         let addr = SocketAddr::new(Ipv4Addr::LOCALHOST.into(), run_args.port);
         let deployment_id = Uuid::new_v4();
         let (tx, mut rx) = mpsc::unbounded_channel();
+
+        // Load secrets
+        let secrets = self.ctx.secrets();
+        if !secrets.is_empty() {
+            let conn_str = factory
+                .get_db_connection_string(klyra_common::database::Type::Shared(
+                    klyra_common::database::SharedEngine::Postgres,
+                ))
+                .await?;
+
+            let conn = sqlx::PgPool::connect(&conn_str).await?;
+
+            for (key, value) in secrets.iter() {
+                debug!("setting secret for {key}");
+                conn.set_secret(key, value).await?;
+            }
+        }
 
         trace!("loading project");
         println!(

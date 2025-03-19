@@ -1095,6 +1095,7 @@ dependencies = [
  "serde_json",
  "klyra-common",
  "klyra-service",
+ "sqlx",
  "tempfile",
  "test-context",
  "tokio",
