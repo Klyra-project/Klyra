@@ -12,7 +12,7 @@ export const TWITTER_HANDLE = "@klyra_dev";
 export const MIXPANEL_TOKEN = "ea13713300ea92e06107f27762512e57";
 
 export const GITHUB_URL = "https://github.com/getsynth/klyra";
-export const DISCORD_URL = "https://discord.gg/H33rRDTm3p";
+export const DISCORD_URL = "https://discord.gg/klyra";
 export const TWITTER_URL = "https://twitter.com/klyra_dev";
 export const klyra_DOCS_URL =
   "https://docs.rs/klyra-service/latest/klyra_service/";

@@ -112,7 +112,7 @@ If you have any requests or suggestions feel free to open an issue.
 
 - [Community Forum](https://github.com/getsynth/klyra/discussions). Best for: help with building, discussion about best practices.
 - [GitHub Issues](https://github.com/getsynth/klyra/issues). Best for: bugs and errors you encounter using Klyra.
-- [Discord](https://discord.gg/H33rRDTm3p). Best for: sharing your applications and hanging out with the community.
+- [Discord](https://discord.gg/klyra). Best for: sharing your applications and hanging out with the community.
 - [Twitter](https://twitter.com/klyra_dev). Best for: keeping up with announcements and releases
 
 ## Status
