@@ -1,6 +1,6 @@
 [package]
 name = "klyra-api"
-version = "0.5.1"
+version = "0.5.2"
 edition = "2021"
 publish = false
 
@@ -31,14 +31,14 @@ tonic = "0.8.0"
 uuid = { version = "1.1.2", features = ["v4"] }
 
 [dependencies.klyra-common]
-version = "0.5.1"
+version = "0.5.2"
 path = "../common"
 
 [dependencies.klyra-proto]
-version = "0.5.1"
+version = "0.5.2"
 path = "../proto"
 
 [dependencies.klyra-service]
-version = "0.5.1"
+version = "0.5.2"
 path = "../service"
 features = ["loader", "secrets"]
