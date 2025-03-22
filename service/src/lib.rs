@@ -258,13 +258,15 @@ extern crate klyra_codegen;
 /// The following types can be returned from a `#[klyra_service::main]` function and enjoy first class service support in klyra. Be sure to also enable the correct feature on
 /// `klyra-service` in `Cargo.toml` for the type to be recognized.
 ///
-/// | Return type                           | Feature flag | Service                                     | Version    | Example                                                                             |
-/// | ------------------------------------- | ------------ | ------------------------------------------- | ---------- | ----------------------------------------------------------------------------------- |
-/// | `KlyraRocket`                       | web-rocket   | [rocket](https://docs.rs/rocket/0.5.0-rc.2) | 0.5.0-rc.2 | [GitHub](https://github.com/getsynth/klyra/tree/main/examples/rocket/hello-world) |
-/// | `KlyraAxum`                         | web-axum     | [axum](https://docs.rs/axum/0.5)            | 0.5        | [GitHub](https://github.com/getsynth/klyra/tree/main/examples/axum/hello-world)   |
-/// | `KlyraTide`                         | web-tide     | [tide](https://docs.rs/tide/0.16.0)         | 0.16.0     | [GitHub](https://github.com/getsynth/klyra/tree/main/examples/tide/hello-world)   |
-/// | `KlyraPoem`                         | web-poem     | [poem](https://docs.rs/poem/1.3.35)         | 1.3.35     | [GitHub](https://github.com/getsynth/klyra/tree/main/examples/poem/hello-world)   |
-/// | `Result<T, klyra_service::Error>`   | web-tower    | [tower](https://docs.rs/tower/0.4.12)       | 0.14.12    | [GitHub](https://github.com/getsynth/klyra/tree/main/examples/tower/hello-world)  |
+/// | Return type                           | Feature flag | Service                                     | Version    | Example                                                                               |
+/// | ------------------------------------- | ------------ | ------------------------------------------- | ---------- | -----------------------------------------------------------------------------------   |
+/// | `KlyraRocket`                       | web-rocket   | [rocket](https://docs.rs/rocket/0.5.0-rc.2) | 0.5.0-rc.2 | [GitHub](https://github.com/getsynth/klyra/tree/main/examples/rocket/hello-world)   |
+/// | `KlyraAxum`                         | web-axum     | [axum](https://docs.rs/axum/0.5)            | 0.5        | [GitHub](https://github.com/getsynth/klyra/tree/main/examples/axum/hello-world)     |
+/// | `KlyraSalvo`                        | web-salvo    | [salvo](https://docs.rs/salvo/0.34.3)       | 0.34.3     | [GitHub](https://github.com/getsynth/klyra/tree/main/examples/salvo/hello-world)    |
+/// | `KlyraTide`                         | web-tide     | [tide](https://docs.rs/tide/0.16.0)         | 0.16.0     | [GitHub](https://github.com/getsynth/klyra/tree/main/examples/tide/hello-world)     |
+/// | `KlyraPoem`                         | web-poem     | [poem](https://docs.rs/poem/1.3.35)         | 1.3.35     | [GitHub](https://github.com/getsynth/klyra/tree/main/examples/poem/hello-world)     |
+/// | `Result<T, klyra_service::Error>`   | web-tower    | [tower](https://docs.rs/tower/0.4.12)       | 0.14.12    | [GitHub](https://github.com/getsynth/klyra/tree/main/examples/tower/hello-world)    |
+/// | `KlyraSerenity`                     | bot-serenity | [serenity](https://docs.rs/serenity/0.11.5) | 0.11.5     | [GitHub](https://github.com/getsynth/klyra/tree/main/examples/serenity/hello-world) |
 ///
 /// # Getting klyra managed services
 /// Klyra is able to manage service dependencies for you. These services are passed in as inputs to your `#[klyra_service::main]` function and are configured using attributes:
@@ -476,6 +478,21 @@ impl Service for sync_wrapper::SyncWrapper<axum::Router> {
 
 #[cfg(feature = "web-axum")]
 pub type KlyraAxum = Result<sync_wrapper::SyncWrapper<axum::Router>, Error>;
+
+#[cfg(feature = "web-salvo")]
+#[async_trait]
+impl Service for salvo::Router {
+    async fn bind(mut self: Box<Self>, addr: SocketAddr) -> Result<(), error::Error> {
+        salvo::Server::new(salvo::listener::TcpListener::bind(&addr))
+            .serve(self)
+            .await;
+
+        Ok(())
+    }
+}
+
+#[cfg(feature = "web-salvo")]
+pub type KlyraSalvo = Result<salvo::Router, Error>;
 
 #[cfg(feature = "web-tide")]
 #[async_trait]
