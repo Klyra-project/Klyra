@@ -25,7 +25,7 @@ async fn cargo_klyra_deploy(path: &str, api_url: String) -> anyhow::Result<Comma
 }
 
 #[should_panic(
-    expected = "Your klyra_service version is outdated. Update your klyra_service version to 1.2.5 and try to deploy again"
+    expected = "Your klyra-service version is outdated. Update your klyra-service version to 1.2.5 and try to deploy again"
 )]
 #[test_context(HttpTestContext)]
 #[tokio::test]

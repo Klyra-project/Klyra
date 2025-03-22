@@ -288,7 +288,7 @@ impl Klyra {
             Ok(())
         } else {
             Err(anyhow!(
-                "Your klyra_service version is outdated. Update your klyra_service version to {} and try to deploy again",
+                "Your klyra-service version is outdated. Update your klyra-service version to {} and try to deploy again",
                 &server_version,
             ))
         }

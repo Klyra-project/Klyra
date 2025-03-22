@@ -5,8 +5,11 @@ use std::process::Command;
 use anyhow::{anyhow, Context, Result};
 use rocket::tokio;
 use rocket::tokio::io::AsyncWriteExt;
-use klyra_service::loader::build_crate;
+use semver::VersionReq;
 use uuid::Uuid;
+
+use klyra_common::version::get_klyra_service_from_user_crate;
+use klyra_service::loader::build_crate;
 
 #[cfg(debug_assertions)]
 pub const DEFAULT_FS_ROOT: &str = "/tmp/klyra/crates/";
@@ -26,6 +29,7 @@ pub(crate) trait BuildSystem: Send + Sync {
         &self,
         crate_bytes: &[u8],
         project: &str,
+        version_req: &VersionReq,
         buf: Box<dyn std::io::Write + Send>,
     ) -> Result<Build>;
 
@@ -73,6 +77,7 @@ impl BuildSystem for FsBuildSystem {
         &self,
         crate_bytes: &[u8],
         project_name: &str,
+        version_req: &VersionReq,
         buf: Box<dyn std::io::Write + Send>,
     ) -> Result<Build> {
         // project path
@@ -96,6 +101,9 @@ impl BuildSystem for FsBuildSystem {
 
         // extract tarball
         extract_tarball(&crate_path, &project_path)?;
+
+        // check klyra service version of service
+        check_klyra_version(&project_path, version_req)?;
 
         // run cargo build (--debug for now)
         let so_path = build_crate(&project_path, buf)?;
@@ -186,5 +194,32 @@ fn extract_tarball(crate_path: &Path, project_path: &Path) -> Result<()> {
         Err(anyhow::Error::msg(err).context(anyhow!("failed to unpack cargo archive")))
     } else {
         Ok(())
+    }
+}
+
+fn check_klyra_version<P: AsRef<Path>>(
+    working_directory: P,
+    version_req: &VersionReq,
+) -> anyhow::Result<()> {
+    let manifest_path = working_directory.as_ref().join("Cargo.toml");
+    let target_klyra_version = get_klyra_service_from_user_crate(&manifest_path)?;
+
+    if version_req.matches(&target_klyra_version) {
+        Ok(())
+    } else {
+        Err(anyhow!(
+            "the version of `klyra-service` specified as a dependency to this service (v{target_klyra_version}) is not supported by this instance ({version_req}); try updating `klyra-service` to the latest version available and deploy"
+        ))
+    }
+}
+
+#[cfg(test)]
+pub mod tests {
+    use super::*;
+
+    #[test]
+    fn our_version_is_accepted() {
+        let version_req = VersionReq::parse(env!("klyra_SERVICE_VERSION_REQ")).unwrap();
+        assert!(check_klyra_version("./", &version_req).is_ok())
     }
 }
