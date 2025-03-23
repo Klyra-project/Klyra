@@ -31,6 +31,10 @@ impl KlyraFactory {
 
 #[async_trait]
 impl Factory for KlyraFactory {
+    fn get_project_name(&self) -> ProjectName {
+        self.project_name.clone()
+    }
+
     async fn get_db_connection_string(
         &mut self,
         db_type: Type,
