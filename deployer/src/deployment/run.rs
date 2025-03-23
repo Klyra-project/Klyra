@@ -218,6 +218,10 @@ mod tests {
         ) -> Result<BTreeMap<String, String>, klyra_service::Error> {
             panic!("no test should get any secrets");
         }
+
+        fn get_service_name(&self) -> klyra_service::ServiceName {
+            panic!("no test should get the service name");
+        }
     }
 
     struct StubLogger;

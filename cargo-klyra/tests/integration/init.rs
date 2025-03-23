@@ -24,6 +24,8 @@ async fn cargo_klyra_init(path: PathBuf) -> anyhow::Result<CommandOutcome> {
                 tide: false,
                 tower: false,
                 poem: false,
+                salvo: false,
+                serenity: false,
                 path,
             }),
         })
@@ -47,6 +49,8 @@ async fn cargo_klyra_init_framework(path: PathBuf) -> anyhow::Result<CommandOutc
                 tide: false,
                 tower: false,
                 poem: false,
+                salvo: false,
+                serenity: false,
                 path,
             }),
         })
