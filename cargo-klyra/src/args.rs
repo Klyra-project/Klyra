@@ -77,6 +77,9 @@ pub enum Command {
     Login(LoginArgs),
     /// run a klyra service locally
     Run(RunArgs),
+    /// manage a project on klyra
+    #[clap(subcommand)]
+    Project(ProjectCommand),
 }
 
 #[derive(Parser)]
@@ -88,6 +91,16 @@ pub enum DeploymentCommand {
         /// ID of deployment to get status for
         id: Uuid,
     },
+}
+
+#[derive(Parser)]
+pub enum ProjectCommand {
+    /// create an environment for this project on klyra
+    New,
+    /// remove this project environment from klyra
+    Rm,
+    /// show the status of this project's environment on klyra
+    Status,
 }
 
 #[derive(Parser)]
