@@ -11,7 +11,7 @@ export const TWITTER_HANDLE = "@klyra_dev";
 
 export const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
 
-export const GITHUB_URL = "https://github.com/getsynth/klyra";
+export const GITHUB_URL = "https://github.com/klyra-hq/klyra";
 export const DISCORD_URL = "https://discord.gg/klyra";
 export const TWITTER_URL = "https://twitter.com/klyra_dev";
 export const klyra_DOCS_URL =

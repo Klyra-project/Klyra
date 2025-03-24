@@ -55,7 +55,7 @@ async fn add(Json(todo): Json<Todo>, collection: Data<&Collection<Todo>>) -> Res
 
 #[klyra_service::main]
 async fn main(
-    #[shared::MongoDb] db: Database,
+    #[klyra_shared_db::MongoDb] db: Database,
 ) -> klyra_service::KlyraPoem<impl poem::Endpoint> {
     let collection = db.collection::<Todo>("todos");
 

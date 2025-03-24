@@ -21,7 +21,7 @@ export default function AnnouncementBar() {
         ⭐️ If you like Klyra,&nbsp;
         <ExternalLink
           className={styles.announcement__link}
-          href={"https://github.com/getsynth/klyra"}
+          href={"https://github.com/klyra-hq/klyra"}
         >
           give it a star on GitHub
         </ExternalLink>

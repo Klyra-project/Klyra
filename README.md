@@ -1,12 +1,12 @@
 <p align="center">
-<img width="300" src="https://raw.githubusercontent.com/getsynth/klyra/master/resources/logo-rectangle-transparent.png"/>
+<img width="300" src="https://raw.githubusercontent.com/klyra-hq/klyra/master/assets/logo-rectangle-transparent.png"/>
 </p>
 <br>
 <p align=center>
   <a href="https://docs.rs/klyra-service">
     <img alt="docs" src="https://img.shields.io/badge/doc-reference-orange">
   </a>
-  <a href="https://github.com/getsynth/klyra/search?l=rust">
+  <a href="https://github.com/klyra-hq/klyra/search?l=rust">
     <img alt="language" src="https://img.shields.io/badge/language-Rust-orange.svg">
   </a>
   <a href="https://circleci.com/gh/klyra-hq/klyra/">

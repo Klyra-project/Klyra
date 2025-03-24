@@ -8,7 +8,7 @@ WORKDIR /build
 FROM klyra-build as cache
 WORKDIR /src
 COPY . .
-RUN find ${SRC_CRATES} \( -name "*.proto" -or -name "*.rs" -or -name "*.toml" \) -type f -exec install -D \{\} /build/\{\} \;
+RUN find ${SRC_CRATES} \( -name "*.proto" -or -name "*.rs" -or -name "*.toml" -or -name "README.md" \) -type f -exec install -D \{\} /build/\{\} \;
 
 FROM klyra-build AS planner
 COPY --from=cache /build .

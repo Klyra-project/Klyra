@@ -29,7 +29,7 @@ struct MyState {
 }
 
 #[klyra_service::main]
-async fn tide(#[aws::rds::Postgres] pool: PgPool) -> KlyraTide<MyState> {
+async fn tide(#[klyra_aws_rds::Postgres] pool: PgPool) -> KlyraTide<MyState> {
     pool.execute(include_str!("../schema.sql"))
         .await
         .map_err(CustomError::new)?;

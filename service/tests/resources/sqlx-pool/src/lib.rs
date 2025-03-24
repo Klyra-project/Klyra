@@ -7,7 +7,9 @@ struct PoolService {
 }
 
 #[klyra_service::main]
-async fn init(#[shared::Postgres] pool: PgPool) -> Result<PoolService, klyra_service::Error> {
+async fn init(
+    #[klyra_shared_db::Postgres] pool: PgPool,
+) -> Result<PoolService, klyra_service::Error> {
     Ok(PoolService { pool })
 }
 

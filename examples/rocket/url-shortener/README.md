@@ -31,7 +31,7 @@ The project consists of the following files
 To deploy this app, check out the repository locally
 
 ```bash
-$ git clone https://github.com/getsynth/klyra.git
+$ git clone https://github.com/klyra-hq/klyra.git
 ```
 
 navigate to `examples/rocket/url-shortener`

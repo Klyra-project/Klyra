@@ -3,8 +3,8 @@ use serenity::async_trait;
 use serenity::model::channel::Message;
 use serenity::model::gateway::Ready;
 use serenity::prelude::*;
+use klyra_secrets::SecretStore;
 use klyra_service::error::CustomError;
-use klyra_service::SecretStore;
 use sqlx::PgPool;
 
 struct Bot;
@@ -25,7 +25,7 @@ impl EventHandler for Bot {
 }
 
 #[klyra_service::main]
-async fn serenity(#[shared::Postgres] pool: PgPool) -> klyra_service::KlyraSerenity {
+async fn serenity(#[klyra_shared_db::Postgres] pool: PgPool) -> klyra_service::KlyraSerenity {
     // Get the discord token set in `Secrets.toml` from the shared Postgres database
     let token = pool
         .get_secret("DISCORD_TOKEN")

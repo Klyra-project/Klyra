@@ -39,6 +39,10 @@ In order to test local changes to the `klyra-service` crate, you may want to add
 ``` toml
 [patch.crates-io]
 klyra-service = { path = "[base]/klyra/service" }
+klyra-aws-rds = { path = "[base]/klyra/resources/aws-rds" }
+klyra-persist = { path = "[base]/klyra/resources/persist" }
+klyra-shared-db = { path = "[base]/klyra/resources/shared-db" }
+klyra-secrets = { path = "[base]/klyra/resources/secrets" }
 ```
 
 Login to klyra service in a new terminal window from the main klyra directory:

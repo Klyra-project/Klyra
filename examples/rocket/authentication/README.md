@@ -27,7 +27,6 @@ After logging into klyra, use the following command to deploy this example:
 $ cargo klyra deploy
 ```
 
-Notice how this deploy fails since one of the test fails. See the `TODO` at the top of `src/claims.rs` on how to fix the test. Once the code is fixed, try to deploy again.
 Now make a note of the `Host` for the deploy to use in the examples below. Or just use `authentication-rocket-app.klyraapp.rs` as the host below.
 
 ### Seeing it in action

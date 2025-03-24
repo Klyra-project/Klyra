@@ -25,7 +25,7 @@ use rocket::serde::json::Json;
 use rocket::{tokio, Build, Data, Rocket, State};
 use klyra_common::project::ProjectName;
 use klyra_common::{DeploymentApiError, DeploymentMeta, Port};
-use klyra_service::SecretStore;
+use klyra_secrets::SecretStore;
 use uuid::Uuid;
 
 use crate::args::Args;
