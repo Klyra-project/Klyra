@@ -21,7 +21,7 @@
 
 # klyra
 
-[Klyra](https://www.klyra.rs/) is Rust-native cloud development platform that lets you deploy your Rust apps for free.
+[Klyra](https://www.klyra.rs/) is a Rust-native cloud development platform that lets you deploy your Rust apps for free.
 
 Klyra is built for productivity, reliability and performance:
 - Zero-Configuration support for Rust using annotations
