@@ -7,7 +7,6 @@ use poem::{
     EndpointExt, Result, Route,
 };
 use serde::{Deserialize, Serialize};
-use klyra_secrets::SecretStore;
 use klyra_service::error::CustomError;
 use sqlx::{Executor, FromRow, PgPool};
 

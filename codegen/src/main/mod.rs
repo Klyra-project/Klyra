@@ -330,7 +330,7 @@ mod tests {
                     klyra_service::tracing_subscriber::registry()
                         .with(filter_layer)
                         .with(logger)
-                        .init(); // this sets the subscriber as the global default and also adds a compatibility layer for capturing `log::Record`s
+                        .init();
                 })
                 .await
                 .map_err(|e| {
@@ -444,7 +444,7 @@ mod tests {
                     klyra_service::tracing_subscriber::registry()
                         .with(filter_layer)
                         .with(logger)
-                        .init(); // this sets the subscriber as the global default and also adds a compatibility layer for capturing `log::Record`s
+                        .init();
                 })
                 .await
                 .map_err(|e| {
@@ -591,14 +591,21 @@ mod tests {
             async fn __klyra_wrapper(
                 factory: &mut dyn klyra_service::Factory,
                 runtime: &klyra_service::Runtime,
-                logger: Box<dyn klyra_service::log::Log>,
+                logger: klyra_service::Logger,
             ) -> Result<Box<dyn klyra_service::Service>, klyra_service::Error> {
+                use klyra_service::tracing_subscriber::prelude::*;
                 use klyra_service::ResourceBuilder;
 
                 runtime.spawn_blocking(move || {
-                    klyra_service::log::set_boxed_logger(logger)
-                        .map(|()| klyra_service::log::set_max_level(klyra_service::log::LevelFilter::Info))
-                        .expect("logger set should succeed");
+                    let filter_layer =
+                        klyra_service::tracing_subscriber::EnvFilter::try_from_default_env()
+                            .or_else(|_| klyra_service::tracing_subscriber::EnvFilter::try_new("INFO"))
+                            .unwrap();
+
+                    klyra_service::tracing_subscriber::registry()
+                        .with(filter_layer)
+                        .with(logger)
+                        .init();
                 })
                 .await
                 .map_err(|e| {
