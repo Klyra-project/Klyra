@@ -1,12 +1,12 @@
 use clap::Parser;
 use futures::prelude::*;
-use klyra_gateway::{Service, Refresh};
 use klyra_gateway::args::{Args, Commands, InitArgs};
 use klyra_gateway::auth::Key;
 use klyra_gateway::proxy::make_proxy;
 use klyra_gateway::service::{GatewayService, MIGRATIONS};
-use klyra_gateway::worker::{Worker, Work};
+use klyra_gateway::worker::{Work, Worker};
 use klyra_gateway::{api::make_api, args::StartArgs};
+use klyra_gateway::{Refresh, Service};
 use sqlx::migrate::MigrateDatabase;
 use sqlx::{query, Sqlite, SqlitePool};
 use std::io;
@@ -74,7 +74,14 @@ async fn start(db: SqlitePool, args: StartArgs) -> io::Result<()> {
         .expect("could not list projects")
     {
         match work.refresh(&gateway.context()).await {
-            Ok(work) => sender.send(Work { account_name, project_name, work }).await.unwrap(),
+            Ok(work) => sender
+                .send(Work {
+                    account_name,
+                    project_name,
+                    work,
+                })
+                .await
+                .unwrap(),
             Err(err) => {
                 error!(
                     error = %err,
@@ -82,8 +89,8 @@ async fn start(db: SqlitePool, args: StartArgs) -> io::Result<()> {
                     %project_name,
                     "could not refresh state. Skipping it for now.",
                 );
-                panic!("could not refresh state");  
-            },
+                panic!("could not refresh state");
+            }
         }
     }
 
@@ -102,7 +109,11 @@ async fn start(db: SqlitePool, args: StartArgs) -> io::Result<()> {
 
     let proxy_handle = tokio::spawn(hyper::Server::bind(&args.user).serve(proxy));
 
-    let _ = tokio::join!(worker_handle, api_handle, proxy_handle);
+    let _ = tokio::select!(
+        _ = worker_handle => info!("worker handle finished"),
+        _ = api_handle => info!("api handle finished"),
+        _ = proxy_handle => info!("proxy handle finished"),
+    );
 
     Ok(())
 }
