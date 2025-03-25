@@ -28,5 +28,9 @@ COPY --from=cache /build/ /usr/src/klyra/
 
 FROM klyra-common
 ARG crate
+SHELL ["/bin/bash", "-c"]
+RUN mkdir -p $CARGO_HOME; \
+echo $'[patch.crates-io] \n\
+klyra-service = { path = "/usr/src/klyra/service" }' > $CARGO_HOME/config.toml
 COPY --from=builder /build/target/debug/${crate} /usr/local/bin/service
 ENTRYPOINT ["/usr/local/bin/service"]
