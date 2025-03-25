@@ -1,12 +1,12 @@
 <p align="center">
-<img width="300" src="https://raw.githubusercontent.com/getsynth/klyra/master/resources/logo-rectangle-transparent.png"/>
+<img width="300" src="https://raw.githubusercontent.com/klyra-hq/klyra/master/assets/logo-rectangle-transparent.png"/>
 </p>
 <br>
 <p align=center>
   <a href="https://docs.rs/klyra-service">
     <img alt="docs" src="https://img.shields.io/badge/doc-reference-orange">
   </a>
-  <a href="https://github.com/getsynth/klyra/search?l=rust">
+  <a href="https://github.com/klyra-hq/klyra/search?l=rust">
     <img alt="language" src="https://img.shields.io/badge/language-Rust-orange.svg">
   </a>
   <a href="https://circleci.com/gh/klyra-hq/klyra/">
@@ -21,7 +21,7 @@
 
 # klyra
 
-[Klyra](https://www.klyra.rs/) is Rust-native cloud development platform that lets you deploy your Rust apps for free.
+[Klyra](https://www.klyra.rs/) is a Rust-native cloud development platform that lets you deploy your Rust apps for free.
 
 Klyra is built for productivity, reliability and performance:
 - Zero-Configuration support for Rust using annotations
@@ -97,11 +97,19 @@ $ cargo klyra deploy
         Database URI:       postgres://***:***@pg.klyra.rs/db-hello-world
 ```
 
-For the full documentation, visit [docs.rs/klyra-service](https://docs.rs/klyra-service)
+For the full documentation, visit [docs.rs/klyra-service](https://docs.rs/klyra-service).
+
+For more examples, check out [klyra examples](https://github.com/klyra-hq/klyra/tree/main/examples).
 
 ## Contributing to klyra
 
-If you want to setup a local environment to test code changes to core `klyra` packages, or want to contribute to the project see [CONTRIBUTING.md](./CONTRIBUTING.md)
+Contributing to klyra is highly encouraged!
+
+If you want to setup a local environment to test code changes to core `klyra` packages, or want to contribute to the project see [CONTRIBUTING.md](./CONTRIBUTING.md). 
+
+Even if you are not planning to submit any code; joining our [Discord server](https://discord.gg/klyra) and providing feedback helps us a lot!
+
+You can also ⭐ this repo to show your interest & support.
 
 ## Roadmap
 
@@ -114,7 +122,7 @@ If you have any requests or suggestions feel free to open an issue.
 - [Community Forum](https://github.com/klyra-hq/klyra/discussions). Best for: help with building, discussion about best practices.
 - [GitHub Issues](https://github.com/klyra-hq/klyra/issues). Best for: bugs and errors you encounter using Klyra.
 - [Discord](https://discord.gg/klyra). Best for: sharing your applications and hanging out with the community.
-- [Twitter](https://twitter.com/klyra_dev). Best for: keeping up with announcements and releases
+- [Twitter](https://twitter.com/klyra_dev). Best for: keeping up with announcements and releases.
 
 ## Status
 

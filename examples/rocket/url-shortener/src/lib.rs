@@ -71,7 +71,7 @@ async fn shorten(url: String, state: &State<AppState>) -> Result<String, status:
 static MIGRATOR: Migrator = sqlx::migrate!();
 
 #[klyra_service::main]
-async fn rocket(#[shared::Postgres] pool: PgPool) -> KlyraRocket {
+async fn rocket(#[klyra_shared_db::Postgres] pool: PgPool) -> KlyraRocket {
     MIGRATOR.run(&pool).await.map_err(CustomError::new)?;
 
     let state = AppState { pool };

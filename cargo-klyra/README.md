@@ -7,7 +7,7 @@
     <img alt="language" src="https://img.shields.io/badge/language-Rust-orange.svg">
   </a>
   <a href="https://github.com/klyra-hq/klyra/actions">
-    <img alt="build status" src="https://img.shields.io/github/workflow/status/getsynth/klyra/cargo-test"/>
+    <img alt="build status" src="https://img.shields.io/github/workflow/status/klyra-hq/klyra/cargo-test"/>
   </a>
   <a href="https://discord.gg/H33rRDTm3p">
     <img alt="discord" src="https://img.shields.io/discord/803236282088161321?logo=discord"/>

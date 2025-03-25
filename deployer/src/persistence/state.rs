@@ -48,3 +48,18 @@ impl From<State> for klyra_common::deployment::State {
         }
     }
 }
+
+impl From<klyra_common::deployment::State> for State {
+    fn from(state: klyra_common::deployment::State) -> Self {
+        match state {
+            klyra_common::deployment::State::Queued => Self::Queued,
+            klyra_common::deployment::State::Building => Self::Building,
+            klyra_common::deployment::State::Built => Self::Built,
+            klyra_common::deployment::State::Running => Self::Running,
+            klyra_common::deployment::State::Completed => Self::Completed,
+            klyra_common::deployment::State::Stopped => Self::Stopped,
+            klyra_common::deployment::State::Crashed => Self::Crashed,
+            klyra_common::deployment::State::Unknown => Self::Unknown,
+        }
+    }
+}

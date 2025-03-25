@@ -1,10 +1,10 @@
 #![doc(
-    html_logo_url = "https://raw.githubusercontent.com/getsynth/klyra/main/resources/logo-square-transparent.png",
-    html_favicon_url = "https://raw.githubusercontent.com/getsynth/klyra/main/resources/favicon.ico"
+    html_logo_url = "https://raw.githubusercontent.com/klyra-hq/klyra/main/assets/logo-square-transparent.png",
+    html_favicon_url = "https://raw.githubusercontent.com/klyra-hq/klyra/main/assets/favicon.ico"
 )]
 //! # Klyra - Deploy Rust apps with a single Cargo subcommand
 //! <div style="display: flex; margin-top: 30px; margin-bottom: 30px;">
-//! <img src="https://raw.githubusercontent.com/getsynth/klyra/main/resources/logo-rectangle-transparent.png" width="400px" style="margin-left: auto; margin-right: auto;"/>
+//! <img src="https://raw.githubusercontent.com/klyra-hq/klyra/main/assets/logo-rectangle-transparent.png" width="400px" style="margin-left: auto; margin-right: auto;"/>
 //! </div>
 //!
 //! Hello, and welcome to the <span style="font-family: Sans-Serif;"><a href="https://klyra.rs">klyra</a></span> API documentation!
@@ -53,7 +53,7 @@
 //! ```
 //!
 //! See the [klyra_service::main][main] macro for more information on supported services - such as `axum`.
-//! Or look at more complete examples [in the repository](https://github.com/getsynth/klyra/tree/main/examples), but
+//! Or look at more complete examples [in the repository](https://github.com/klyra-hq/klyra/tree/main/examples), but
 //! take note that the examples may update before official releases.
 //!
 //! ## Running locally
@@ -98,10 +98,10 @@
 //!
 //! Here is a quick example to deploy a service that uses a postgres database and [sqlx](http://docs.rs/sqlx):
 //!
-//! Add the `sqlx-postgres` feature to the `klyra-service` dependency, and add `sqlx` as a dependency with the `runtime-tokio-native-tls` and `postgres` features inside `Cargo.toml`:
+//! Add `klyra-shared-db` as a dependency with the `postgres` feature, and add `sqlx` as a dependency with the `runtime-tokio-native-tls` and `postgres` features inside `Cargo.toml`:
 //!
 //! ```toml
-//! klyra-service = { version = "0.5.2", features = ["web-rocket", "sqlx-postgres"] }
+//! klyra-shared-db = { version = "0.5.2", features = ["postgres"] }
 //! sqlx = { version = "0.6.1", features = ["runtime-tokio-native-tls", "postgres"] }
 //! ```
 //!
@@ -124,7 +124,7 @@
 //! }
 //!
 //! #[klyra_service::main]
-//! async fn rocket(#[shared::Postgres] pool: PgPool) -> KlyraRocket {
+//! async fn rocket(#[klyra_shared_db::Postgres] pool: PgPool) -> KlyraRocket {
 //!     let state = MyState(pool);
 //!     let rocket = rocket::build().manage(state).mount("/", routes![hello]);
 //!
@@ -136,7 +136,7 @@
 //!
 //! For deploys, klyra will provision a database for your application and connect it to the `PgPool` on your behalf.
 //!
-//! To learn more about klyra managed services, see [klyra_service::main][main#getting-klyra-managed-services].
+//! To learn more about klyra managed resources, see [klyra_service::main][main#getting-klyra-managed-resources].
 //!
 //! ## Configuration
 //!
@@ -200,7 +200,7 @@
 //!
 //! If you have any questions, [join our Discord server](https://discord.gg/klyra). There's always someone on there that can help!
 //!
-//! You can also [open an issue or a discussion on GitHub](https://github.com/getsynth/klyra).
+//! You can also [open an issue or a discussion on GitHub](https://github.com/klyra-hq/klyra).
 //!
 
 use std::collections::BTreeMap;
@@ -211,40 +211,24 @@ use std::pin::Pin;
 pub use async_trait::async_trait;
 
 // Pub uses by `codegen`
-pub use log;
 pub use tokio::runtime::Runtime;
+pub use tracing;
+pub use tracing_subscriber;
 
 pub mod error;
 pub use error::Error;
 
+mod logger;
+pub use logger::Logger;
+
 pub use klyra_common::database;
-
-#[cfg(any(feature = "sqlx-postgres", feature = "mongodb-integration",))]
-pub mod shared;
-
-#[cfg(feature = "secrets")]
-pub mod secrets;
-#[cfg(feature = "secrets")]
-pub use secrets::{SecretStore, Secrets};
-
-#[cfg(any(
-    feature = "sqlx-aws-mariadb",
-    feature = "sqlx-aws-mysql",
-    feature = "sqlx-aws-postgres"
-))]
-pub mod aws;
-
-#[cfg(feature = "persist")]
-pub mod persist;
-#[cfg(feature = "persist")]
-pub use persist::PersistInstance;
 
 #[cfg(feature = "codegen")]
 extern crate klyra_codegen;
 #[cfg(feature = "codegen")]
 /// Helper macro that generates the entrypoint required by any service - likely the only macro you need in this crate.
 ///
-/// # Without klyra managed services
+/// # Without klyra managed resources
 /// The simplest usage is when your service does not require any klyra managed resources, so you only need to return a klyra supported service:
 ///
 /// ```rust,no_run
@@ -264,16 +248,16 @@ extern crate klyra_codegen;
 ///
 /// | Return type                           | Feature flag | Service                                     | Version    | Example                                                                               |
 /// | ------------------------------------- | ------------ | ------------------------------------------- | ---------- | -----------------------------------------------------------------------------------   |
-/// | `KlyraRocket`                       | web-rocket   | [rocket](https://docs.rs/rocket/0.5.0-rc.2) | 0.5.0-rc.2 | [GitHub](https://github.com/getsynth/klyra/tree/main/examples/rocket/hello-world)   |
-/// | `KlyraAxum`                         | web-axum     | [axum](https://docs.rs/axum/0.5)            | 0.5        | [GitHub](https://github.com/getsynth/klyra/tree/main/examples/axum/hello-world)     |
-/// | `KlyraSalvo`                        | web-salvo    | [salvo](https://docs.rs/salvo/0.34.3)       | 0.34.3     | [GitHub](https://github.com/getsynth/klyra/tree/main/examples/salvo/hello-world)    |
-/// | `KlyraTide`                         | web-tide     | [tide](https://docs.rs/tide/0.16.0)         | 0.16.0     | [GitHub](https://github.com/getsynth/klyra/tree/main/examples/tide/hello-world)     |
-/// | `KlyraPoem`                         | web-poem     | [poem](https://docs.rs/poem/1.3.35)         | 1.3.35     | [GitHub](https://github.com/getsynth/klyra/tree/main/examples/poem/hello-world)     |
-/// | `Result<T, klyra_service::Error>`   | web-tower    | [tower](https://docs.rs/tower/0.4.12)       | 0.14.12    | [GitHub](https://github.com/getsynth/klyra/tree/main/examples/tower/hello-world)    |
-/// | `KlyraSerenity`                     | bot-serenity | [serenity](https://docs.rs/serenity/0.11.5) | 0.11.5     | [GitHub](https://github.com/getsynth/klyra/tree/main/examples/serenity/hello-world) |
+/// | `KlyraRocket`                       | web-rocket   | [rocket](https://docs.rs/rocket/0.5.0-rc.2) | 0.5.0-rc.2 | [GitHub](https://github.com/klyra-hq/klyra/tree/main/examples/rocket/hello-world)   |
+/// | `KlyraAxum`                         | web-axum     | [axum](https://docs.rs/axum/0.5)            | 0.5        | [GitHub](https://github.com/klyra-hq/klyra/tree/main/examples/axum/hello-world)     |
+/// | `KlyraSalvo`                        | web-salvo    | [salvo](https://docs.rs/salvo/0.34.3)       | 0.34.3     | [GitHub](https://github.com/klyra-hq/klyra/tree/main/examples/salvo/hello-world)    |
+/// | `KlyraTide`                         | web-tide     | [tide](https://docs.rs/tide/0.16.0)         | 0.16.0     | [GitHub](https://github.com/klyra-hq/klyra/tree/main/examples/tide/hello-world)     |
+/// | `KlyraPoem`                         | web-poem     | [poem](https://docs.rs/poem/1.3.35)         | 1.3.35     | [GitHub](https://github.com/klyra-hq/klyra/tree/main/examples/poem/hello-world)     |
+/// | `Result<T, klyra_service::Error>`   | web-tower    | [tower](https://docs.rs/tower/0.4.12)       | 0.14.12    | [GitHub](https://github.com/klyra-hq/klyra/tree/main/examples/tower/hello-world)    |
+/// | `KlyraSerenity`                     | bot-serenity | [serenity](https://docs.rs/serenity/0.11.5) | 0.11.5     | [GitHub](https://github.com/klyra-hq/klyra/tree/main/examples/serenity/hello-world) |
 ///
-/// # Getting klyra managed services
-/// Klyra is able to manage service dependencies for you. These services are passed in as inputs to your `#[klyra_service::main]` function and are configured using attributes:
+/// # Getting klyra managed resources
+/// Klyra is able to manage resource dependencies for you. These resources are passed in as inputs to your `#[klyra_service::main]` function and are configured using attributes:
 /// ```rust,no_run
 /// use sqlx::PgPool;
 /// use klyra_service::KlyraRocket;
@@ -281,7 +265,7 @@ extern crate klyra_codegen;
 /// struct MyState(PgPool);
 ///
 /// #[klyra_service::main]
-/// async fn rocket(#[shared::Postgres] pool: PgPool) -> KlyraRocket {
+/// async fn rocket(#[klyra_shared_db::Postgres] pool: PgPool) -> KlyraRocket {
 ///     let state = MyState(pool);
 ///     let rocket = rocket::build().manage(state);
 ///
@@ -289,17 +273,7 @@ extern crate klyra_codegen;
 /// }
 /// ```
 ///
-/// ## klyra managed dependencies
-/// The following dependencies can be managed by klyra - remember to enable their feature flags for the `klyra-service` dependency in `Cargo.toml` and configure them using an attribute annotation:
-///
-
-/// | Argument type                                                            | Feature flag        | Attribute            | Dependency                                                                                         | Example                                                                          |
-/// | ------------------------------------------------------------------------ | ------------------- | -------------------- | -------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
-/// | [`PgPool`](https://docs.rs/sqlx/latest/sqlx/type.PgPool.html)            | sqlx-postgres       | `shared::Postgres`   | A shared PostgresSQL instance accessed using [sqlx](https://docs.rs/sqlx)                          | [GitHub](https://github.com/getsynth/klyra/tree/main/examples/rocket/postgres) |
-/// | [`Database`](https://docs.rs/mongodb/latest/mongodb/struct.Database.html)| mongodb-integration | `shared::MongoDb`    | A shared MongoDb database accessed using the [mongodb](https://docs.rs/mongodb) driver             | [GitHub](https://github.com/getsynth/klyra/tree/main/examples/poem/mongodb)    |
-/// | [`MySqlPool`](https://docs.rs/sqlx/latest/sqlx/type.MySqlPool.html)      | sqlx-aws-mariadb    | `aws::rds::MariaDB`  | An AWS RDS MariaDB instance tied to your instance and accessed using [sqlx](https://docs.rs/sqlx)  |                                                                                  |
-/// | [`MySqlPool`](https://docs.rs/sqlx/latest/sqlx/type.MySqlPool.html)      | sqlx-aws-mysql      | `aws::rds::MySql`    | An AWS RDS MySql instance tied to your instance and accessed using [sqlx](https://docs.rs/sqlx)    |                                                                                  |
-/// | [`PgPool`](https://docs.rs/sqlx/latest/sqlx/type.PgPool.html)            | sqlx-aws-postgres   | `aws::rds::Postgres` | An AWS RDS Postgres instance tied to your instance and accessed using [sqlx](https://docs.rs/sqlx) | [GitHub](https://github.com/getsynth/klyra/tree/main/examples/tide/postgres)   |
+/// More [klyra managed resources can be found here](https://github.com/klyra-hq/klyra/tree/main/resources)
 pub use klyra_codegen::main;
 use tokio::task::JoinHandle;
 
@@ -332,9 +306,69 @@ pub trait Factory: Send + Sync {
 
 /// Used to get resources of type `T` from factories.
 ///
-/// This is mainly meant for consumption by our code generator and should generally not be implemented by users.
-/// Some resources cannot cross the boundary between the api runtime and the runtime of services. These resources
-/// should be created on the passed in runtime.
+/// This is mainly meant for consumption by our code generator and should generally not be called by users.
+///
+/// ## Creating your own managed resource
+/// You may want to create your own managed resource by implementing this trait for some builder `B` to construct resource `T`. [`Factory`] can be used to provision resources
+/// on klyra's servers if your resource will need any.
+///
+/// The biggest thing to look out for is that your resource object might panic when it crosses the boundary between the klyra's backend runtime and the runtime
+/// of services. These resources should be created on the passed in `runtime` for this trait to prevent these panics.
+///
+/// Your resource will be available on a [klyra_service::main][main] function as follow:
+/// ```
+/// #[klyra_service::main]
+/// async fn my_service([custom_resource_crate::namespace::B] custom_resource: T)
+///     -> klyra_service::KlyraAxum {}
+/// ```
+///
+/// Here `custom_resource_crate::namespace` is the crate and namespace to a builder `B` that implements [`ResourceBuilder`] to create resource `T`.
+///
+/// ### Example
+/// ```
+/// pub struct Builder {
+///     name: String,
+/// }
+///
+/// pub struct Resource {
+///     name: String,
+/// }
+///
+/// impl Builder {
+///     /// Name to give resource
+///     pub fn name(self, name: &str) -> Self {
+///         self.name = name.to_string();
+///
+///         self
+///     }
+/// }
+///
+/// #[async_trait]
+/// impl ResourceBuilder<Resource> for Builder {
+///     fn new() -> Self {
+///         Self {
+///             name: String::new(),
+///         }
+///     }
+///
+///     async fn build(
+///         self,
+///         factory: &mut dyn Factory,
+///         _runtime: &Runtime,
+///     ) -> Result<Resource, klyra_service::Error> {
+///         Ok(Resource { name: self.name })
+///     }
+/// }
+/// ```
+///
+/// Then using this resource in a service:
+/// ```
+/// #[klyra_service::main]
+/// async fn my_service(
+///     [custom_resource_crate::Builder(name = "John")] resource: custom_resource_crate::Resource
+/// )
+///     -> klyra_service::KlyraAxum {}
+/// ```
 #[async_trait]
 pub trait ResourceBuilder<T> {
     fn new() -> Self;
@@ -365,7 +399,7 @@ pub type StateBuilder<T> =
     for<'a> fn(
         &'a mut dyn Factory,
         &'a Runtime,
-        Box<dyn log::Log>,
+        Logger,
     ) -> Pin<Box<dyn Future<Output = Result<T, Error>> + Send + 'a>>;
 
 /// This function is generated by codegen to ensure binding happens on the other side of the FFI and on the correct
@@ -394,11 +428,7 @@ impl Bootstrapper {
     }
 
     #[cfg(feature = "loader")]
-    async fn bootstrap(
-        &mut self,
-        factory: &mut dyn Factory,
-        logger: Box<dyn log::Log>,
-    ) -> Result<(), Error> {
+    async fn bootstrap(&mut self, factory: &mut dyn Factory, logger: Logger) -> Result<(), Error> {
         if let Some(builder) = self.builder.take() {
             let service = builder(factory, self.runtime.as_ref().unwrap(), logger).await?;
             self.service = Some(service);
@@ -435,13 +465,14 @@ impl Service for rocket::Rocket<rocket::Build> {
             ..rocket::config::Shutdown::default()
         };
 
-        let config = rocket::Config {
-            address: addr.ip(),
-            port: addr.port(),
-            log_level: rocket::config::LogLevel::Off,
-            shutdown,
-            ..Default::default()
-        };
+        let config = self
+            .figment()
+            .clone()
+            .merge((rocket::Config::ADDRESS, addr.ip()))
+            .merge((rocket::Config::PORT, addr.port()))
+            .merge((rocket::Config::LOG_LEVEL, rocket::config::LogLevel::Off))
+            .merge((rocket::Config::SHUTDOWN, shutdown));
+
         let _rocket = self
             .configure(config)
             .launch()

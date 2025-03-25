@@ -7,6 +7,7 @@ use poem::{
     EndpointExt, Result, Route,
 };
 use serde::{Deserialize, Serialize};
+use klyra_secrets::SecretStore;
 use klyra_service::error::CustomError;
 use sqlx::{Executor, FromRow, PgPool};
 
@@ -34,7 +35,7 @@ async fn add(Json(data): Json<TodoNew>, state: Data<&PgPool>) -> Result<Json<Tod
 
 #[klyra_service::main]
 async fn main(
-    #[shared::Postgres] pool: PgPool,
+    #[klyra_shared_db::Postgres] pool: PgPool,
 ) -> klyra_service::KlyraPoem<impl poem::Endpoint> {
     pool.execute(include_str!("../schema.sql"))
         .await

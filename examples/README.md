@@ -7,13 +7,13 @@ Some example apps to show what you can do with klyra.
 To deploy the examples, check out the repository locally
 
 ```bash
-$ git clone https://github.com/getsynth/klyra.git
+$ git clone https://github.com/klyra-hq/klyra.git
 ```
 
 navigate to an example root folder
 
 ```bash
-$ cd examples/rocket/hello-world
+$ cd examples/axum/hello-world
 ```
 
 Pick a project name that is something unique - in klyra,

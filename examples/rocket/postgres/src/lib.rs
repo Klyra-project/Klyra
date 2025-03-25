@@ -5,6 +5,7 @@ use rocket::response::status::BadRequest;
 use rocket::serde::json::Json;
 use rocket::State;
 use serde::{Deserialize, Serialize};
+use klyra_secrets::SecretStore;
 use klyra_service::error::CustomError;
 use sqlx::{Executor, FromRow, PgPool};
 
@@ -38,7 +39,7 @@ struct MyState {
 }
 
 #[klyra_service::main]
-async fn rocket(#[shared::Postgres] pool: PgPool) -> klyra_service::KlyraRocket {
+async fn rocket(#[klyra_shared_db::Postgres] pool: PgPool) -> klyra_service::KlyraRocket {
     pool.execute(include_str!("../schema.sql"))
         .await
         .map_err(CustomError::new)?;
