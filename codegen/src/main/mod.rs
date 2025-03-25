@@ -226,29 +226,36 @@ impl ToTokens for Wrapper {
             async fn __klyra_wrapper(
                 #factory_ident: &mut dyn klyra_service::Factory,
                 runtime: &klyra_service::Runtime,
-                logger: Box<dyn klyra_service::log::Log>,
+                logger: klyra_service::logger::Logger,
             ) -> Result<Box<dyn klyra_service::Service>, klyra_service::Error> {
+                use klyra_service::tracing_subscriber::prelude::*;
                 #extra_imports
 
                 runtime.spawn_blocking(move || {
-                    klyra_service::log::set_boxed_logger(logger)
-                        .map(|()| klyra_service::log::set_max_level(klyra_service::log::LevelFilter::Info))
-                        .expect("logger set should succeed");
-                })
-                    .await
-                    .map_err(|e| {
-                        if e.is_panic() {
-                            let mes = e
-                                .into_panic()
-                                .downcast_ref::<&str>()
-                                .map(|x| x.to_string())
-                                .unwrap_or_else(|| "<no panic message>".to_string());
+                    let filter_layer =
+                        klyra_service::tracing_subscriber::EnvFilter::try_from_default_env()
+                            .or_else(|_| klyra_service::tracing_subscriber::EnvFilter::try_new("INFO"))
+                            .unwrap();
 
-                            klyra_service::Error::BuildPanic(mes)
-                        } else {
-                            klyra_service::Error::Custom(klyra_service::error::CustomError::new(e))
-                        }
-                    })?;
+                    klyra_service::tracing_subscriber::registry()
+                        .with(filter_layer)
+                        .with(logger)
+                        .init(); // this sets the subscriber as the global default and also adds a compatibility layer for capturing `log::Record`s
+                })
+                .await
+                .map_err(|e| {
+                    if e.is_panic() {
+                        let mes = e
+                            .into_panic()
+                            .downcast_ref::<&str>()
+                            .map(|x| x.to_string())
+                            .unwrap_or_else(|| "<no panic message>".to_string());
+
+                        klyra_service::Error::BuildPanic(mes)
+                    } else {
+                        klyra_service::Error::Custom(klyra_service::error::CustomError::new(e))
+                    }
+                })?;
 
                 #(let #fn_inputs = #fn_inputs_builder::new()#fn_inputs_builder_options.build(#factory_ident, runtime).await?;)*
 
@@ -311,12 +318,19 @@ mod tests {
             async fn __klyra_wrapper(
                 _factory: &mut dyn klyra_service::Factory,
                 runtime: &klyra_service::Runtime,
-                logger: Box<dyn klyra_service::log::Log>,
+                logger: klyra_service::logger::Logger,
             ) -> Result<Box<dyn klyra_service::Service>, klyra_service::Error> {
+                use klyra_service::tracing_subscriber::prelude::*;
                 runtime.spawn_blocking(move || {
-                    klyra_service::log::set_boxed_logger(logger)
-                        .map(|()| klyra_service::log::set_max_level(klyra_service::log::LevelFilter::Info))
-                        .expect("logger set should succeed");
+                    let filter_layer =
+                        klyra_service::tracing_subscriber::EnvFilter::try_from_default_env()
+                            .or_else(|_| klyra_service::tracing_subscriber::EnvFilter::try_new("INFO"))
+                            .unwrap();
+
+                    klyra_service::tracing_subscriber::registry()
+                        .with(filter_layer)
+                        .with(logger)
+                        .init(); // this sets the subscriber as the global default and also adds a compatibility layer for capturing `log::Record`s
                 })
                 .await
                 .map_err(|e| {
@@ -416,14 +430,21 @@ mod tests {
             async fn __klyra_wrapper(
                 factory: &mut dyn klyra_service::Factory,
                 runtime: &klyra_service::Runtime,
-                logger: Box<dyn klyra_service::log::Log>,
+                logger: klyra_service::logger::Logger,
             ) -> Result<Box<dyn klyra_service::Service>, klyra_service::Error> {
+                use klyra_service::tracing_subscriber::prelude::*;
                 use klyra_service::ResourceBuilder;
 
                 runtime.spawn_blocking(move || {
-                    klyra_service::log::set_boxed_logger(logger)
-                        .map(|()| klyra_service::log::set_max_level(klyra_service::log::LevelFilter::Info))
-                        .expect("logger set should succeed");
+                    let filter_layer =
+                        klyra_service::tracing_subscriber::EnvFilter::try_from_default_env()
+                            .or_else(|_| klyra_service::tracing_subscriber::EnvFilter::try_new("INFO"))
+                            .unwrap();
+
+                    klyra_service::tracing_subscriber::registry()
+                        .with(filter_layer)
+                        .with(logger)
+                        .init(); // this sets the subscriber as the global default and also adds a compatibility layer for capturing `log::Record`s
                 })
                 .await
                 .map_err(|e| {
