@@ -15,4 +15,4 @@ export const GITHUB_URL = "https://github.com/klyra-hq/klyra";
 export const DISCORD_URL = "https://discord.gg/klyra";
 export const TWITTER_URL = "https://twitter.com/klyra_dev";
 export const klyra_DOCS_URL =
-  "https://docs.rs/klyra-service/latest/klyra_service/";
+  "https://docs.klyra.rs/";

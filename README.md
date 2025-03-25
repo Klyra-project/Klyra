@@ -26,64 +26,41 @@
 Klyra is built for productivity, reliability and performance:
 - Zero-Configuration support for Rust using annotations
 - Automatic resource provisioning (databases, caches, subdomains, etc.) via [Infrastructure-From-Code](https://www.klyra.rs/blog/2022/05/09/ifc)
-- First-class support for popular Rust frameworks ([Rocket](https://github.com/klyra-hq/klyra/tree/main/examples/rocket/hello-world), [Axum](https://github.com/klyra-hq/klyra/tree/main/examples/axum/hello-world), 
-  [Tide](https://github.com/klyra-hq/klyra/tree/main/examples/tide/hello-world), [Poem](https://github.com/klyra-hq/klyra/tree/main/examples/poem/hello-world) and [Tower](https://github.com/klyra-hq/klyra/tree/main/examples/tower/hello-world))
-- Support for deploying Discord bots using [Serenity](https://github.com/klyra-hq/klyra/tree/main/examples/serenity/hello-world)
+- First-class support for popular Rust frameworks ([Rocket](https://docs.klyra.rs/guide/rocket-examples.html), [Axum](https://docs.klyra.rs/guide/axum-examples.html), 
+  [Tide](https://docs.klyra.rs/guide/tide-examples.html), [Poem](https://docs.klyra.rs/guide/poem-examples.html) and [Tower](https://docs.klyra.rs/guide/tower-examples.html))
+- Support for deploying Discord bots using [Serenity](https://docs.klyra.rs/guide/serenity-examples.html)
 - Scalable hosting (with optional self-hosting)
 
+📖 Check out our documentation to get started quickly: [docs.klyra.rs](https://docs.klyra.rs)
+
+⭐ If you find klyra interesting, consider starring this repo to help spread the word.
+
+🙋‍♂️ If you have any questions, join our [Discord](https://discord.gg/klyra) server.
 
 ## Getting Started
 
-First download the Klyra cargo extension and login:
+Run the following command to install klyra:
 
 ```bash
-$ cargo install cargo-klyra
-$ cargo klyra login
+cargo install cargo-klyra
 ```
 
-Create your first klyra app with the `axum` framework:
+And then login:
 
 ```bash
-$ cargo klyra init --axum hello-world
+cargo klyra login
 ```
 
-Your `Cargo.toml` should look like:
-
-```toml
-[package]
-name = "hello-world"
-version = "0.1.0"
-edition = "2021"
-
-[lib]
-
-[dependencies]
-axum = "0.5"
-klyra-service = { version = "0.5.2", features = ["web-axum"] }
-sync_wrapper = "0.1"
+To initialize your project, simply write:
+```bash
+cargo klyra init --axum hello-world
+```
+And to deploy it, write:
+```bash
+cargo klyra deploy
 ```
 
-
-Your klyra app in `lib.rs` should look like:
-
-```rust
-use axum::{routing::get, Router};
-use sync_wrapper::SyncWrapper;
-
-async fn hello_world() -> &'static str {
-    "Hello, world!"
-}
-
-#[klyra_service::main]
-async fn axum() -> klyra_service::KlyraAxum {
-    let router = Router::new().route("/hello", get(hello_world));
-    let sync_wrapper = SyncWrapper::new(router);
-
-    Ok(sync_wrapper)
-}
-```
-
-Deploy:
+And that's... it.
 
 ```bash
 $ cargo klyra deploy
@@ -94,22 +71,18 @@ $ cargo klyra deploy
         Deployment Status:  DEPLOYED
         Host:               hello-world.klyraapp.rs
         Created At:         2022-04-01 08:32:34.412602556 UTC
-        Database URI:       postgres://***:***@pg.klyra.rs/db-hello-world
 ```
 
-For the full documentation, visit [docs.rs/klyra-service](https://docs.rs/klyra-service).
+Feel free to build on-top of the generated `hello-world` boilerplate or take a stab at one of our [examples](https://docs.klyra.rs/guide/axum-examples.html#hello-world).
 
-For more examples, check out [klyra examples](https://github.com/klyra-hq/klyra/tree/main/examples).
-
+For the full documentation, visit [our docs](https://docs.klyra.rs).
 ## Contributing to klyra
 
 Contributing to klyra is highly encouraged!
 
-If you want to setup a local environment to test code changes to core `klyra` packages, or want to contribute to the project see [CONTRIBUTING.md](./CONTRIBUTING.md). 
+If you want to setup a local environment to test code changes to core `klyra` packages, or want to contribute to the project check out [our docs](https://docs.klyra.rs/guide/contribute.html). 
 
 Even if you are not planning to submit any code; joining our [Discord server](https://discord.gg/klyra) and providing feedback helps us a lot!
-
-You can also ⭐ this repo to show your interest & support.
 
 ## Roadmap
 
