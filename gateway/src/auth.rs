@@ -96,7 +96,7 @@ where
     }
 }
 
-impl From<User> for klyra_common::user::Response {
+impl From<User> for klyra_common::models::user::Response {
     fn from(user: User) -> Self {
         Self {
             name: user.name.to_string(),

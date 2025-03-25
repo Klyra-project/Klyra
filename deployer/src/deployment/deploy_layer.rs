@@ -21,7 +21,8 @@
 
 use chrono::{DateTime, Utc};
 use serde_json::{json, Value};
-use klyra_common::{deployment, log::BuildLogStream, STATE_MESSAGE};
+use klyra_common::log::BuildLogStream;
+use klyra_common::STATE_MESSAGE;
 use std::{net::SocketAddr, str::FromStr};
 use tracing::{error, field::Visit, span, warn, Metadata, Subscriber};
 use tracing_subscriber::Layer;
@@ -70,19 +71,19 @@ impl Log {
     pub fn to_stream_log(&self) -> Option<BuildLogStream> {
         let (state, message) = match self.r#type {
             LogType::State => match self.state {
-                State::Queued => Some((deployment::State::Queued, None)),
-                State::Building => Some((deployment::State::Building, None)),
-                State::Built => Some((deployment::State::Built, None)),
-                State::Running => Some((deployment::State::Running, None)),
-                State::Completed => Some((deployment::State::Completed, None)),
-                State::Stopped => Some((deployment::State::Stopped, None)),
-                State::Crashed => Some((deployment::State::Crashed, None)),
-                State::Unknown => Some((deployment::State::Unknown, None)),
+                State::Queued => Some((klyra_common::deployment::State::Queued, None)),
+                State::Building => Some((klyra_common::deployment::State::Building, None)),
+                State::Built => Some((klyra_common::deployment::State::Built, None)),
+                State::Running => Some((klyra_common::deployment::State::Running, None)),
+                State::Completed => Some((klyra_common::deployment::State::Completed, None)),
+                State::Stopped => Some((klyra_common::deployment::State::Stopped, None)),
+                State::Crashed => Some((klyra_common::deployment::State::Crashed, None)),
+                State::Unknown => Some((klyra_common::deployment::State::Unknown, None)),
             },
             LogType::Event => match self.state {
                 State::Building => {
                     let msg = extract_message(&self.fields)?;
-                    Some((deployment::State::Building, Some(msg)))
+                    Some((klyra_common::deployment::State::Building, Some(msg)))
                 }
                 _ => None,
             },

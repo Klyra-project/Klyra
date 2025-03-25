@@ -1,4 +1,4 @@
-use klyra_common::service;
+use klyra_common::models::service;
 use uuid::Uuid;
 
 #[derive(Clone, Debug, Eq, PartialEq, sqlx::FromRow)]

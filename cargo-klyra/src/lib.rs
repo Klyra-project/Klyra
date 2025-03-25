@@ -23,7 +23,7 @@ use config::RequestContext;
 use crossterm::style::Stylize;
 use factory::LocalFactory;
 use futures::StreamExt;
-use klyra_common::{deployment, secret};
+use klyra_common::models::secret;
 use klyra_service::loader::{build_crate, Loader};
 use klyra_service::Logger;
 use tokio::sync::mpsc;
@@ -209,7 +209,7 @@ impl Klyra {
 
             while let Some(Ok(msg)) = stream.next().await {
                 if let tokio_tungstenite::tungstenite::Message::Text(line) = msg {
-                    let log_item: klyra_common::log::Item =
+                    let log_item: klyra_common::LogItem =
                         serde_json::from_str(&line).expect("to parse log line");
                     println!("{log_item}")
                 }
@@ -360,7 +360,7 @@ impl Klyra {
             println!("{service}");
 
             Ok(match new_deployment.state {
-                deployment::State::Crashed => CommandOutcome::DeploymentFailure,
+                klyra_common::deployment::State::Crashed => CommandOutcome::DeploymentFailure,
                 _ => CommandOutcome::Ok,
             })
         } else {
