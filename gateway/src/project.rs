@@ -357,6 +357,10 @@ impl ProjectCreating {
                 "0.0.0.0:8000",
                 "--proxy-fqdn",
                 fqdn,
+                "--artifacts-path",
+                "/opt/klyra",
+                "--state",
+                "/opt/klyra/deployer.sqlite",
             ],
             "Env": [
                 "RUST_LOG=klyra_deployer,klyra_service,sqlx",
