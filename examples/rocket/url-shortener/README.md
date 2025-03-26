@@ -56,5 +56,6 @@ Pick a project name that is something unique - in klyra,
 projects are globally unique. Then run
 
 ```bash
+$ cargo klyra project new --name=$PROJECT_NAME
 $ cargo klyra deploy --name=$PROJECT_NAME
 ```

@@ -24,6 +24,7 @@ And a `Claims` object can also be converted to a token using `to_token()`.
 After logging into klyra, use the following command to deploy this example:
 
 ```sh
+$ cargo klyra project new
 $ cargo klyra deploy
 ```
 
