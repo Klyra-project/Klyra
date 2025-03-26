@@ -1,12 +1,19 @@
-import { handleAuth, handleCallback, handleLogin } from "@auth0/nextjs-auth0";
-import { getApiKey } from "../../../lib/klyra-api";
+import {handleAuth, handleCallback, handleLogin} from "@auth0/nextjs-auth0";
+import klyra, {Error} from "../../../lib/klyra";
 
 async function afterCallback(req, res, session, state) {
-  try {
-    session.user.api_key = await getApiKey(session.user.sub.replace("|", "-"));
-  } catch (err) {
-    console.error(err);
-  }
+  const shuttlified = session.user.sub.replace("|", "-");
+
+  const user = await klyra.get_user(shuttlified).catch((err) => {
+    if ((err as Error).status === 404) {
+      console.log(`user ${shuttlified} does not exist, creating`);
+      return klyra.create_user(shuttlified);
+    } else {
+      return Promise.reject(err);
+    }
+  });
+
+  session.user.api_key = user.key;
 
   return session;
 }
