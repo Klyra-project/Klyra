@@ -333,7 +333,8 @@ async fn build_logs_websocket_handler(mut s: WebSocket, persistence: Persistence
             }
             (klyra_common::deployment::State::Building, None) => {}
             (klyra_common::deployment::State::Queued, _)
-            | (klyra_common::deployment::State::Built, _) => {}
+            | (klyra_common::deployment::State::Built, _)
+            | (klyra_common::deployment::State::Loading, _) => {}
             _ => {
                 debug!("closing channel after reaching more than just build logs");
                 let _ = s.close().await;
@@ -355,7 +356,8 @@ async fn build_logs_websocket_handler(mut s: WebSocket, persistence: Persistence
                         }
                     }
                     (klyra_common::deployment::State::Queued, _)
-                    | (klyra_common::deployment::State::Built, _) => {}
+                    | (klyra_common::deployment::State::Built, _)
+                    | (klyra_common::deployment::State::Loading, _) => {}
                     (klyra_common::deployment::State::Building, None) => {}
                     _ => break,
                 }

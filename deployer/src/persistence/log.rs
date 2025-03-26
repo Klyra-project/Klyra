@@ -36,6 +36,7 @@ impl Log {
                     State::Queued => Some((klyra_common::deployment::State::Queued, None)),
                     State::Building => Some((klyra_common::deployment::State::Building, None)),
                     State::Built => Some((klyra_common::deployment::State::Built, None)),
+                    State::Loading => Some((klyra_common::deployment::State::Loading, None)),
                     State::Running => Some((klyra_common::deployment::State::Running, None)),
                     State::Completed => Some((klyra_common::deployment::State::Completed, None)),
                     State::Stopped => Some((klyra_common::deployment::State::Stopped, None)),

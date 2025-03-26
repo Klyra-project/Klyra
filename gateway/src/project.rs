@@ -363,7 +363,7 @@ impl ProjectCreating {
                 "/opt/klyra/deployer.sqlite",
             ],
             "Env": [
-                "RUST_LOG=klyra_deployer,klyra_service,sqlx",
+                "RUST_LOG=debug",
             ],
             "Healthcheck": {
                 "Interval": 5_000_000_000i64,

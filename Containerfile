@@ -24,6 +24,7 @@ RUN cargo build --bin ${crate}
 FROM rust:1.63.0-buster as klyra-common
 RUN apt-get update &&\
     apt-get install -y curl
+RUN rustup component add rust-src
 COPY --from=cache /build/ /usr/src/klyra/
 
 FROM klyra-common
@@ -31,6 +32,10 @@ ARG crate
 SHELL ["/bin/bash", "-c"]
 RUN mkdir -p $CARGO_HOME; \
 echo $'[patch.crates-io] \n\
-klyra-service = { path = "/usr/src/klyra/service" }' > $CARGO_HOME/config.toml
+klyra-service = { path = "/usr/src/klyra/service" } \n\
+klyra-aws-rds = { path = "/usr/src/klyra/resources/aws-rds" } \n\
+klyra-persist = { path = "/usr/src/klyra/resources/persist" } \n\
+klyra-shared-db = { path = "/usr/src/klyra/resources/shared-db" } \n\
+klyra-secrets = { path = "/usr/src/klyra/resources/secrets" }' > $CARGO_HOME/config.toml
 COPY --from=builder /build/target/debug/${crate} /usr/local/bin/service
 ENTRYPOINT ["/usr/local/bin/service"]
