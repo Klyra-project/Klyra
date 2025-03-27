@@ -12,6 +12,7 @@ async fn cargo_klyra_init(path: PathBuf) -> anyhow::Result<CommandOutcome> {
     let working_directory = Path::new(".").to_path_buf();
 
     Klyra::new()
+        .unwrap()
         .run(Args {
             api_url: Some("http://klyra.invalid:80".to_string()),
             project_args: ProjectArgs {
@@ -39,6 +40,7 @@ async fn cargo_klyra_init_framework(path: PathBuf) -> anyhow::Result<CommandOutc
     let working_directory = Path::new(".").to_path_buf();
 
     Klyra::new()
+        .unwrap()
         .run(Args {
             api_url: Some("http://klyra.invalid:80".to_string()),
             project_args: ProjectArgs {

@@ -10,7 +10,7 @@ async fn cargo_klyra_run(working_directory: &str) -> u16 {
     let port = pick_unused_port().unwrap();
     let run_args = RunArgs { port };
 
-    let runner = Klyra::new().run(Args {
+    let runner = Klyra::new().unwrap().run(Args {
         api_url: Some("http://klyra.invalid:80".to_string()),
         project_args: ProjectArgs {
             working_directory: working_directory.clone(),

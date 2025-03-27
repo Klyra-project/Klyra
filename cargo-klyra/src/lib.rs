@@ -37,16 +37,10 @@ pub struct Klyra {
     ctx: RequestContext,
 }
 
-impl Default for Klyra {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
 impl Klyra {
-    pub fn new() -> Self {
-        let ctx = RequestContext::load_global().unwrap();
-        Self { ctx }
+    pub fn new() -> Result<Self> {
+        let ctx = RequestContext::load_global()?;
+        Ok(Self { ctx })
     }
 
     pub async fn run(mut self, mut args: Args) -> Result<CommandOutcome> {
@@ -479,7 +473,7 @@ mod tests {
             name: None,
         };
 
-        let mut klyra = Klyra::new();
+        let mut klyra = Klyra::new().unwrap();
         Klyra::load_project(&mut klyra, &mut project_args).unwrap();
 
         assert_eq!(
