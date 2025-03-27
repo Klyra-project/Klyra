@@ -7,9 +7,12 @@ use std::{
 
 use clap::Parser;
 use klyra_common::project::ProjectName;
+use uuid::Uuid;
 
 #[derive(Parser)]
 #[clap(
+    version,
+    about,
     // Cargo passes in the subcommand name to the invoked executable. Use a
     // hidden, optional positional argument to deal with it.
     arg(clap::Arg::with_name("dummy")
@@ -46,22 +49,58 @@ pub struct ProjectArgs {
 
 #[derive(Parser)]
 pub enum Command {
-    /// deploy a klyra project
+    /// deploy a klyra service
     Deploy(DeployArgs),
-    /// create a new klyra project
+    /// manage deployments of a klyra service
+    #[clap(subcommand)]
+    Deployment(DeploymentCommand),
+    /// create a new klyra service
     Init(InitArgs),
-    /// view the status of a klyra project
+    /// view the status of a klyra service
     Status,
-    /// view the logs of a klyra project
-    Logs,
-    /// delete the latest deployment for a klyra project
+    /// view the logs of a deployment in this klyra service
+    Logs {
+        /// Deployment ID to get logs for. Defaults to currently running deployment
+        id: Option<Uuid>,
+
+        #[clap(short, long)]
+        /// Follow log output
+        follow: bool,
+    },
+    /// delete this klyra service
     Delete,
+    /// manage secrets for this klyra service
+    Secrets,
     /// create user credentials for the klyra platform
     Auth(AuthArgs),
     /// login to the klyra platform
     Login(LoginArgs),
-    /// run a klyra project locally
+    /// run a klyra service locally
     Run(RunArgs),
+    /// manage a project on klyra
+    #[clap(subcommand)]
+    Project(ProjectCommand),
+}
+
+#[derive(Parser)]
+pub enum DeploymentCommand {
+    /// list all the deployments for a service
+    List,
+    /// view status of a deployment
+    Status {
+        /// ID of deployment to get status for
+        id: Uuid,
+    },
+}
+
+#[derive(Parser)]
+pub enum ProjectCommand {
+    /// create an environment for this project on klyra
+    New,
+    /// remove this project environment from klyra
+    Rm,
+    /// show the status of this project's environment on klyra
+    Status,
 }
 
 #[derive(Parser)]
@@ -100,7 +139,7 @@ pub struct InitArgs {
     /// Initialize with axum framework
     #[clap(long, conflicts_with_all = &["rocket", "tide", "tower", "poem", "serenity", "warp", "salvo"])]
     pub axum: bool,
-    /// Initialize with actix-web framework
+    /// Initialize with rocket framework
     #[clap(long, conflicts_with_all = &["axum", "tide", "tower", "poem", "serenity", "warp", "salvo"])]
     pub rocket: bool,
     /// Initialize with tide framework

@@ -1,43 +1,12 @@
 version: "3"
 
 services:
-  api:
-    entrypoint:
-      - /bin/bash
-      - -c
-      - |
-        mkdir -p /var/lib/klyra/crates
-
-        cat<<EOF > /var/lib/klyra/users.toml
-        [test-key]
-        name = "tester"
-        projects = []
-        EOF
-
-        mkdir -p $$CARGO_HOME
-        cat<<EOF > $$CARGO_HOME/config.toml
-        [patch.crates-io]
-        klyra-service = { path = "/usr/src/klyra/service" }
-        klyra-aws-rds = { path = "/usr/src/klyra/resources/aws-rds" }
-        klyra-persist = { path = "/usr/src/klyra/resources/persist" }
-        klyra-shared-db = { path = "/usr/src/klyra/resources/shared-db" }
-        klyra-secrets = { path = "/usr/src/klyra/resources/secrets" }
-        EOF
-
-        until </dev/tcp/provisioner/8000
-        do
-          >&2 echo "provisioner is not available yet - sleeping"
-          sleep 1
-        done
-
-        exec /usr/local/bin/service "$${@:0}"
-
   provisioner:
     entrypoint:
       - /bin/bash
       - -c
       - |
-        until </dev/tcp/pg/5432
+        until </dev/tcp/postgres/5432
         do
           >&2 echo "PG is not available yet - sleeping"
           sleep 1

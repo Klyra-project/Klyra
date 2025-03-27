@@ -57,6 +57,8 @@ cargo klyra init --axum hello-world
 ```
 And to deploy it, write:
 ```bash
+cargo klyra project new
+cargo klyra project status // until the project is "ready"
 cargo klyra deploy
 ```
 
