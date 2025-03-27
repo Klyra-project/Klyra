@@ -1,12 +1,12 @@
 use clap::Parser;
 use futures::prelude::*;
-use klyra_gateway::args::{Args, Commands, InitArgs};
+use klyra_gateway::args::{Args, Commands, ExecCmd, ExecCmds, InitArgs};
 use klyra_gateway::auth::Key;
 use klyra_gateway::proxy::make_proxy;
 use klyra_gateway::service::{GatewayService, MIGRATIONS};
 use klyra_gateway::worker::{Work, Worker};
 use klyra_gateway::{api::make_api, args::StartArgs};
-use klyra_gateway::{Refresh, Service};
+use klyra_gateway::{project, Refresh, Service};
 use sqlx::migrate::MigrateDatabase;
 use sqlx::{query, Sqlite, SqlitePool};
 use std::io;
@@ -55,16 +55,18 @@ async fn main() -> io::Result<()> {
     match args.command {
         Commands::Start(start_args) => start(db, start_args).await,
         Commands::Init(init_args) => init(db, init_args).await,
+        Commands::Exec(exec_cmd) => exec(db, exec_cmd).await,
     }
 }
 
 async fn start(db: SqlitePool, args: StartArgs) -> io::Result<()> {
     let fqdn = args
+        .context
         .proxy_fqdn
         .to_string()
         .trim_end_matches('.')
         .to_string();
-    let gateway = Arc::new(GatewayService::init(args.clone(), fqdn.clone(), db).await);
+    let gateway = Arc::new(GatewayService::init(args.context.clone(), db).await);
 
     let worker = Worker::new(Arc::clone(&gateway));
 
@@ -144,5 +146,17 @@ async fn init(db: SqlitePool, args: InitArgs) -> io::Result<()> {
         .map_err(|e| io::Error::new(io::ErrorKind::Other, e))?;
 
     println!("`{}` created as super user with key: {key}", args.name);
+    Ok(())
+}
+
+async fn exec(db: SqlitePool, exec_cmd: ExecCmds) -> io::Result<()> {
+    let gateway = GatewayService::init(exec_cmd.context.clone(), db).await;
+
+    match exec_cmd.command {
+        ExecCmd::Revive => project::exec::revive(gateway)
+            .await
+            .map_err(|e| io::Error::new(io::ErrorKind::Other, e))?,
+    };
+
     Ok(())
 }
