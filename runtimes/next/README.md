@@ -1,4 +1,4 @@
-# `klyra-runtime`
+# `klyra-next`
 
 ## How to run
 

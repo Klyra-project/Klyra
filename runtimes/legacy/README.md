@@ -1,4 +1,4 @@
-## klyra-next runtime-wrapper
+## klyra-legacy
 
 Load and run an .so library that implements `klyra_service::Service`. 
 
