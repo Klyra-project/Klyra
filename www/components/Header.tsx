@@ -12,6 +12,7 @@ const navigation = [
   { name: "Docs", href: klyra_DOCS_URL, internal: false },
   { name: "Blog", href: "/blog", internal: true },
   { name: "Pricing", href: "/pricing", internal: true },
+  { name: "Beta", href: "/beta", internal: true },
 ];
 
 export default function Header() {
