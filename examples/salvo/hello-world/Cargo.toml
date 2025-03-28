@@ -7,4 +7,4 @@ edition = "2021"
 
 [dependencies]
 salvo = "0.34.3"
-klyra-service = { version = "0.7.0", features = ["web-salvo"] }
+klyra-service = { version = "0.7.1", features = ["web-salvo"] }
