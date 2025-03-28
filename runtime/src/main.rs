@@ -1,13 +1,13 @@
 use std::net::{Ipv4Addr, SocketAddr};
 
 use clap::Parser;
-use klyra_next::{args::Args, Next};
-use klyra_runtime_proto::runtime::runtime_server::RuntimeServer;
+use klyra_proto::runtime::runtime_server::RuntimeServer;
+use klyra_runtime::{Args, Legacy, Next};
 use tonic::transport::Server;
 use tracing::trace;
 use tracing_subscriber::{fmt, prelude::*, EnvFilter};
 
-#[tokio::main]
+#[tokio::main(flavor = "multi_thread")]
 async fn main() {
     let args = Args::parse();
 
@@ -24,10 +24,15 @@ async fn main() {
     trace!(args = ?args, "parsed args");
 
     let addr = SocketAddr::new(Ipv4Addr::LOCALHOST.into(), 8000);
-    let next = Next::new();
-    Server::builder()
-        .add_service(RuntimeServer::new(next))
-        .serve(addr)
-        .await
-        .unwrap();
+    let router = if args.legacy {
+        let legacy = Legacy::new();
+        let svc = RuntimeServer::new(legacy);
+        Server::builder().add_service(svc)
+    } else {
+        let next = Next::new();
+        let svc = RuntimeServer::new(next);
+        Server::builder().add_service(svc)
+    };
+
+    router.serve(addr).await.unwrap();
 }
