@@ -27,7 +27,7 @@
 //! be a library crate with a `klyra-service` dependency with the `web-rocket` feature on the `klyra-service` dependency.
 //!
 //! ```toml
-//! klyra-service = { version = "0.7.1", features = ["web-rocket"] }
+//! klyra-service = { version = "0.7.2", features = ["web-rocket"] }
 //! ```
 //!
 //! A boilerplate code for your rocket project can also be found in `src/lib.rs`:
@@ -108,7 +108,7 @@
 //! Add `klyra-shared-db` as a dependency with the `postgres` feature, and add `sqlx` as a dependency with the `runtime-tokio-native-tls` and `postgres` features inside `Cargo.toml`:
 //!
 //! ```toml
-//! klyra-shared-db = { version = "0.7.1", features = ["postgres"] }
+//! klyra-shared-db = { version = "0.7.2", features = ["postgres"] }
 //! sqlx = { version = "0.6.1", features = ["runtime-tokio-native-tls", "postgres"] }
 //! ```
 //!
@@ -218,6 +218,7 @@ use std::pin::Pin;
 pub use async_trait::async_trait;
 
 // Pub uses by `codegen`
+pub use anyhow::Context;
 pub use tokio::runtime::Runtime;
 pub use tracing;
 pub use tracing_subscriber;

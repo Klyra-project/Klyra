@@ -1,6 +1,6 @@
 [package]
 name = "cargo-klyra"
-version = "0.7.1"
+version = "0.7.2"
 edition = "2021"
 license = "Apache-2.0"
 description = "A cargo command for the klyra platform (https://www.klyra.rs/)"
@@ -43,15 +43,15 @@ uuid = { version = "1.1.2", features = ["v4"] }
 webbrowser = "0.7.1"
 
 [dependencies.klyra-common]
-version = "0.7.1"
+version = "0.7.2"
 path = "../common"
 
 [dependencies.klyra-secrets]
-version = "0.7.1"
+version = "0.7.2"
 path = "../resources/secrets"
 
 [dependencies.klyra-service]
-version = "0.7.1"
+version = "0.7.2"
 path = "../service"
 features = ["loader"]
 
