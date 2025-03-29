@@ -1,9 +1,0 @@
-# *
-User-agent: *
-Allow: /
-
-# Host
-Host: https://klyra.rs
-
-# Sitemaps
-Sitemap: https://klyra.rs/sitemap.xml
