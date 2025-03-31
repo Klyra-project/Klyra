@@ -65,5 +65,52 @@ pub mod provisioner {
 }
 
 pub mod runtime {
+    use std::time::SystemTime;
+
+    use prost_types::Timestamp;
+
     tonic::include_proto!("runtime");
+
+    impl From<klyra_common::LogItem> for LogItem {
+        fn from(log: klyra_common::LogItem) -> Self {
+            Self {
+                id: log.id.into_bytes().to_vec(),
+                timestamp: Some(Timestamp::from(SystemTime::from(log.timestamp))),
+                state: LogState::from(log.state) as i32,
+                level: LogLevel::from(log.level) as i32,
+                file: log.file,
+                line: log.line,
+                target: log.target,
+                fields: log.fields,
+            }
+        }
+    }
+
+    impl From<klyra_common::deployment::State> for LogState {
+        fn from(state: klyra_common::deployment::State) -> Self {
+            match state {
+                klyra_common::deployment::State::Queued => Self::Queued,
+                klyra_common::deployment::State::Building => Self::Building,
+                klyra_common::deployment::State::Built => Self::Built,
+                klyra_common::deployment::State::Loading => Self::Loading,
+                klyra_common::deployment::State::Running => Self::Running,
+                klyra_common::deployment::State::Completed => Self::Completed,
+                klyra_common::deployment::State::Stopped => Self::Stopped,
+                klyra_common::deployment::State::Crashed => Self::Crashed,
+                klyra_common::deployment::State::Unknown => Self::Unknown,
+            }
+        }
+    }
+
+    impl From<klyra_common::log::Level> for LogLevel {
+        fn from(level: klyra_common::log::Level) -> Self {
+            match level {
+                klyra_common::log::Level::Trace => Self::Trace,
+                klyra_common::log::Level::Debug => Self::Debug,
+                klyra_common::log::Level::Info => Self::Info,
+                klyra_common::log::Level::Warn => Self::Warn,
+                klyra_common::log::Level::Error => Self::Error,
+            }
+        }
+    }
 }
