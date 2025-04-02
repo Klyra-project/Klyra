@@ -4,7 +4,7 @@ use futures::prelude::*;
 use instant_acme::{AccountCredentials, ChallengeType};
 use opentelemetry::global;
 use klyra_gateway::acme::{AcmeClient, CustomDomain};
-use klyra_gateway::api::latest::ApiBuilder;
+use klyra_gateway::api::latest::{ApiBuilder, SVC_DEGRADED_THRESHOLD};
 use klyra_gateway::args::StartArgs;
 use klyra_gateway::args::{Args, Commands, InitArgs, UseTls};
 use klyra_gateway::auth::Key;
@@ -12,14 +12,14 @@ use klyra_gateway::proxy::UserServiceBuilder;
 use klyra_gateway::service::{GatewayService, MIGRATIONS};
 use klyra_gateway::task;
 use klyra_gateway::tls::{make_tls_acceptor, ChainAndPrivateKey};
-use klyra_gateway::worker::Worker;
+use klyra_gateway::worker::{Worker, WORKER_QUEUE_SIZE};
 use sqlx::migrate::MigrateDatabase;
 use sqlx::{query, Sqlite, SqlitePool};
 use std::io::{self, Cursor};
 use std::path::{Path, PathBuf};
 use std::sync::Arc;
 use std::time::Duration;
-use tracing::{debug, error, info, trace, warn};
+use tracing::{debug, error, info, info_span, trace, warn};
 use tracing_subscriber::{fmt, prelude::*, EnvFilter};
 
 #[tokio::main(flavor = "multi_thread")]
@@ -108,14 +108,33 @@ async fn start(db: SqlitePool, fs: PathBuf, args: StartArgs) -> io::Result<()> {
         async move {
             loop {
                 tokio::time::sleep(Duration::from_secs(60)).await;
+                if sender.capacity() < WORKER_QUEUE_SIZE - SVC_DEGRADED_THRESHOLD {
+                    // if degraded, don't stack more health checks
+                    warn!(
+                        sender.capacity = sender.capacity(),
+                        "skipping health checks"
+                    );
+                    continue;
+                }
+
                 if let Ok(projects) = gateway.iter_projects().await {
+                    let span = info_span!(
+                        "running health checks",
+                        healthcheck.num_projects = projects.len()
+                    );
+                    let _ = span.enter();
                     for (project_name, _) in projects {
-                        let _ = gateway
+                        if let Ok(handle) = gateway
                             .new_task()
                             .project(project_name)
                             .and_then(task::check_health())
                             .send(&sender)
-                            .await;
+                            .await
+                        {
+                            // we wait for the check to be done before
+                            // queuing up the next one
+                            handle.await
+                        }
                     }
                 }
             }
