@@ -47,7 +47,7 @@ DD_ENV=production
 USE_TLS=enable
 else
 DOCKER_COMPOSE_FILES=-f docker-compose.yml -f docker-compose.dev.yml
-STACK=klyra-dev
+STACK?=klyra-dev
 APPS_FQDN=unstable.klyraapp.rs
 DB_FQDN=db.unstable.klyra.rs
 CONTAINER_REGISTRY=public.ecr.aws/klyra-dev
