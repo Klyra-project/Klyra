@@ -13,6 +13,11 @@ are always appreciated!
 You can use Docker and docker-compose to test klyra locally during development. See the [Docker install](https://docs.docker.com/get-docker/)
 and [docker-compose install](https://docs.docker.com/compose/install/) instructions if you do not have them installed already.
 
+```bash
+git clone git@github.com:klyra-hq/klyra.git
+cd klyra
+```
+
 You should now be ready to setup a local environment to test code changes to core `klyra` packages as follows:
 
 Build the required images with:
@@ -61,6 +66,8 @@ cargo run --bin cargo-klyra -- login --api-key "test-key"
 cd into one of the examples:
 
 ```bash
+git submodule init
+git submodule update
 cd examples/rocket/hello-world/
 ```
 
