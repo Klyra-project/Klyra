@@ -49,7 +49,7 @@ klyra-secrets = { path = "[base]/klyra/resources/secrets" }
 Prime gateway database with an admin user:
 
 ```bash
-docker compose --file docker-compose.rendered.yml --project-name klyra-dev exec gateway /usr/local/bin/service --state=/var/lib/klyra/gateway.sqlite init --name admin --key test-key
+docker compose --file docker-compose.rendered.yml --project-name klyra-dev exec gateway /usr/local/bin/service --state=/var/lib/klyra init --name admin --key test-key
 ```
 
 Login to klyra service in a new terminal window from the main klyra directory:
