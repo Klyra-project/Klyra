@@ -21,6 +21,51 @@ pub trait KlyraInit {
     fn get_boilerplate_code_for_framework(&self) -> &'static str;
 }
 
+pub struct KlyraInitActixWeb;
+
+impl KlyraInit for KlyraInitActixWeb {
+    fn set_cargo_dependencies(
+        &self,
+        dependencies: &mut Table,
+        manifest_path: &Path,
+        url: &Url,
+        get_dependency_version_fn: GetDependencyVersionFn,
+    ) {
+        set_key_value_dependency_version(
+            "actix-web",
+            dependencies,
+            manifest_path,
+            url,
+            true,
+            get_dependency_version_fn,
+        );
+
+        set_inline_table_dependency_features(
+            "klyra-service",
+            dependencies,
+            vec!["web-actix-web".to_string()],
+        );
+    }
+
+    fn get_boilerplate_code_for_framework(&self) -> &'static str {
+        indoc! {r#"
+        use actix_web::web::{resource, ServiceConfig};
+        use klyra_service::KlyraActixWeb;
+
+        async fn hello_world() -> &'static str {
+            "Hello World!"
+        }
+
+        #[klyra_service::main]
+        async fn actix_web(
+        ) -> KlyraActixWeb<impl FnOnce(&mut ServiceConfig) + Sync + Send + Copy + Clone + 'static> {
+            Ok(move |cfg: &mut ServiceConfig| {
+                cfg.service(resource("/hello").to(hello_world));
+            })
+        }"#}
+    }
+}
+
 pub struct KlyraInitAxum;
 
 impl KlyraInit for KlyraInitAxum {
@@ -556,6 +601,9 @@ impl KlyraInit for KlyraInitNoOp {
 /// for writing framework-specific dependencies to `Cargo.toml` and generating
 /// boilerplate code in `src/lib.rs`.
 pub fn get_framework(init_args: &InitArgs) -> Box<dyn KlyraInit> {
+    if init_args.actix_web {
+        return Box::new(KlyraInitActixWeb);
+    }
     if init_args.axum {
         return Box::new(KlyraInitAxum);
     }
@@ -742,6 +790,7 @@ mod klyra_init_tests {
 
     fn init_args_factory(framework: &str) -> InitArgs {
         let mut init_args = InitArgs {
+            actix_web: false,
             axum: false,
             rocket: false,
             tide: false,
@@ -755,6 +804,7 @@ mod klyra_init_tests {
         };
 
         match framework {
+            "actix-web" => init_args.actix_web = true,
             "axum" => init_args.axum = true,
             "rocket" => init_args.rocket = true,
             "tide" => init_args.tide = true,
@@ -790,9 +840,19 @@ mod klyra_init_tests {
     #[test]
     fn test_get_framework_via_get_boilerplate_code() {
         let frameworks = vec![
-            "axum", "rocket", "tide", "tower", "poem", "salvo", "serenity", "warp", "thruster",
+            "actix-web",
+            "axum",
+            "rocket",
+            "tide",
+            "tower",
+            "poem",
+            "salvo",
+            "serenity",
+            "warp",
+            "thruster",
         ];
         let framework_inits: Vec<Box<dyn KlyraInit>> = vec![
+            Box::new(KlyraInitActixWeb),
             Box::new(KlyraInitAxum),
             Box::new(KlyraInitRocket),
             Box::new(KlyraInitTide),
@@ -875,6 +935,37 @@ mod klyra_init_tests {
         let expected = indoc! {r#"
             [dependencies]
             klyra-service = "1.0"
+        "#};
+
+        assert_eq!(cargo_toml.to_string(), expected);
+    }
+    #[test]
+    fn test_set_cargo_dependencies_actix_web() {
+        let mut cargo_toml = cargo_toml_factory();
+        let dependencies = cargo_toml["dependencies"].as_table_mut().unwrap();
+        let manifest_path = PathBuf::new();
+        let url = Url::parse("https://klyra.rs").unwrap();
+
+        set_inline_table_dependency_version(
+            "klyra-service",
+            dependencies,
+            &manifest_path,
+            &url,
+            false,
+            mock_get_latest_dependency_version,
+        );
+
+        KlyraInitActixWeb.set_cargo_dependencies(
+            dependencies,
+            &manifest_path,
+            &url,
+            mock_get_latest_dependency_version,
+        );
+
+        let expected = indoc! {r#"
+            [dependencies]
+            klyra-service = { version = "1.0", features = ["web-actix-web"] }
+            actix-web = "1.0"
         "#};
 
         assert_eq!(cargo_toml.to_string(), expected);

@@ -20,6 +20,7 @@ async fn cargo_klyra_init(path: PathBuf) -> anyhow::Result<CommandOutcome> {
                 name: None,
             },
             cmd: Command::Init(InitArgs {
+                actix_web: false,
                 axum: false,
                 rocket: false,
                 tide: false,
@@ -48,6 +49,7 @@ async fn cargo_klyra_init_framework(path: PathBuf) -> anyhow::Result<CommandOutc
                 name: None,
             },
             cmd: Command::Init(InitArgs {
+                actix_web: false,
                 axum: false,
                 rocket: true,
                 tide: false,

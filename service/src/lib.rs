@@ -263,6 +263,8 @@ extern crate klyra_codegen;
 /// | `KlyraPoem`                         | web-poem     | [poem](https://docs.rs/poem/1.3.35)         | 1.3.35     | [GitHub](https://github.com/klyra-hq/examples/tree/main/poem/hello-world)           |
 /// | `Result<T, klyra_service::Error>`   | web-tower    | [tower](https://docs.rs/tower/0.4.12)       | 0.14.12    | [GitHub](https://github.com/klyra-hq/examples/tree/main/tower/hello-world)          |
 /// | `KlyraSerenity`                     | bot-serenity | [serenity](https://docs.rs/serenity/0.11.5) | 0.11.5     | [GitHub](https://github.com/klyra-hq/examples/tree/main/serenity/hello-world)       |
+/// | `KlyraActixWeb`                     | web-actix-web| [actix-web](https://docs.rs/actix-web/4.2.1)| 4.2.1      | [GitHub](https://github.com/klyra-hq/examples/tree/main/actix-web/hello-world)           |
+
 ///
 /// # Getting klyra managed resources
 /// Klyra is able to manage resource dependencies for you. These resources are passed in as inputs to your `#[klyra_service::main]` function and are configured using attributes:
@@ -543,6 +545,24 @@ impl Service for sync_wrapper::SyncWrapper<axum::Router> {
         Ok(())
     }
 }
+
+#[cfg(feature = "web-actix-web")]
+#[async_trait]
+impl<F> Service for F
+where
+    F: FnOnce(&mut actix_web::web::ServiceConfig) + Sync + Send + Copy + Clone + 'static,
+{
+    async fn bind(self: Box<Self>, addr: SocketAddr) -> Result<(), Error> {
+        let srv = actix_web::HttpServer::new(move || actix_web::App::new().configure(*self))
+            .bind(addr)?
+            .run();
+        srv.await.map_err(error::CustomError::new)?;
+
+        Ok(())
+    }
+}
+#[cfg(feature = "web-actix-web")]
+pub type KlyraActixWeb<F> = Result<F, Error>;
 
 #[cfg(feature = "web-axum")]
 pub type KlyraAxum = Result<sync_wrapper::SyncWrapper<axum::Router>, Error>;
