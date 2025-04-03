@@ -42,12 +42,17 @@ klyra-service = {{ path = "{}" }}
 klyra-aws-rds = {{ path = "{}" }}
 klyra-persist = {{ path = "{}" }}
 klyra-shared-db = {{ path = "{}" }}
-klyra-secrets = {{ path = "{}" }}"#,
+klyra-secrets = {{ path = "{}" }}
+klyra-static-folder = {{ path = "{}" }}"#,
                     WORKSPACE_ROOT.join("service").display(),
                     WORKSPACE_ROOT.join("resources").join("aws-rds").display(),
                     WORKSPACE_ROOT.join("resources").join("persist").display(),
                     WORKSPACE_ROOT.join("resources").join("shared-db").display(),
                     WORKSPACE_ROOT.join("resources").join("secrets").display(),
+                    WORKSPACE_ROOT
+                        .join("resources")
+                        .join("static-folder")
+                        .display(),
                 )
                 .unwrap();
 

@@ -49,6 +49,7 @@ klyra-aws-rds = { path = "[base]/klyra/resources/aws-rds" }
 klyra-persist = { path = "[base]/klyra/resources/persist" }
 klyra-shared-db = { path = "[base]/klyra/resources/shared-db" }
 klyra-secrets = { path = "[base]/klyra/resources/secrets" }
+klyra-static-folder = { path = "[base]/klyra/resources/static-folder" }
 ```
 
 Prime gateway database with an admin user:
