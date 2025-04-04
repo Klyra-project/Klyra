@@ -112,7 +112,11 @@ pub enum ProjectCommand {
     /// remove this project environment from klyra
     Rm,
     /// show the status of this project's environment on klyra
-    Status,
+    Status {
+        #[clap(short, long)]
+        /// Follow status of project command
+        follow: bool,
+    },
 }
 
 #[derive(Parser, Clone, Debug)]
