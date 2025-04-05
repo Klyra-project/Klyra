@@ -18,3 +18,10 @@ klyra-static-folder = { path = "/usr/src/klyra/resources/static-folder" }' > $CA
 # Prefetch crates.io index
 cd /usr/src/klyra/service
 cargo fetch
+
+# Make future crates requests to our own mirror
+echo '
+[source.klyra-crates-io-mirror]
+registry = "http://panamax:8080/git/crates.io-index"
+[source.crates-io]
+replace-with = "klyra-crates-io-mirror"' >> $CARGO_HOME/config.toml
