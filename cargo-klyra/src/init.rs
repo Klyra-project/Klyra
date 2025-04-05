@@ -85,18 +85,19 @@ impl KlyraInit for KlyraInitActixWeb {
 
     fn get_boilerplate_code_for_framework(&self) -> &'static str {
         indoc! {r#"
-        use actix_web::web::{resource, ServiceConfig};
+        use actix_web::{get, web::ServiceConfig};
         use klyra_service::KlyraActixWeb;
 
+        #[get("/hello")]
         async fn hello_world() -> &'static str {
             "Hello World!"
         }
 
         #[klyra_service::main]
         async fn actix_web(
-        ) -> KlyraActixWeb<impl FnOnce(&mut ServiceConfig) + Sync + Send + Copy + Clone + 'static> {
+        ) -> KlyraActixWeb<impl FnOnce(&mut ServiceConfig) + Sync + Send + Clone + 'static> {
             Ok(move |cfg: &mut ServiceConfig| {
-                cfg.service(resource("/hello").to(hello_world));
+                cfg.service(hello_world);
             })
         }"#}
     }
