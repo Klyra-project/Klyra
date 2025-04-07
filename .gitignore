@@ -29,3 +29,10 @@ e2e/users.toml
 
 .klyra-*
 docker-compose.rendered.yml
+
+.env
+node_modules/
+package.json
+yarn.lock
+
+*.wasm

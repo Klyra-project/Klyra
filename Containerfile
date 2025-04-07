@@ -1,5 +1,5 @@
 #syntax=docker/dockerfile-upstream:1.4.0-rc1
-FROM rust:1.63.0-buster as klyra-build
+FROM rust:1.65.0-buster as klyra-build
 RUN apt-get update &&\
     apt-get install -y curl
 # download protoc binary and unzip it in usr/bin
@@ -23,24 +23,18 @@ FROM klyra-build AS builder
 COPY --from=planner /build/recipe.json recipe.json
 RUN cargo chef cook --recipe-path recipe.json
 COPY --from=cache /build .
-ARG crate
-RUN cargo build --bin ${crate}
+ARG folder
+RUN cargo build --bin klyra-${folder}
 
-FROM rust:1.63.0-buster as klyra-common
+FROM rust:1.65.0-buster as klyra-common
 RUN apt-get update &&\
     apt-get install -y curl
 RUN rustup component add rust-src
 COPY --from=cache /build/ /usr/src/klyra/
 
 FROM klyra-common
-ARG crate
-SHELL ["/bin/bash", "-c"]
-RUN mkdir -p $CARGO_HOME; \
-echo $'[patch.crates-io] \n\
-klyra-service = { path = "/usr/src/klyra/service" } \n\
-klyra-aws-rds = { path = "/usr/src/klyra/resources/aws-rds" } \n\
-klyra-persist = { path = "/usr/src/klyra/resources/persist" } \n\
-klyra-shared-db = { path = "/usr/src/klyra/resources/shared-db" } \n\
-klyra-secrets = { path = "/usr/src/klyra/resources/secrets" }' > $CARGO_HOME/config.toml
-COPY --from=builder /build/target/debug/${crate} /usr/local/bin/service
+ARG folder
+COPY ${folder}/prepare.sh /prepare.sh
+RUN /prepare.sh
+COPY --from=builder /build/target/debug/klyra-${folder} /usr/local/bin/service
 ENTRYPOINT ["/usr/local/bin/service"]

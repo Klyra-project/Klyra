@@ -9,5 +9,5 @@ Add `klyra-shared-db` to the dependencies for your service. Every type of sharea
 | Postgres | postgres     | klyra_shared_db::Postgres |
 | MongoDB  | mongodb      | klyra_shared_db::MongoDb  |
 
-An example using the Rocket framework can be found on [GitHub](https://github.com/klyra-hq/klyra/tree/main/examples/rocket/postgres)
+An example using the Rocket framework can be found on [GitHub](https://github.com/klyra-hq/examples/tree/main/rocket/postgres)
 

@@ -26,9 +26,9 @@
 Klyra is built for productivity, reliability and performance:
 - Zero-Configuration support for Rust using annotations
 - Automatic resource provisioning (databases, caches, subdomains, etc.) via [Infrastructure-From-Code](https://www.klyra.rs/blog/2022/05/09/ifc)
-- First-class support for popular Rust frameworks ([Rocket](https://docs.klyra.rs/guide/rocket-examples.html), [Axum](https://docs.klyra.rs/guide/axum-examples.html), 
-  [Tide](https://docs.klyra.rs/guide/tide-examples.html), [Poem](https://docs.klyra.rs/guide/poem-examples.html) and [Tower](https://docs.klyra.rs/guide/tower-examples.html))
-- Support for deploying Discord bots using [Serenity](https://docs.klyra.rs/guide/serenity-examples.html)
+- First-class support for popular Rust frameworks ([Rocket](https://docs.klyra.rs/examples/rocket), [Axum](https://docs.klyra.rs/examples/axum), 
+  [Tide](https://docs.klyra.rs/examples/tide), [Poem](https://docs.klyra.rs/examples/poem) and [Tower](https://docs.klyra.rs/examples/tower))
+- Support for deploying Discord bots using [Serenity](https://docs.klyra.rs/examples/serenity)
 - Scalable hosting (with optional self-hosting)
 
 📖 Check out our documentation to get started quickly: [docs.klyra.rs](https://docs.klyra.rs)
@@ -82,7 +82,7 @@ For the full documentation, visit [our docs](https://docs.klyra.rs).
 
 Contributing to klyra is highly encouraged!
 
-If you want to setup a local environment to test code changes to core `klyra` packages, or want to contribute to the project check out [our docs](https://docs.klyra.rs/guide/contribute.html). 
+If you want to setup a local environment to test code changes to core `klyra` packages, or want to contribute to the project check out [our docs](https://docs.klyra.rs/community/contribute). 
 
 Even if you are not planning to submit any code; joining our [Discord server](https://discord.gg/klyra) and providing feedback helps us a lot!
 

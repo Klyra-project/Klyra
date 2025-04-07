@@ -1,9 +1,0 @@
-#[klyra_service::main]
-async fn tide() -> klyra_service::KlyraTide<()> {
-    let mut app = tide::new();
-    app.with(tide::log::LogMiddleware::new());
-
-    app.at("/hello").get(|_| async { Ok("Hello, world!") });
-
-    Ok(app)
-}
