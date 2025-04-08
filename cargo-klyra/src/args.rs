@@ -85,8 +85,6 @@ pub enum Command {
     Delete,
     /// manage secrets for this klyra service
     Secrets,
-    /// create user credentials for the klyra platform
-    Auth(AuthArgs),
     /// login to the klyra platform
     Login(LoginArgs),
     /// run a klyra service locally
@@ -126,13 +124,6 @@ pub struct LoginArgs {
     /// api key for the klyra platform
     #[clap(long)]
     pub api_key: Option<String>,
-}
-
-#[derive(Parser)]
-pub struct AuthArgs {
-    /// the desired username for the klyra platform
-    #[clap()]
-    pub username: String,
 }
 
 #[derive(Parser)]
