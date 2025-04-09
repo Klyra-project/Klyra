@@ -16,6 +16,7 @@ use opentelemetry_http::HeaderExtractor;
 use klyra_common::backends::metrics::Metrics;
 use klyra_common::models::secret;
 use klyra_common::project::ProjectName;
+use klyra_common::storage_manager::StorageManager;
 use klyra_common::LogItem;
 use klyra_service::loader::clean_crate;
 use tower_http::auth::RequireAuthorizationLayer;
