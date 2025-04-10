@@ -264,8 +264,8 @@ extern crate klyra_codegen;
 /// | `KlyraPoem`                         | web-poem     | [poem](https://docs.rs/poem/1.3.35)         | 1.3.35     | [GitHub](https://github.com/klyra-hq/examples/tree/main/poem/hello-world)           |
 /// | `Result<T, klyra_service::Error>`   | web-tower    | [tower](https://docs.rs/tower/0.4.12)       | 0.14.12    | [GitHub](https://github.com/klyra-hq/examples/tree/main/tower/hello-world)          |
 /// | `KlyraSerenity`                     | bot-serenity | [serenity](https://docs.rs/serenity/0.11.5) | 0.11.5     | [GitHub](https://github.com/klyra-hq/examples/tree/main/serenity/hello-world)       |
-/// | `KlyraActixWeb`                     | web-actix-web| [actix-web](https://docs.rs/actix-web/4.2.1)| 4.2.1      | [GitHub](https://github.com/klyra-hq/examples/tree/main/actix-web/hello-world)           |
-
+/// | `KlyraPoise`                        | bot-poise    | [poise](https://docs.rs/poise/0.5.2)        | 0.5.2      | [GitHub](https://github.com/klyra-hq/examples/tree/main/poise/hello-world)          |
+/// | `KlyraActixWeb`                     | web-actix-web| [actix-web](https://docs.rs/actix-web/4.2.1)| 4.2.1      | [GitHub](https://github.com/klyra-hq/examples/tree/main/actix-web/hello-world)      |
 ///
 /// # Getting klyra managed resources
 /// Klyra is able to manage resource dependencies for you. These resources are passed in as inputs to your `#[klyra_service::main]` function and are configured using attributes:
@@ -660,6 +660,23 @@ impl Service for serenity::Client {
 
 #[cfg(feature = "bot-serenity")]
 pub type KlyraSerenity = Result<serenity::Client, Error>;
+
+#[cfg(feature = "bot-poise")]
+#[async_trait]
+impl<T, E> Service for std::sync::Arc<poise::Framework<T, E>>
+where
+    T: std::marker::Send + std::marker::Sync + 'static,
+    E: std::marker::Send + std::marker::Sync + 'static,
+{
+    async fn bind(mut self: Box<Self>, _addr: SocketAddr) -> Result<(), error::Error> {
+        self.start().await.map_err(error::CustomError::new)?;
+
+        Ok(())
+    }
+}
+
+#[cfg(feature = "bot-poise")]
+pub type KlyraPoise<T, E> = Result<std::sync::Arc<poise::Framework<T, E>>, Error>;
 
 pub const VERSION: &str = env!("CARGO_PKG_VERSION");
 pub const NAME: &str = env!("CARGO_PKG_NAME");

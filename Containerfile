@@ -1,5 +1,6 @@
 #syntax=docker/dockerfile-upstream:1.4.0-rc1
-FROM rust:1.65.0-buster as klyra-build
+ARG RUSTUP_TOOLCHAIN
+FROM rust:${RUSTUP_TOOLCHAIN}-buster as klyra-build
 RUN apt-get update &&\
     apt-get install -y curl
 # download protoc binary and unzip it in usr/bin
@@ -26,7 +27,8 @@ COPY --from=cache /build .
 ARG folder
 RUN cargo build --bin klyra-${folder}
 
-FROM rust:1.65.0-buster as klyra-common
+ARG RUSTUP_TOOLCHAIN
+FROM rust:${RUSTUP_TOOLCHAIN}-buster as klyra-common
 RUN apt-get update &&\
     apt-get install -y curl
 RUN rustup component add rust-src
@@ -37,4 +39,6 @@ ARG folder
 COPY ${folder}/prepare.sh /prepare.sh
 RUN /prepare.sh
 COPY --from=builder /build/target/debug/klyra-${folder} /usr/local/bin/service
+ARG RUSTUP_TOOLCHAIN
+ENV RUSTUP_TOOLCHAIN=${RUSTUP_TOOLCHAIN}
 ENTRYPOINT ["/usr/local/bin/service"]
