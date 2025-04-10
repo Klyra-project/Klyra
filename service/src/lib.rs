@@ -680,3 +680,4 @@ pub type KlyraPoise<T, E> = Result<std::sync::Arc<poise::Framework<T, E>>, Error
 
 pub const VERSION: &str = env!("CARGO_PKG_VERSION");
 pub const NAME: &str = env!("CARGO_PKG_NAME");
+pub const NEXT_NAME: &str = "klyra-next";
