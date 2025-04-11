@@ -27,7 +27,6 @@ use futures::{StreamExt, TryFutureExt};
 use git2::{Repository, StatusOptions};
 use ignore::overrides::OverrideBuilder;
 use ignore::WalkBuilder;
-use provisioner_server::LocalProvisioner;
 use klyra_common::models::{project, secret};
 use klyra_service::loader::{build_crate, Runtime};
 use std::fmt::Write;
@@ -38,6 +37,7 @@ use uuid::Uuid;
 
 use crate::args::{DeploymentCommand, ProjectCommand};
 use crate::client::Client;
+use crate::provisioner_server::LocalProvisioner;
 
 pub struct Klyra {
     ctx: RequestContext,
@@ -479,6 +479,7 @@ impl Klyra {
 
         trace!(response = ?response,  "client response: ");
 
+        // TODO: move to runtime
         let addr = if run_args.external {
             std::net::IpAddr::V4(Ipv4Addr::new(0, 0, 0, 0))
         } else {

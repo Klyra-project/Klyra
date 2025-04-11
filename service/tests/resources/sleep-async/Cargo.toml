@@ -10,4 +10,4 @@ crate-type = ["cdylib"]
 
 [dependencies]
 tokio = { version = "1.22.0", features = ["time"] }
-klyra-service = { path = "../../../", features = ["codegen"] }
+klyra-service = { path = "../../../" }
