@@ -9,4 +9,4 @@ crate-type = ["cdylib"]
 [workspace]
 
 [dependencies]
-klyra-service = { path = "../../../", features = ["codegen"] }
+klyra-service = { path = "../../../" }

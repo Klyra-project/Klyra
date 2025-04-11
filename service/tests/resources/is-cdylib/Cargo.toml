@@ -10,4 +10,4 @@ crate-type = ["cdylib", "staticlib"]
 
 [dependencies]
 rocket = "0.5.0-rc.2"
-klyra-service = { path = "../../../", features = ["codegen", "web-rocket"] }
+klyra-service = { path = "../../../", features = ["web-rocket"] }
