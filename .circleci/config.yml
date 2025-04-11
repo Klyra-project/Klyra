@@ -88,6 +88,7 @@ commands:
             klyra-service = { path = "$PWD/service" }
             klyra-aws-rds = { path = "$PWD/resources/aws-rds" }
             klyra-persist = { path = "$PWD/resources/persist" }
+            klyra-next = { path = "$PWD/next" }
             klyra-shared-db = { path = "$PWD/resources/shared-db" }
             klyra-secrets = { path = "$PWD/resources/secrets" }
             klyra-static-folder = { path = "$PWD/resources/static-folder" }
@@ -97,7 +98,7 @@ commands:
       - run:
           name: Install Rust
           command: |
-            curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+            curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --target add wasm32-wasi
             sudo apt update && sudo apt install -y libssl1.1
   install-protoc:
     steps:
