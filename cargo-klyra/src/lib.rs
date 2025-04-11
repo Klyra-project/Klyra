@@ -7,6 +7,7 @@ mod provisioner_server;
 use klyra_common::project::ProjectName;
 use klyra_proto::runtime::{self, LoadRequest, StartRequest, SubscribeLogsRequest};
 use std::collections::HashMap;
+use std::convert::TryInto;
 use std::ffi::OsString;
 use std::fs::{read_to_string, File};
 use std::io::stdout;
@@ -454,7 +455,7 @@ impl Klyra {
 
         tokio::spawn(async move {
             while let Some(log) = stream.message().await.expect("to get log from stream") {
-                let log: klyra_common::LogItem = log.into();
+                let log: klyra_common::LogItem = log.try_into().expect("to convert log");
                 println!("{log}");
             }
         });
