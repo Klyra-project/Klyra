@@ -15,6 +15,9 @@ klyra-shared-db = { path = "/usr/src/klyra/resources/shared-db" }
 klyra-secrets = { path = "/usr/src/klyra/resources/secrets" }
 klyra-static-folder = { path = "/usr/src/klyra/resources/static-folder" }' > $CARGO_HOME/config.toml
 
+# Install the klyra runtime
+cargo install klyra-runtime --path "/usr/src/klyra/runtime" 
+
 # Make future crates requests to our own mirror
 echo '
 [source.klyra-crates-io-mirror]

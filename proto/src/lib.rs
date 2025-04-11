@@ -96,10 +96,8 @@ pub mod provisioner {
 
 pub mod runtime {
     use std::{
-        env::temp_dir,
-        fs::OpenOptions,
-        io::Write,
         path::PathBuf,
+        process::Command,
         time::{Duration, SystemTime},
     };
 
@@ -240,7 +238,6 @@ pub mod runtime {
     }
 
     pub async fn start(
-        binary_bytes: &[u8],
         wasm: bool,
         storage_manager_type: StorageManagerType,
         provisioner_address: &str,
@@ -252,7 +249,7 @@ pub mod runtime {
             StorageManagerType::WorkingDir(path) => ("working-dir", path),
         };
 
-        let runtime_executable = get_runtime_executable(binary_bytes);
+        let runtime_executable = get_runtime_executable();
 
         let runtime = process::Command::new(runtime_executable)
             .args([
@@ -283,27 +280,40 @@ pub mod runtime {
         Ok((runtime, runtime_client))
     }
 
-    fn get_runtime_executable(binary_bytes: &[u8]) -> PathBuf {
-        let tmp_dir = temp_dir();
+    fn get_runtime_executable() -> PathBuf {
+        // When this library is compiled in debug mode with `cargo run --bin cargo-klyra`,
+        // install the checked-out local version of `klyra-runtime
+        if cfg!(debug_assertions) {
+            // Path to cargo-klyra
+            let manifest_dir = env!("CARGO_MANIFEST_DIR");
 
-        let path = tmp_dir.join("klyra-runtime");
-        let mut open_options = OpenOptions::new();
-        open_options.write(true).create(true).truncate(true);
+            // Canonicalized path to klyra-runtime
+            let path = std::fs::canonicalize(format!("{manifest_dir}/../runtime"))
+                .expect("failed to canonicalize path to runtime");
 
-        #[cfg(target_family = "unix")]
-        {
-            use std::os::unix::prelude::OpenOptionsExt;
-
-            open_options.mode(0o755);
+            Command::new("cargo")
+                .arg("install")
+                .arg("klyra-runtime")
+                .arg("--path")
+                .arg(path)
+                .output()
+                .expect("failed to install the klyra runtime");
+        // When this library is compiled in release mode with `cargo install cargo-klyra`,
+        // install the latest released `klyra-runtime`
+        } else {
+            Command::new("cargo")
+                .arg("install")
+                .arg("klyra-runtime")
+                .arg("--git")
+                .arg("https://github.com/klyra-hq/klyra")
+                .arg("--branch")
+                .arg("production")
+                .output()
+                .expect("failed to install the klyra runtime");
         }
 
-        let mut file = open_options
-            .open(&path)
-            .expect("to create runtime executable file");
+        let cargo_home = home::cargo_home().expect("failed to find cargo home directory");
 
-        file.write_all(binary_bytes)
-            .expect("to write out binary file");
-
-        path
+        cargo_home.join("bin/klyra-runtime")
     }
 }
