@@ -15,6 +15,9 @@ klyra-shared-db = { path = "/usr/src/klyra/resources/shared-db" }
 klyra-secrets = { path = "/usr/src/klyra/resources/secrets" }
 klyra-static-folder = { path = "/usr/src/klyra/resources/static-folder" }' > $CARGO_HOME/config.toml
 
+# Add the wasm32-wasi target
+rustup target add wasm32-wasi
+
 # Install the klyra runtime
 cargo install klyra-runtime --path "/usr/src/klyra/runtime" 
 

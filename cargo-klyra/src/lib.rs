@@ -4,6 +4,7 @@ pub mod config;
 mod init;
 mod provisioner_server;
 
+use cargo::util::ToSemver;
 use klyra_common::project::ProjectName;
 use klyra_proto::runtime::{self, LoadRequest, StartRequest, SubscribeLogsRequest};
 use std::collections::HashMap;
@@ -39,6 +40,9 @@ use uuid::Uuid;
 use crate::args::{DeploymentCommand, ProjectCommand};
 use crate::client::Client;
 use crate::provisioner_server::LocalProvisioner;
+
+const VERSION: &str = env!("CARGO_PKG_VERSION");
+const MANIFEST_DIR: &str = env!("CARGO_MANIFEST_DIR");
 
 pub struct Klyra {
     ctx: RequestContext,
@@ -410,11 +414,53 @@ impl Klyra {
             Ipv4Addr::LOCALHOST.into(),
             run_args.port + 1,
         ));
+
+        let get_runtime_executable = || {
+            let runtime_path = home::cargo_home()
+                .expect("failed to find cargo home dir")
+                .join("bin/klyra-runtime");
+
+            if cfg!(debug_assertions) {
+                // Canonicalized path to klyra-runtime for dev to work on windows
+                let path = std::fs::canonicalize(format!("{MANIFEST_DIR}/../runtime"))
+                    .expect("path to klyra-runtime does not exist or is invalid");
+
+                std::process::Command::new("cargo")
+                    .arg("install")
+                    .arg("klyra-runtime")
+                    .arg("--path")
+                    .arg(path)
+                    .output()
+                    .expect("failed to install the klyra runtime");
+            } else {
+                // If the version of cargo-klyra is different from klyra-runtime,
+                // or it isn't installed, try to install klyra-runtime from the production
+                // branch.
+                if let Err(err) = check_version(&runtime_path) {
+                    trace!("{}", err);
+
+                    trace!("installing klyra-runtime");
+                    std::process::Command::new("cargo")
+                        .arg("install")
+                        .arg("klyra-runtime")
+                        .arg("--git")
+                        .arg("https://github.com/klyra-hq/klyra")
+                        .arg("--branch")
+                        .arg("production")
+                        .output()
+                        .expect("failed to install the klyra runtime");
+                };
+            };
+
+            runtime_path
+        };
+
         let (mut runtime, mut runtime_client) = runtime::start(
             is_wasm,
             runtime::StorageManagerType::WorkingDir(working_directory.to_path_buf()),
             &format!("http://localhost:{}", run_args.port + 1),
             run_args.port + 2,
+            get_runtime_executable,
         )
         .await
         .map_err(|err| {
@@ -769,6 +815,40 @@ impl Klyra {
         }
 
         Ok(())
+    }
+}
+
+fn check_version(runtime_path: &Path) -> Result<()> {
+    let valid_version = VERSION.to_semver().unwrap();
+
+    if !runtime_path.try_exists()? {
+        bail!("klyra-runtime is not installed");
+    }
+
+    // Get runtime version from klyra-runtime cli
+    let runtime_version = std::process::Command::new("cargo")
+        .arg("klyra-runtime")
+        .arg("--version")
+        .output()
+        .context("failed to check the klyra-runtime version")?
+        .stdout;
+
+    // Parse the version, splitting the version from the name and
+    // and pass it to `to_semver()`.
+    let runtime_version = std::str::from_utf8(&runtime_version)
+        .expect("klyra-runtime version should be valid utf8")
+        .split_once(' ')
+        .expect("klyra-runtime version should be in the `name version` format")
+        .1
+        .to_semver()
+        .context("failed to convert runtime version to semver")?;
+
+    if runtime_version == valid_version {
+        Ok(())
+    } else {
+        Err(anyhow!(
+            "klyra-runtime and cargo-klyra are not the same version"
+        ))
     }
 }
 

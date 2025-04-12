@@ -22,10 +22,12 @@ RUN cargo chef prepare --recipe-path recipe.json
 
 FROM klyra-build AS builder
 COPY --from=planner /build/recipe.json recipe.json
-RUN cargo chef cook --recipe-path recipe.json
+RUN cargo chef cook $(if [ "$CARGO_PROFILE" = "release" ]; then echo --${CARGO_PROFILE}; fi) --recipe-path recipe.json
 COPY --from=cache /build .
 ARG folder
-RUN cargo build --bin klyra-${folder}
+ARG CARGO_PROFILE
+# if CARGO_PROFILE is release, pass --release, else use default debug profile
+RUN cargo build --bin klyra-${folder} $(if [ "$CARGO_PROFILE" = "release" ]; then echo --${CARGO_PROFILE}; fi)
 
 ARG RUSTUP_TOOLCHAIN
 FROM rust:${RUSTUP_TOOLCHAIN}-buster as klyra-common
@@ -43,7 +45,8 @@ FROM klyra-common
 ARG folder
 COPY ${folder}/prepare.sh /prepare.sh
 RUN /prepare.sh
-COPY --from=builder /build/target/debug/klyra-${folder} /usr/local/bin/service
+ARG CARGO_PROFILE
+COPY --from=builder /build/target/${CARGO_PROFILE}/klyra-${folder} /usr/local/bin/service
 ARG RUSTUP_TOOLCHAIN
 ENV RUSTUP_TOOLCHAIN=${RUSTUP_TOOLCHAIN}
 ENTRYPOINT ["/usr/local/bin/service"]
