@@ -324,6 +324,10 @@ mod tests {
             panic!("no test should get the service name");
         }
 
+        fn get_environment(&self) -> klyra_service::Environment {
+            panic!("no test should get the environment");
+        }
+
         fn get_build_path(&self) -> Result<PathBuf, klyra_service::Error> {
             panic!("no test should get the build path");
         }

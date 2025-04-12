@@ -11,3 +11,17 @@ Add `klyra-shared-db` to the dependencies for your service. Every type of sharea
 
 An example using the Rocket framework can be found on [GitHub](https://github.com/klyra-hq/examples/tree/main/rocket/postgres)
 
+### Postgres
+This resource has the following options
+
+| Option    | Type | Description                                                                                                    |
+|-----------|------|----------------------------------------------------------------------------------------------------------------|
+| local_uri | &str | Don't spin a local docker instance of Postgres, but rather connect to this URI instead for `cargo klyra run` |
+
+### MongoDB
+This resource has the following options
+
+| Option    | Type | Description                                                                                                   |
+|-----------|------|---------------------------------------------------------------------------------------------------------------|
+| local_uri | &str | Don't spin a local docker instance of MongoDB, but rather connect to this URI instead for `cargo klyra run` |
+
