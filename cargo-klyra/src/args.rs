@@ -83,6 +83,8 @@ pub enum Command {
     Secrets,
     /// login to the klyra platform
     Login(LoginArgs),
+    /// log out of the klyra platform
+    Logout,
     /// run a klyra service locally
     Run(RunArgs),
     /// Open an issue on github and provide feedback.
