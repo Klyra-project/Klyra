@@ -16,7 +16,11 @@ async fn cargo_klyra_run(working_directory: &str, external: bool) -> String {
         format!("http://0.0.0.0:{port}")
     };
 
-    let run_args = RunArgs { port, external };
+    let run_args = RunArgs {
+        port,
+        external,
+        release: false,
+    };
 
     let runner = Klyra::new().unwrap().run(Args {
         api_url: Some("http://klyra.invalid:80".to_string()),

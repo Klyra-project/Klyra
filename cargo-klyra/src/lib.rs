@@ -398,7 +398,7 @@ impl Klyra {
             "Building".bold().green(),
             working_directory.display()
         );
-        let so_path = build_crate(id, working_directory, false, tx).await?;
+        let so_path = build_crate(id, working_directory, run_args.release, tx).await?;
 
         trace!("loading secrets");
         let secrets_path = working_directory.join("Secrets.toml");
