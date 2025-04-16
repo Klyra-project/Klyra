@@ -5828,12 +5828,22 @@ dependencies = [
 name = "klyra-auth"
 version = "0.1.0"
 dependencies = [
+ "anyhow",
+ "async-trait",
  "axum",
  "clap 4.0.27",
+ "hyper",
  "opentelemetry",
  "opentelemetry-datadog",
+ "rand 0.8.5",
+ "serde",
+ "serde_json",
  "klyra-common",
+ "sqlx",
+ "strum",
+ "thiserror",
  "tokio",
+ "tower",
  "tracing",
  "tracing-opentelemetry",
  "tracing-subscriber",

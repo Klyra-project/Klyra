@@ -413,7 +413,7 @@ workflows:
              - workspace-clippy
            matrix:
              parameters:
-               crate: ["klyra-deployer", "cargo-klyra", "klyra-codegen", "klyra-common", "klyra-proto", "klyra-provisioner"]
+               crate: ["klyra-auth", "klyra-deployer", "cargo-klyra", "klyra-codegen", "klyra-common", "klyra-proto", "klyra-provisioner"]
        - e2e-test:
            requires:
              - service-test
