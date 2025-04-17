@@ -2,8 +2,7 @@
 
 ## Raise an Issue
 
-Raising [issues](https://github.com/klyra-hq/klyra/issues) is encouraged. We have some templates to help you get started.
-
+Raising [issues](https://github.com/klyra-hq/klyra/issues) is encouraged.
 ## Docs
 
 If you found an error in our docs, or you simply want to make them better, contributions to our [docs](https://github.com/klyra-hq/klyra-docs)
@@ -13,22 +12,24 @@ are always appreciated!
 You can use Docker and docker-compose to test klyra locally during development. See the [Docker install](https://docs.docker.com/get-docker/)
 and [docker-compose install](https://docs.docker.com/compose/install/) instructions if you do not have them installed already.
 
-```bash
+> Note for Windows: The current [Makefile](https://github.com/klyra-hq/klyra/blob/main/Makefile) does not work on Windows systems by itself - if you want to build the local environment on Windows you could use [Windows Subsystem for Linux](https://learn.microsoft.com/en-us/windows/wsl/install). Additional Windows considerations are listed at the bottom of this page.
+
+> Note for Linux: When building on Linux systems, if the error unknown flag: --build-arg is received, install the docker-buildx package using the package management tool for your particular system.
+
+Clone the klyra repository (or your fork):
+
+```
 git clone git@github.com:klyra-hq/klyra.git
 cd klyra
 ```
 
 You should now be ready to setup a local environment to test code changes to core `klyra` packages as follows:
 
-Build the required images with:
+From the root of the klyra repo, build the required images with:
 
 ```bash
 make images
 ```
-
-> Note for Windows: The current [Makefile](https://github.com/klyra-hq/klyra/blob/main/Makefile) does not work on Windows systems by itself - if you want to build the local environment on Windows you could use [Windows Subsystem for Linux](https://learn.microsoft.com/en-us/windows/wsl/install). Additional Windows considerations are listed at the bottom of this page.
-
-> Note for Linux: When building on Linux systems, if the error unknown flag: --build-arg is received, install the docker-buildx package using the package management tool for your particular system.
 
 The images get built with [cargo-chef](https://github.com/LukeMathWalker/cargo-chef) and therefore support incremental builds (most of the time). So they will be much faster to re-build after an incremental change in your code - should you wish to deploy it locally straight away.
 
@@ -42,11 +43,13 @@ make up
 
 The API is now accessible on `localhost:8000` (for app proxies) and `localhost:8001` (for the control plane). When running `cargo run --bin cargo-klyra` (in a debug build), the CLI will point itself to `localhost` for its API calls.
 
-In order to test local changes to the `klyra-service` crate, you may want to add the below to a `.cargo/config.toml` file. (See [Overriding Dependencies](https://doc.rust-lang.org/cargo/reference/overriding-dependencies.html) for more)
+In order to test local changes to the library crates, you may want to add the below to a `.cargo/config.toml` file. (See [Overriding Dependencies](https://doc.rust-lang.org/cargo/reference/overriding-dependencies.html) for more)
 
 ``` toml
 [patch.crates-io]
 klyra-service = { path = "[base]/klyra/service" }
+klyra-common = { path = "[base]/klyra/common" }
+klyra-proto = { path = "[base]/klyra/proto" }
 klyra-aws-rds = { path = "[base]/klyra/resources/aws-rds" }
 klyra-persist = { path = "[base]/klyra/resources/persist" }
 klyra-shared-db = { path = "[base]/klyra/resources/shared-db" }
@@ -54,37 +57,38 @@ klyra-secrets = { path = "[base]/klyra/resources/secrets" }
 klyra-static-folder = { path = "[base]/klyra/resources/static-folder" }
 ```
 
-Prime gateway database with an admin user:
+Before we can login to our local instance of klyra, we need to create a user.
+The following command inserts a user into the gateway state with admin privileges:
 
 ```bash
 docker compose --file docker-compose.rendered.yml --project-name klyra-dev exec gateway /usr/local/bin/service --state=/var/lib/klyra init --name admin --key test-key
 ```
 
-Login to klyra service in a new terminal window from the main klyra directory:
+Login to klyra service in a new terminal window from the root of the klyra directory:
 
 ```bash
 cargo run --bin cargo-klyra -- login --api-key "test-key"
 ```
 
-cd into one of the examples:
+The [klyra examples](https://github.com/klyra-hq/examples) are linked to the main repo as a [git submodule](https://git-scm.com/book/en/v2/Git-Tools-Submodules), to initialize it run the following commands:
 
 ```bash
 git submodule init
 git submodule update
+```
+
+Then `cd` into any example:
+
+```bash
 cd examples/rocket/hello-world/
 ```
 
-Create a new project, this will start a deployer container:
+Create a new project, this will prompt your local instance of the gateway to
+start a deployer container:
 
 ```bash
 # the --manifest-path is used to locate the root of the klyra workspace
 cargo run --manifest-path ../../../Cargo.toml --bin cargo-klyra -- project new
-```
-
-Verify that the deployer is healthy and in the ready state:
-
-```bash
-cargo run --manifest-path ../../../Cargo.toml --bin cargo-klyra -- project status
 ```
 
 Deploy the example:
@@ -93,7 +97,7 @@ Deploy the example:
 cargo run --manifest-path ../../../Cargo.toml --bin cargo-klyra -- deploy
 ```
 
-Test if the deploy is working:
+Test if the deployment is working:
 
 ```bash
 # the Host header should match the Host from the deploy output
@@ -108,6 +112,7 @@ cargo run --manifest-path ../../../Cargo.toml --bin cargo-klyra -- logs
 ```
 
 ### Testing deployer only
+
 The steps outlined above starts all the services used by klyra locally (ie. both `gateway` and `deployer`). However, sometimes you will want to quickly test changes to `deployer` only. To do this replace `make up` with the following:
 
 ```bash
@@ -124,6 +129,7 @@ cargo run -p klyra-deployer -- --provisioner-address $provisioner_address --prov
 The `--admin-secret` can safely be changed to your api-key to make testing easier. While `<project_name>` needs to match the name of the project that will be deployed to this deployer. This is the `Cargo.toml` or `Klyra.toml` name for the project.
 
 ### Using Podman instead of Docker
+
 If you are using Podman over Docker, then expose a rootless socket of Podman using the following command:
 
 ```bash
@@ -144,9 +150,9 @@ klyra can now be run locally using the steps shown earlier.
 
 klyra has reasonable test coverage - and we are working on improving this
 every day. We encourage PRs to come with tests. If you're not sure about
-what a test should look like, feel free to [get in touch](https://discord.gg/H33rRDTm3p).
+what a test should look like, feel free to [get in touch](https://discord.gg/klyra).
 
-To run the unit tests for a spesific crate, from the root of the repository run:
+To run the unit tests for a specific crate, from the root of the repository run:
 
 ```bash
 # replace <crate-name> with the name of the crate to test, e.g. `klyra-common`
@@ -167,19 +173,22 @@ make test
 ```
 
 > Note: Running all the end-to-end tests may take a long time, so it is recommended to run individual tests shipped as part of each crate in the workspace first.
+
 ## Committing
 
 We use the [Angular Commit Guidelines](https://github.com/angular/angular/blob/master/CONTRIBUTING.md#commit). We expect all commits to conform to these guidelines.
 
-Furthermore, commits should be squashed before being merged to master.
+We will squash commits before merging to main. If you do want to squash commits, please do not do so
+after the review process has started, the commit history can be useful for reviewers.
 
 Before committing:
 - Make sure your commits don't trigger any warnings from Clippy by running: `cargo clippy --tests --all-targets`. If you have a good reason to contradict Clippy, insert an `#[allow(clippy::<lint>)]` macro, so that it won't complain.
 - Make sure your code is correctly formatted: `cargo fmt --all --check`.
-- Make sure your `Cargo.toml`'s are sorted: `cargo sort --workspace`. This command uses the [cargo-sort crate](https://crates.io/crates/cargo-sort) to sort the `Cargo.toml` dependencies alphabetically.
+- Make sure your `Cargo.toml`'s are sorted: `cargo +nightly sort --workspace`. This command uses the [cargo-sort crate](https://crates.io/crates/cargo-sort) to sort the `Cargo.toml` dependencies alphabetically.
 - If you've made changes to examples, make sure the above commands are ran there as well.
 
 ## Project Layout
+
 The folders in this repository relate to each other as follow:
 
 ```mermaid
@@ -228,6 +237,7 @@ The rest are the following libraries:
 Lastly, the `user service` is not a folder in this repository, but is the user service that will be deployed by `deployer`.
 
 ## Windows Considerations
+
 Currently, if you try to use 'make images' on Windows, you may find that the shell files cannot be read by Bash/WSL. This is due to the fact that Windows may have pulled the files in CRLF format rather than LF[^1], which causes problems with Bash as to run the commands, Linux needs the file in LF format. 
 
 Thankfully, we can fix this problem by simply using the `git config core.autocrlf` command to change how Git handles line endings. It takes a single argument:
