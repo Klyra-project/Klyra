@@ -61,7 +61,7 @@ Before we can login to our local instance of klyra, we need to create a user.
 The following command inserts a user into the gateway state with admin privileges:
 
 ```bash
-docker compose --file docker-compose.rendered.yml --project-name klyra-dev exec gateway /usr/local/bin/service --state=/var/lib/klyra init --name admin --key test-key
+docker compose --file docker-compose.rendered.yml --project-name klyra-dev exec auth /usr/local/bin/service --state=/var/lib/klyra-auth init --name admin --key test-key
 ```
 
 Login to klyra service in a new terminal window from the root of the klyra directory:

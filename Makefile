@@ -77,7 +77,7 @@ clean:
 	rm .klyra-*
 	rm docker-compose.rendered.yml
 
-images: klyra-provisioner klyra-deployer klyra-gateway postgres panamax
+images: klyra-provisioner klyra-deployer klyra-gateway klyra-auth postgres panamax
 
 postgres:
 	docker buildx build \
