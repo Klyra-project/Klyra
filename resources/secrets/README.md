@@ -1,7 +1,9 @@
 # Klyra Secrets
+
 This plugin manages secrets on [klyra](https://www.klyra.rs).
 
 ## Usage
+
 Add `klyra-secrets` to the dependencies for your service, and add a `Secrets.toml` to the root of your project
 with the secrets you'd like to store. Make sure to add `Secrets.toml` to a `.gitignore` to omit your secrets from version control.
 
