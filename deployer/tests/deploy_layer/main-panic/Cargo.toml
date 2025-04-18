@@ -11,4 +11,4 @@ crate-type = ["cdylib"]
 [workspace]
 
 [dependencies]
-klyra-service = "0.10.0"
+klyra-service = "0.11.0"
