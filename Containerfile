@@ -37,8 +37,9 @@ COPY --from=cache /build/ /usr/src/klyra/
 
 FROM klyra-common
 ARG folder
+ARG prepare_args
 COPY ${folder}/prepare.sh /prepare.sh
-RUN /prepare.sh
+RUN /prepare.sh "${prepare_args}"
 ARG CARGO_PROFILE
 COPY --from=builder /build/target/${CARGO_PROFILE}/klyra-${folder} /usr/local/bin/service
 ARG RUSTUP_TOOLCHAIN
