@@ -16,12 +16,10 @@ use hyper_reverse_proxy::ReverseProxy;
 use once_cell::sync::Lazy;
 use opentelemetry::global;
 use opentelemetry_http::HeaderInjector;
-use klyra_common::backends::auth::ConvertResponse;
+use klyra_common::backends::{auth::ConvertResponse, cache::CacheManagement};
 use tower::{Layer, Service};
 use tracing::{error, trace, Span};
 use tracing_opentelemetry::OpenTelemetrySpanExt;
-
-use super::cache::CacheManagement;
 
 static PROXY_CLIENT: Lazy<ReverseProxy<HttpConnector<GaiResolver>>> =
     Lazy::new(|| ReverseProxy::new(Client::new()));
@@ -34,11 +32,14 @@ static PROXY_CLIENT: Lazy<ReverseProxy<HttpConnector<GaiResolver>>> =
 #[derive(Clone)]
 pub struct KlyraAuthLayer {
     auth_uri: Uri,
-    cache_manager: Arc<Box<dyn CacheManagement>>,
+    cache_manager: Arc<Box<dyn CacheManagement<Value = String>>>,
 }
 
 impl KlyraAuthLayer {
-    pub fn new(auth_uri: Uri, cache_manager: Arc<Box<dyn CacheManagement>>) -> Self {
+    pub fn new(
+        auth_uri: Uri,
+        cache_manager: Arc<Box<dyn CacheManagement<Value = String>>>,
+    ) -> Self {
         Self {
             auth_uri,
             cache_manager,
@@ -62,7 +63,7 @@ impl<S> Layer<S> for KlyraAuthLayer {
 pub struct KlyraAuthService<S> {
     inner: S,
     auth_uri: Uri,
-    cache_manager: Arc<Box<dyn CacheManagement>>,
+    cache_manager: Arc<Box<dyn CacheManagement<Value = String>>>,
 }
 
 impl<S> Service<Request<Body>> for KlyraAuthService<S>
