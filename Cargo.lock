@@ -6469,7 +6469,6 @@ dependencies = [
  "klyra-codegen",
  "klyra-common",
  "sqlx",
- "sync_wrapper",
  "thiserror",
  "thruster",
  "tide",
