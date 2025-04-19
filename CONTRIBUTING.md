@@ -24,6 +24,9 @@ git clone git@github.com:klyra-hq/klyra.git
 cd klyra
 ```
 
+> Note: We need the git tags for the local development workflow, but they may not be included when you clone the repository.
+To make sure you have them, run `git fetch upstream --tags`, where upstream is the name of the klyra remote repository.
+
 You should now be ready to setup a local environment to test code changes to core `klyra` packages as follows:
 
 From the root of the klyra repo, build the required images with:
