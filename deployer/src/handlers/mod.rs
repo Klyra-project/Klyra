@@ -18,7 +18,7 @@ use klyra_common::models::secret;
 use klyra_common::project::ProjectName;
 use klyra_common::storage_manager::StorageManager;
 use klyra_common::LogItem;
-use klyra_service::loader::clean_crate;
+use klyra_service::builder::clean_crate;
 use tower_http::auth::RequireAuthorizationLayer;
 use tower_http::trace::TraceLayer;
 use tracing::{debug, debug_span, error, field, instrument, trace, Span};
