@@ -10,3 +10,4 @@ pub use logger::Logger;
 pub use next::{AxumWasm, NextArgs};
 pub use provisioner_factory::ProvisionerFactory;
 pub use klyra_common::storage_manager::StorageManager;
+pub use klyra_service::{main, Error, Service};

@@ -1,5 +1,5 @@
 [package]
-name = "is-cdylib"
+name = "not-bin"
 version = "0.1.0"
 edition = "2021"
 
@@ -11,3 +11,4 @@ crate-type = ["cdylib", "staticlib"]
 [dependencies]
 rocket = "0.5.0-rc.2"
 klyra-service = { path = "../../../", features = ["web-rocket"] }
+klyra-runtime = { path = "../../../../runtime" }
