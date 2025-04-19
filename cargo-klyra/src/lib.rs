@@ -383,6 +383,7 @@ impl Klyra {
             "Building".bold().green(),
             working_directory.display()
         );
+
         let runtime = build_crate(working_directory, false, tx).await?;
 
         trace!("loading secrets");
@@ -403,7 +404,7 @@ impl Klyra {
 
         let service_name = self.ctx.project_name().to_string();
 
-        let (is_wasm, so_path) = match runtime {
+        let (is_wasm, bin_path) = match runtime {
             Runtime::Next(path) => (true, path),
             Runtime::Legacy(path) => (false, path),
         };
@@ -414,44 +415,54 @@ impl Klyra {
             run_args.port + 1,
         ));
 
-        let get_runtime_executable = || {
-            let runtime_path = home::cargo_home()
-                .expect("failed to find cargo home dir")
-                .join("bin/klyra-runtime");
+        let runtime_path = || {
+            if is_wasm {
+                let runtime_path = home::cargo_home()
+                    .expect("failed to find cargo home dir")
+                    .join("bin/klyra-next");
 
-            if cfg!(debug_assertions) {
-                // Canonicalized path to klyra-runtime for dev to work on windows
-                let path = std::fs::canonicalize(format!("{MANIFEST_DIR}/../runtime"))
-                    .expect("path to klyra-runtime does not exist or is invalid");
+                if cfg!(debug_assertions) {
+                    // Canonicalized path to klyra-runtime for dev to work on windows
+                    let path = std::fs::canonicalize(format!("{MANIFEST_DIR}/../runtime"))
+                        .expect("path to klyra-runtime does not exist or is invalid");
 
-                std::process::Command::new("cargo")
-                    .arg("install")
-                    .arg("klyra-runtime")
-                    .arg("--path")
-                    .arg(path)
-                    .output()
-                    .expect("failed to install the klyra runtime");
-            } else {
-                // If the version of cargo-klyra is different from klyra-runtime,
-                // or it isn't installed, try to install klyra-runtime from the production
-                // branch.
-                if let Err(err) = check_version(&runtime_path) {
-                    trace!("{}", err);
-
-                    trace!("installing klyra-runtime");
+                    // TODO: Add --features next here when https://github.com/klyra-hq/klyra/pull/688 is merged
                     std::process::Command::new("cargo")
                         .arg("install")
                         .arg("klyra-runtime")
-                        .arg("--git")
-                        .arg("https://github.com/klyra-hq/klyra")
-                        .arg("--branch")
-                        .arg("production")
+                        .arg("--path")
+                        .arg(path)
+                        .arg("--bin")
+                        .arg("klyra-next")
                         .output()
                         .expect("failed to install the klyra runtime");
-                };
-            };
+                } else {
+                    // If the version of cargo-klyra is different from klyra-runtime,
+                    // or it isn't installed, try to install klyra-runtime from the production
+                    // branch.
+                    if let Err(err) = check_version(&runtime_path) {
+                        trace!("{}", err);
 
-            runtime_path
+                        trace!("installing klyra-runtime");
+                        // TODO: Add --features next here when https://github.com/klyra-hq/klyra/pull/688 is merged
+                        std::process::Command::new("cargo")
+                            .arg("install")
+                            .arg("klyra-runtime")
+                            .arg("--bin")
+                            .arg("klyra-next")
+                            .arg("--git")
+                            .arg("https://github.com/klyra-hq/klyra")
+                            .arg("--branch")
+                            .arg("production")
+                            .output()
+                            .expect("failed to install the klyra runtime");
+                    };
+                };
+
+                runtime_path
+            } else {
+                bin_path.clone()
+            }
         };
 
         let (mut runtime, mut runtime_client) = runtime::start(
@@ -459,7 +470,7 @@ impl Klyra {
             runtime::StorageManagerType::WorkingDir(working_directory.to_path_buf()),
             &format!("http://localhost:{}", run_args.port + 1),
             run_args.port + 2,
-            get_runtime_executable,
+            runtime_path,
         )
         .await
         .map_err(|err| {
@@ -469,7 +480,7 @@ impl Klyra {
         })?;
 
         let load_request = tonic::Request::new(LoadRequest {
-            path: so_path
+            path: bin_path
                 .into_os_string()
                 .into_string()
                 .expect("to convert path to string"),

@@ -4,50 +4,32 @@ use quote::{quote, ToTokens};
 use syn::{
     parenthesized, parse::Parse, parse2, parse_macro_input, parse_quote, punctuated::Punctuated,
     spanned::Spanned, token::Paren, Attribute, Expr, FnArg, Ident, ItemFn, Pat, PatIdent, Path,
-    ReturnType, Signature, Stmt, Token, Type,
+    ReturnType, Signature, Stmt, Token, Type, TypePath,
 };
 
 pub(crate) fn r#impl(_attr: TokenStream, item: TokenStream) -> TokenStream {
     let mut fn_decl = parse_macro_input!(item as ItemFn);
 
-    let wrapper = Wrapper::from_item_fn(&mut fn_decl);
+    let loader = Loader::from_item_fn(&mut fn_decl);
 
     let expanded = quote! {
-        #wrapper
-
-        fn __binder(
-            service: Box<dyn klyra_service::Service>,
-            addr: std::net::SocketAddr,
-            runtime: &klyra_service::Runtime,
-        ) -> klyra_service::ServeHandle {
-            use klyra_service::Context;
-            runtime.spawn(async move { service.bind(addr).await.context("failed to bind service").map_err(Into::into) })
+        #[tokio::main]
+        async fn main() {
+            klyra_runtime::start(loader).await;
         }
+
+        #loader
 
         #fn_decl
-
-        #[no_mangle]
-        pub extern "C" fn _create_service() -> *mut klyra_service::Bootstrapper {
-            let builder: klyra_service::StateBuilder<Box<dyn klyra_service::Service>> =
-                |factory, runtime, logger| Box::pin(__klyra_wrapper(factory, runtime, logger));
-
-            let bootstrapper = klyra_service::Bootstrapper::new(
-                builder,
-                __binder,
-                klyra_service::Runtime::new().unwrap(),
-            );
-
-            let boxed = Box::new(bootstrapper);
-            Box::into_raw(boxed)
-        }
     };
 
     expanded.into()
 }
 
-struct Wrapper {
+struct Loader {
     fn_ident: Ident,
     fn_inputs: Vec<Input>,
+    fn_return: TypePath,
 }
 
 #[derive(Debug, PartialEq)]
@@ -117,8 +99,8 @@ impl Parse for BuilderOption {
     }
 }
 
-impl Wrapper {
-    pub(crate) fn from_item_fn(item_fn: &mut ItemFn) -> Self {
+impl Loader {
+    pub(crate) fn from_item_fn(item_fn: &mut ItemFn) -> Option<Self> {
         let inputs: Vec<_> = item_fn
             .sig
             .inputs
@@ -145,31 +127,40 @@ impl Wrapper {
             })
             .collect();
 
-        check_return_type(&item_fn.sig);
-
-        Self {
-            fn_ident: item_fn.sig.ident.clone(),
-            fn_inputs: inputs,
+        if let Some(type_path) = check_return_type(item_fn.sig.clone()) {
+            Some(Self {
+                fn_ident: item_fn.sig.ident.clone(),
+                fn_inputs: inputs,
+                fn_return: type_path,
+            })
+        } else {
+            None
         }
     }
 }
 
-fn check_return_type(signature: &Signature) {
-    match &signature.output {
-        ReturnType::Default => emit_error!(
-            signature,
-            "klyra_service::main functions need to return a service";
-            hint = "See the docs for services with first class support";
-            doc = "https://docs.rs/klyra-service/latest/klyra_service/attr.main.html#klyra-supported-services"
-        ),
-        ReturnType::Type(_, r#type) => match r#type.as_ref() {
-            Type::Path(_) => {}
-            _ => emit_error!(
-                r#type,
-                "klyra_service::main functions need to return a first class service or 'Result<impl Service, klyra_service::Error>";
+fn check_return_type(signature: Signature) -> Option<TypePath> {
+    match signature.output {
+        ReturnType::Default => {
+            emit_error!(
+                signature,
+                "klyra_service::main functions need to return a service";
                 hint = "See the docs for services with first class support";
                 doc = "https://docs.rs/klyra-service/latest/klyra_service/attr.main.html#klyra-supported-services"
-            ),
+            );
+            None
+        }
+        ReturnType::Type(_, r#type) => match *r#type {
+            Type::Path(path) => Some(path),
+            _ => {
+                emit_error!(
+                    r#type,
+                    "klyra_service::main functions need to return a first class service or 'Result<impl Service, klyra_service::Error>";
+                    hint = "See the docs for services with first class support";
+                    doc = "https://docs.rs/klyra-service/latest/klyra_service/attr.main.html#klyra-supported-services"
+                );
+                None
+            }
         },
     }
 }
@@ -196,9 +187,12 @@ fn attribute_to_builder(pat_ident: &PatIdent, attrs: Vec<Attribute>) -> syn::Res
     Ok(builder)
 }
 
-impl ToTokens for Wrapper {
+impl ToTokens for Loader {
     fn to_tokens(&self, tokens: &mut proc_macro2::TokenStream) {
         let fn_ident = &self.fn_ident;
+
+        let return_type = &self.fn_return;
+
         let mut fn_inputs: Vec<_> = Vec::with_capacity(self.fn_inputs.len());
         let mut fn_inputs_builder: Vec<_> = Vec::with_capacity(self.fn_inputs.len());
         let mut fn_inputs_builder_options: Vec<_> = Vec::with_capacity(self.fn_inputs.len());
@@ -223,67 +217,32 @@ impl ToTokens for Wrapper {
             ))
         };
 
-        let wrapper = quote! {
-            async fn __klyra_wrapper(
-                #factory_ident: &mut dyn klyra_service::Factory,
-                runtime: &klyra_service::Runtime,
-                logger: klyra_service::Logger,
-            ) -> Result<Box<dyn klyra_service::Service>, klyra_service::Error> {
+        let loader = quote! {
+            async fn loader<S: klyra_runtime::StorageManager>(
+                mut #factory_ident: klyra_runtime::ProvisionerFactory<S>,
+                logger: klyra_runtime::Logger,
+            ) -> #return_type {
                 use klyra_service::Context;
                 use klyra_service::tracing_subscriber::prelude::*;
                 #extra_imports
 
-                runtime.spawn_blocking(move || {
-                    let filter_layer =
-                        klyra_service::tracing_subscriber::EnvFilter::try_from_default_env()
-                            .or_else(|_| klyra_service::tracing_subscriber::EnvFilter::try_new("INFO"))
-                            .unwrap();
+                let filter_layer =
+                    klyra_service::tracing_subscriber::EnvFilter::try_from_default_env()
+                        .or_else(|_| klyra_service::tracing_subscriber::EnvFilter::try_new("INFO"))
+                        .unwrap();
 
-                    klyra_service::tracing_subscriber::registry()
-                        .with(filter_layer)
-                        .with(logger)
-                        .init(); // this sets the subscriber as the global default and also adds a compatibility layer for capturing `log::Record`s
-                })
-                .await
-                .map_err(|e| {
-                    if e.is_panic() {
-                        let mes = e
-                            .into_panic()
-                            .downcast_ref::<&str>()
-                            .map(|x| x.to_string())
-                            .unwrap_or_else(|| "panicked setting logger".to_string());
+                klyra_service::tracing_subscriber::registry()
+                    .with(filter_layer)
+                    .with(logger)
+                    .init();
 
-                        klyra_service::Error::BuildPanic(mes)
-                    } else {
-                        klyra_service::Error::Custom(klyra_service::error::CustomError::new(e).context("failed to set logger"))
-                    }
-                })?;
+                #(let #fn_inputs = #fn_inputs_builder::new()#fn_inputs_builder_options.build(&mut #factory_ident).await.context(format!("failed to provision {}", stringify!(#fn_inputs_builder)))?;)*
 
-                #(let #fn_inputs = #fn_inputs_builder::new()#fn_inputs_builder_options.build(#factory_ident, runtime).await.context(format!("failed to provision {}", stringify!(#fn_inputs_builder)))?;)*
-
-                runtime.spawn(async {
-                    #fn_ident(#(#fn_inputs),*)
-                        .await
-                        .map(|ok| Box::new(ok) as Box<dyn klyra_service::Service>)
-                })
-                    .await
-                    .map_err(|e| {
-                        if e.is_panic() {
-                            let mes = e
-                                .into_panic()
-                                .downcast_ref::<&str>()
-                                .map(|x| x.to_string())
-                                .unwrap_or_else(|| "panicked calling main".to_string());
-
-                            klyra_service::Error::BuildPanic(mes)
-                        } else {
-                            klyra_service::Error::Custom(klyra_service::error::CustomError::new(e).context("failed to call main"))
-                        }
-                    })?
+                #fn_ident(#(#fn_inputs),*).await
             }
         };
 
-        wrapper.to_tokens(tokens);
+        loader.to_tokens(tokens);
     }
 }
 
@@ -293,7 +252,7 @@ mod tests {
     use quote::quote;
     use syn::{parse_quote, Ident};
 
-    use super::{Builder, BuilderOptions, Input, Wrapper};
+    use super::{Builder, BuilderOptions, Input, Loader};
 
     #[test]
     fn from_with_return() {
@@ -301,7 +260,7 @@ mod tests {
             async fn simple() -> KlyraAxum {}
         );
 
-        let actual = Wrapper::from_item_fn(&mut input);
+        let actual = Loader::from_item_fn(&mut input).unwrap();
         let expected_ident: Ident = parse_quote!(simple);
 
         assert_eq!(actual.fn_ident, expected_ident);
@@ -310,65 +269,32 @@ mod tests {
 
     #[test]
     fn output_with_return() {
-        let input = Wrapper {
+        let input = Loader {
             fn_ident: parse_quote!(simple),
             fn_inputs: Vec::new(),
+            fn_return: parse_quote!(KlyraSimple),
         };
 
         let actual = quote!(#input);
         let expected = quote! {
-            async fn __klyra_wrapper(
-                _factory: &mut dyn klyra_service::Factory,
-                runtime: &klyra_service::Runtime,
-                logger: klyra_service::Logger,
-            ) -> Result<Box<dyn klyra_service::Service>, klyra_service::Error> {
+            async fn loader<S: klyra_runtime::StorageManager>(
+                mut _factory: klyra_runtime::ProvisionerFactory<S>,
+                logger: klyra_runtime::Logger,
+            ) -> KlyraSimple {
                 use klyra_service::Context;
                 use klyra_service::tracing_subscriber::prelude::*;
-                runtime.spawn_blocking(move || {
-                    let filter_layer =
-                        klyra_service::tracing_subscriber::EnvFilter::try_from_default_env()
-                            .or_else(|_| klyra_service::tracing_subscriber::EnvFilter::try_new("INFO"))
-                            .unwrap();
 
-                    klyra_service::tracing_subscriber::registry()
-                        .with(filter_layer)
-                        .with(logger)
-                        .init();
-                })
-                .await
-                .map_err(|e| {
-                    if e.is_panic() {
-                        let mes = e
-                            .into_panic()
-                            .downcast_ref::<&str>()
-                            .map(|x| x.to_string())
-                            .unwrap_or_else(|| "panicked setting logger".to_string());
+                let filter_layer =
+                    klyra_service::tracing_subscriber::EnvFilter::try_from_default_env()
+                        .or_else(|_| klyra_service::tracing_subscriber::EnvFilter::try_new("INFO"))
+                        .unwrap();
 
-                        klyra_service::Error::BuildPanic(mes)
-                    } else {
-                        klyra_service::Error::Custom(klyra_service::error::CustomError::new(e).context("failed to set logger"))
-                    }
-                })?;
+                klyra_service::tracing_subscriber::registry()
+                    .with(filter_layer)
+                    .with(logger)
+                    .init();
 
-                runtime.spawn(async {
-                    simple()
-                        .await
-                        .map(|ok| Box::new(ok) as Box<dyn klyra_service::Service>)
-                })
-                .await
-                .map_err(|e| {
-                    if e.is_panic() {
-                        let mes = e
-                            .into_panic()
-                            .downcast_ref::<&str>()
-                            .map(|x| x.to_string())
-                            .unwrap_or_else(|| "panicked calling main".to_string());
-
-                        klyra_service::Error::BuildPanic(mes)
-                    } else {
-                        klyra_service::Error::Custom(klyra_service::error::CustomError::new(e).context("failed to call main"))
-                    }
-                })?
+                simple().await
             }
         };
 
@@ -381,7 +307,7 @@ mod tests {
             async fn complex(#[klyra_shared_db::Postgres] pool: PgPool) -> KlyraTide {}
         );
 
-        let actual = Wrapper::from_item_fn(&mut input);
+        let actual = Loader::from_item_fn(&mut input).unwrap();
         let expected_ident: Ident = parse_quote!(complex);
         let expected_inputs: Vec<Input> = vec![Input {
             ident: parse_quote!(pool),
@@ -408,7 +334,7 @@ mod tests {
 
     #[test]
     fn output_with_inputs() {
-        let input = Wrapper {
+        let input = Loader {
             fn_ident: parse_quote!(complex),
             fn_inputs: vec![
                 Input {
@@ -426,67 +352,33 @@ mod tests {
                     },
                 },
             ],
+            fn_return: parse_quote!(KlyraComplex),
         };
 
         let actual = quote!(#input);
         let expected = quote! {
-            async fn __klyra_wrapper(
-                factory: &mut dyn klyra_service::Factory,
-                runtime: &klyra_service::Runtime,
-                logger: klyra_service::Logger,
-            ) -> Result<Box<dyn klyra_service::Service>, klyra_service::Error> {
+            async fn loader<S: klyra_runtime::StorageManager>(
+                mut factory: klyra_runtime::ProvisionerFactory<S>,
+                logger: klyra_runtime::Logger,
+            ) -> KlyraComplex {
                 use klyra_service::Context;
                 use klyra_service::tracing_subscriber::prelude::*;
                 use klyra_service::ResourceBuilder;
 
-                runtime.spawn_blocking(move || {
-                    let filter_layer =
-                        klyra_service::tracing_subscriber::EnvFilter::try_from_default_env()
-                            .or_else(|_| klyra_service::tracing_subscriber::EnvFilter::try_new("INFO"))
-                            .unwrap();
+                let filter_layer =
+                    klyra_service::tracing_subscriber::EnvFilter::try_from_default_env()
+                        .or_else(|_| klyra_service::tracing_subscriber::EnvFilter::try_new("INFO"))
+                        .unwrap();
 
-                    klyra_service::tracing_subscriber::registry()
-                        .with(filter_layer)
-                        .with(logger)
-                        .init();
-                })
-                .await
-                .map_err(|e| {
-                    if e.is_panic() {
-                        let mes = e
-                            .into_panic()
-                            .downcast_ref::<&str>()
-                            .map(|x| x.to_string())
-                            .unwrap_or_else(|| "panicked setting logger".to_string());
+                klyra_service::tracing_subscriber::registry()
+                    .with(filter_layer)
+                    .with(logger)
+                    .init();
 
-                        klyra_service::Error::BuildPanic(mes)
-                    } else {
-                        klyra_service::Error::Custom(klyra_service::error::CustomError::new(e).context("failed to set logger"))
-                    }
-                })?;
+                let pool = klyra_shared_db::Postgres::new().build(&mut factory).await.context(format!("failed to provision {}", stringify!(klyra_shared_db::Postgres)))?;
+                let redis = klyra_shared_db::Redis::new().build(&mut factory).await.context(format!("failed to provision {}", stringify!(klyra_shared_db::Redis)))?;
 
-                let pool = klyra_shared_db::Postgres::new().build(factory, runtime).await.context(format!("failed to provision {}", stringify!(klyra_shared_db::Postgres)))?;
-                let redis = klyra_shared_db::Redis::new().build(factory, runtime).await.context(format!("failed to provision {}", stringify!(klyra_shared_db::Redis)))?;
-
-                runtime.spawn(async {
-                    complex(pool, redis)
-                        .await
-                        .map(|ok| Box::new(ok) as Box<dyn klyra_service::Service>)
-                })
-                .await
-                .map_err(|e| {
-                    if e.is_panic() {
-                        let mes = e
-                            .into_panic()
-                            .downcast_ref::<&str>()
-                            .map(|x| x.to_string())
-                            .unwrap_or_else(|| "panicked calling main".to_string());
-
-                        klyra_service::Error::BuildPanic(mes)
-                    } else {
-                        klyra_service::Error::Custom(klyra_service::error::CustomError::new(e).context("failed to call main"))
-                    }
-                })?
+                complex(pool, redis).await
             }
         };
 
@@ -541,7 +433,7 @@ mod tests {
             }
         );
 
-        let actual = Wrapper::from_item_fn(&mut input);
+        let actual = Loader::from_item_fn(&mut input).unwrap();
         let expected_ident: Ident = parse_quote!(complex);
         let mut expected_inputs: Vec<Input> = vec![Input {
             ident: parse_quote!(pool),
@@ -568,7 +460,7 @@ mod tests {
 
     #[test]
     fn output_with_input_options() {
-        let mut input = Wrapper {
+        let mut input = Loader {
             fn_ident: parse_quote!(complex),
             fn_inputs: vec![Input {
                 ident: parse_quote!(pool),
@@ -577,6 +469,7 @@ mod tests {
                     options: Default::default(),
                 },
             }],
+            fn_return: parse_quote!(KlyraComplex),
         };
 
         input.fn_inputs[0]
@@ -592,62 +485,27 @@ mod tests {
 
         let actual = quote!(#input);
         let expected = quote! {
-            async fn __klyra_wrapper(
-                factory: &mut dyn klyra_service::Factory,
-                runtime: &klyra_service::Runtime,
-                logger: klyra_service::Logger,
-            ) -> Result<Box<dyn klyra_service::Service>, klyra_service::Error> {
+            async fn loader<S: klyra_runtime::StorageManager>(
+                mut factory: klyra_runtime::ProvisionerFactory<S>,
+                logger: klyra_runtime::Logger,
+            ) -> KlyraComplex {
                 use klyra_service::Context;
                 use klyra_service::tracing_subscriber::prelude::*;
                 use klyra_service::ResourceBuilder;
 
-                runtime.spawn_blocking(move || {
-                    let filter_layer =
-                        klyra_service::tracing_subscriber::EnvFilter::try_from_default_env()
-                            .or_else(|_| klyra_service::tracing_subscriber::EnvFilter::try_new("INFO"))
-                            .unwrap();
+                let filter_layer =
+                    klyra_service::tracing_subscriber::EnvFilter::try_from_default_env()
+                        .or_else(|_| klyra_service::tracing_subscriber::EnvFilter::try_new("INFO"))
+                        .unwrap();
 
-                    klyra_service::tracing_subscriber::registry()
-                        .with(filter_layer)
-                        .with(logger)
-                        .init();
-                })
-                .await
-                .map_err(|e| {
-                    if e.is_panic() {
-                        let mes = e
-                            .into_panic()
-                            .downcast_ref::<&str>()
-                            .map(|x| x.to_string())
-                            .unwrap_or_else(|| "panicked setting logger".to_string());
+                klyra_service::tracing_subscriber::registry()
+                    .with(filter_layer)
+                    .with(logger)
+                    .init();
 
-                        klyra_service::Error::BuildPanic(mes)
-                    } else {
-                        klyra_service::Error::Custom(klyra_service::error::CustomError::new(e).context("failed to set logger"))
-                    }
-                })?;
+                let pool = klyra_shared_db::Postgres::new().size("10Gb").public(false).build(&mut factory).await.context(format!("failed to provision {}", stringify!(klyra_shared_db::Postgres)))?;
 
-                let pool = klyra_shared_db::Postgres::new().size("10Gb").public(false).build(factory, runtime).await.context(format!("failed to provision {}", stringify!(klyra_shared_db::Postgres)))?;
-
-                runtime.spawn(async {
-                    complex(pool)
-                        .await
-                        .map(|ok| Box::new(ok) as Box<dyn klyra_service::Service>)
-                })
-                .await
-                .map_err(|e| {
-                    if e.is_panic() {
-                        let mes = e
-                            .into_panic()
-                            .downcast_ref::<&str>()
-                            .map(|x| x.to_string())
-                            .unwrap_or_else(|| "panicked calling main".to_string());
-
-                        klyra_service::Error::BuildPanic(mes)
-                    } else {
-                        klyra_service::Error::Custom(klyra_service::error::CustomError::new(e).context("failed to call main"))
-                    }
-                })?
+                complex(pool).await
             }
         };
 

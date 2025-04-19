@@ -6,6 +6,7 @@ async fn main() {
 
 async fn loader<S: klyra_common::storage_manager::StorageManager>(
     mut factory: klyra_runtime::ProvisionerFactory<S>,
+    logger: klyra_runtime::Logger,
 ) -> klyra_service::KlyraRocket {
     use klyra_service::ResourceBuilder;
 
