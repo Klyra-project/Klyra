@@ -516,7 +516,6 @@ impl Klyra {
 
         let start_request = StartRequest {
             deployment_id: id.as_bytes().to_vec(),
-            service_name,
             ip: addr.to_string(),
         };
 
