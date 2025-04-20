@@ -13,10 +13,11 @@ use fqdn::FQDN;
 use futures::StreamExt;
 use hyper::Uri;
 use klyra_common::backends::auth::{
-    AdminSecretLayer, AuthPublicKey, Claim, JwtAuthenticationLayer, Scope, ScopedLayer,
+    AdminSecretLayer, AuthPublicKey, JwtAuthenticationLayer, ScopedLayer,
 };
 use klyra_common::backends::headers::XKlyraAccountName;
 use klyra_common::backends::metrics::{Metrics, TraceLayer};
+use klyra_common::claims::{Claim, Scope};
 use klyra_common::models::secret;
 use klyra_common::project::ProjectName;
 use klyra_common::storage_manager::StorageManager;

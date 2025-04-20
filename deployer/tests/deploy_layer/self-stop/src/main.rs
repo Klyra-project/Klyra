@@ -8,6 +8,6 @@ impl klyra_runtime::Service for MyService {
 }
 
 #[klyra_runtime::main]
-async fn self_stop() -> Result<MyService, klyra_service::Error> {
+async fn self_stop() -> Result<MyService, klyra_runtime::Error> {
     Ok(MyService)
 }

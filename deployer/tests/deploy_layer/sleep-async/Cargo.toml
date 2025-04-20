@@ -8,5 +8,5 @@ edition = "2021"
 [workspace]
 
 [dependencies]
-klyra-runtime = { path = "../../../../runtime" }
+klyra-runtime = "0.1.0"
 tokio = { version = "1.0", features = ["time"]}

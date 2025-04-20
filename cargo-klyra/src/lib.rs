@@ -1049,7 +1049,7 @@ mod tests {
                 "Secrets.toml",
                 "Secrets.toml.example",
                 "Klyra.toml",
-                "src/lib.rs",
+                "src/main.rs",
             ]
         );
     }

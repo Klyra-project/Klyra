@@ -2,7 +2,7 @@ use std::{collections::BTreeMap, path::PathBuf, sync::Arc};
 
 use async_trait::async_trait;
 use klyra_common::{
-    backends::{auth::ClaimService, tracing::InjectPropagation},
+    claims::{ClaimService, InjectPropagation},
     database,
     storage_manager::StorageManager,
     DatabaseReadyInfo,
