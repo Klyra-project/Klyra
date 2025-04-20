@@ -30,7 +30,7 @@ async fn non_interactive_basic_init() {
 
     // Expected: name = "basic-initRANDOM_CHARS"
     assert!(cargo_toml.contains("name = \"basic-init"));
-    assert!(cargo_toml.contains("klyra-service = "));
+    assert!(cargo_toml.contains("klyra-runtime = "));
 }
 
 // TODO: unignore when klyra-rocket is published
