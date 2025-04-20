@@ -239,8 +239,8 @@ impl ToTokens for Loader {
         };
 
         let loader = quote! {
-            async fn loader<S: klyra_runtime::StorageManager>(
-                mut #factory_ident: klyra_runtime::ProvisionerFactory<S>,
+            async fn loader(
+                mut #factory_ident: klyra_runtime::ProvisionerFactory,
                 logger: klyra_runtime::Logger,
             ) -> #return_type {
                 use klyra_service::Context;
@@ -299,8 +299,8 @@ mod tests {
 
         let actual = quote!(#input);
         let expected = quote! {
-            async fn loader<S: klyra_runtime::StorageManager>(
-                mut _factory: klyra_runtime::ProvisionerFactory<S>,
+            async fn loader(
+                mut _factory: klyra_runtime::ProvisionerFactory,
                 logger: klyra_runtime::Logger,
             ) -> KlyraSimple {
                 use klyra_service::Context;
@@ -379,8 +379,8 @@ mod tests {
 
         let actual = quote!(#input);
         let expected = quote! {
-            async fn loader<S: klyra_runtime::StorageManager>(
-                mut factory: klyra_runtime::ProvisionerFactory<S>,
+            async fn loader(
+                mut factory: klyra_runtime::ProvisionerFactory,
                 logger: klyra_runtime::Logger,
             ) -> KlyraComplex {
                 use klyra_service::Context;
@@ -494,8 +494,8 @@ mod tests {
 
         let actual = quote!(#input);
         let expected = quote! {
-            async fn loader<S: klyra_runtime::StorageManager>(
-                mut factory: klyra_runtime::ProvisionerFactory<S>,
+            async fn loader(
+                mut factory: klyra_runtime::ProvisionerFactory,
                 logger: klyra_runtime::Logger,
             ) -> KlyraComplex {
                 use klyra_service::Context;

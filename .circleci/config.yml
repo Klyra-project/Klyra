@@ -89,6 +89,7 @@ commands:
             klyra-aws-rds = { path = "$PWD/resources/aws-rds" }
             klyra-persist = { path = "$PWD/resources/persist" }
             klyra-next = { path = "$PWD/next" }
+            klyra-runtime = { path = "$PWD/runtime" }
             klyra-shared-db = { path = "$PWD/resources/shared-db" }
             klyra-secrets = { path = "$PWD/resources/secrets" }
             klyra-static-folder = { path = "$PWD/resources/static-folder" }

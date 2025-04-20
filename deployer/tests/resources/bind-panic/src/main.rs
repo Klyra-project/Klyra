@@ -4,10 +4,7 @@ struct MyService;
 
 #[klyra_service::async_trait]
 impl Service for MyService {
-    async fn bind(
-        mut self: Box<Self>,
-        _: std::net::SocketAddr,
-    ) -> Result<(), klyra_service::Error> {
+    async fn bind(mut self, _: std::net::SocketAddr) -> Result<(), klyra_service::Error> {
         panic!("panic in bind");
     }
 }
