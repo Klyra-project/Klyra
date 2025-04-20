@@ -510,7 +510,7 @@ impl Klyra {
             .into_inner();
 
         tokio::spawn(async move {
-            while let Some(log) = stream.message().await.expect("to get log from stream") {
+            while let Ok(Some(log)) = stream.message().await {
                 let log: klyra_common::LogItem = log.try_into().expect("to convert log");
                 println!("{log}");
             }
