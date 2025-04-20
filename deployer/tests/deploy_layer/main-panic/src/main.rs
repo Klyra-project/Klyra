@@ -1,15 +1,13 @@
-use klyra_service::Service;
-
 struct MyService;
 
-#[klyra_service::async_trait]
-impl Service for MyService {
-    async fn bind(mut self, _: std::net::SocketAddr) -> Result<(), klyra_service::Error> {
+#[klyra_runtime::async_trait]
+impl klyra_runtime::Service for MyService {
+    async fn bind(mut self, _: std::net::SocketAddr) -> Result<(), klyra_runtime::Error> {
         Ok(())
     }
 }
 
-#[klyra_service::main]
-async fn main_panic() -> Result<MyService, klyra_service::Error> {
+#[klyra_runtime::main]
+async fn main_panic() -> Result<MyService, klyra_runtime::Error> {
     panic!("main panic")
 }

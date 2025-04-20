@@ -1,6 +1,6 @@
-#[klyra_service::main]
-async fn axum() -> klyra_service::KlyraAxum {
+#[klyra_runtime::main]
+async fn axum() -> klyra_axum::KlyraAxum {
     let router = axum::Router::new();
 
-    Ok(router)
+    Ok(router.into())
 }

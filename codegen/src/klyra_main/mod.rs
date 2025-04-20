@@ -37,7 +37,7 @@ struct Input {
     /// The identifier for a resource input
     ident: Ident,
 
-    /// The klyra_service builder for this resource
+    /// The klyra_runtime builder for this resource
     builder: Builder,
 }
 
@@ -134,9 +134,9 @@ fn check_return_type(signature: Signature) -> Option<TypePath> {
         ReturnType::Default => {
             emit_error!(
                 signature,
-                "klyra_service::main functions need to return a service";
+                "klyra_runtime::main functions need to return a service";
                 hint = "See the docs for services with first class support";
-                doc = "https://docs.rs/klyra-service/latest/klyra_service/attr.main.html#klyra-supported-services"
+                doc = "https://docs.rs/klyra-service/latest/klyra_runtime/attr.main.html#klyra-supported-services"
             );
             None
         }
@@ -145,9 +145,9 @@ fn check_return_type(signature: Signature) -> Option<TypePath> {
             _ => {
                 emit_error!(
                     r#type,
-                    "klyra_service::main functions need to return a first class service or 'Result<impl Service, klyra_service::Error>";
+                    "klyra_runtime::main functions need to return a first class service or 'Result<impl Service, klyra_runtime::Error>";
                     hint = "See the docs for services with first class support";
-                    doc = "https://docs.rs/klyra-service/latest/klyra_service/attr.main.html#klyra-supported-services"
+                    doc = "https://docs.rs/klyra-service/latest/klyra_runtime/attr.main.html#klyra-supported-services"
                 );
                 None
             }
@@ -204,7 +204,7 @@ impl ToTokens for Loader {
                             lit: Lit::Str(str), ..
                         }) => {
                             needs_vars = true;
-                            quote!(&klyra_service::strfmt(#str, &vars)?)
+                            quote!(&klyra_runtime::strfmt(#str, &vars)?)
                         }
                         other => quote!(#other),
                     };
@@ -226,7 +226,7 @@ impl ToTokens for Loader {
             None
         } else {
             Some(parse_quote!(
-                use klyra_service::ResourceBuilder;
+                use klyra_runtime::ResourceBuilder;
             ))
         };
 
@@ -243,16 +243,16 @@ impl ToTokens for Loader {
                 mut #factory_ident: klyra_runtime::ProvisionerFactory,
                 logger: klyra_runtime::Logger,
             ) -> #return_type {
-                use klyra_service::Context;
-                use klyra_service::tracing_subscriber::prelude::*;
+                use klyra_runtime::Context;
+                use klyra_runtime::tracing_subscriber::prelude::*;
                 #extra_imports
 
                 let filter_layer =
-                    klyra_service::tracing_subscriber::EnvFilter::try_from_default_env()
-                        .or_else(|_| klyra_service::tracing_subscriber::EnvFilter::try_new("INFO"))
+                    klyra_runtime::tracing_subscriber::EnvFilter::try_from_default_env()
+                        .or_else(|_| klyra_runtime::tracing_subscriber::EnvFilter::try_new("INFO"))
                         .unwrap();
 
-                klyra_service::tracing_subscriber::registry()
+                klyra_runtime::tracing_subscriber::registry()
                     .with(filter_layer)
                     .with(logger)
                     .init();
@@ -303,15 +303,15 @@ mod tests {
                 mut _factory: klyra_runtime::ProvisionerFactory,
                 logger: klyra_runtime::Logger,
             ) -> KlyraSimple {
-                use klyra_service::Context;
-                use klyra_service::tracing_subscriber::prelude::*;
+                use klyra_runtime::Context;
+                use klyra_runtime::tracing_subscriber::prelude::*;
 
                 let filter_layer =
-                    klyra_service::tracing_subscriber::EnvFilter::try_from_default_env()
-                        .or_else(|_| klyra_service::tracing_subscriber::EnvFilter::try_new("INFO"))
+                    klyra_runtime::tracing_subscriber::EnvFilter::try_from_default_env()
+                        .or_else(|_| klyra_runtime::tracing_subscriber::EnvFilter::try_new("INFO"))
                         .unwrap();
 
-                klyra_service::tracing_subscriber::registry()
+                klyra_runtime::tracing_subscriber::registry()
                     .with(filter_layer)
                     .with(logger)
                     .init();
@@ -383,16 +383,16 @@ mod tests {
                 mut factory: klyra_runtime::ProvisionerFactory,
                 logger: klyra_runtime::Logger,
             ) -> KlyraComplex {
-                use klyra_service::Context;
-                use klyra_service::tracing_subscriber::prelude::*;
-                use klyra_service::ResourceBuilder;
+                use klyra_runtime::Context;
+                use klyra_runtime::tracing_subscriber::prelude::*;
+                use klyra_runtime::ResourceBuilder;
 
                 let filter_layer =
-                    klyra_service::tracing_subscriber::EnvFilter::try_from_default_env()
-                        .or_else(|_| klyra_service::tracing_subscriber::EnvFilter::try_new("INFO"))
+                    klyra_runtime::tracing_subscriber::EnvFilter::try_from_default_env()
+                        .or_else(|_| klyra_runtime::tracing_subscriber::EnvFilter::try_new("INFO"))
                         .unwrap();
 
-                klyra_service::tracing_subscriber::registry()
+                klyra_runtime::tracing_subscriber::registry()
                     .with(filter_layer)
                     .with(logger)
                     .init();
@@ -498,22 +498,22 @@ mod tests {
                 mut factory: klyra_runtime::ProvisionerFactory,
                 logger: klyra_runtime::Logger,
             ) -> KlyraComplex {
-                use klyra_service::Context;
-                use klyra_service::tracing_subscriber::prelude::*;
-                use klyra_service::ResourceBuilder;
+                use klyra_runtime::Context;
+                use klyra_runtime::tracing_subscriber::prelude::*;
+                use klyra_runtime::ResourceBuilder;
 
                 let filter_layer =
-                    klyra_service::tracing_subscriber::EnvFilter::try_from_default_env()
-                        .or_else(|_| klyra_service::tracing_subscriber::EnvFilter::try_new("INFO"))
+                    klyra_runtime::tracing_subscriber::EnvFilter::try_from_default_env()
+                        .or_else(|_| klyra_runtime::tracing_subscriber::EnvFilter::try_new("INFO"))
                         .unwrap();
 
-                klyra_service::tracing_subscriber::registry()
+                klyra_runtime::tracing_subscriber::registry()
                     .with(filter_layer)
                     .with(logger)
                     .init();
 
                 let vars = std::collections::HashMap::from_iter(factory.get_secrets().await?.into_iter().map(|(key, value)| (format!("secrets.{}", key), value)));
-                let pool = klyra_shared_db::Postgres::new().size(&klyra_service::strfmt("10Gb", &vars)?).public(false).build(&mut factory).await.context(format!("failed to provision {}", stringify!(klyra_shared_db::Postgres)))?;
+                let pool = klyra_shared_db::Postgres::new().size(&klyra_runtime::strfmt("10Gb", &vars)?).public(false).build(&mut factory).await.context(format!("failed to provision {}", stringify!(klyra_shared_db::Postgres)))?;
 
                 complex(pool).await
             }

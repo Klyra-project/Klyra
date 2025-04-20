@@ -6,10 +6,10 @@ fn index() -> &'static str {
     "Hello, world!"
 }
 
-#[klyra_service::main]
-async fn rocket() -> klyra_service::KlyraRocket {
+#[klyra_runtime::main]
+async fn rocket() -> klyra_rocket::KlyraRocket {
     let rocket = rocket::build().mount("/hello", routes![index]);
-    Ok(rocket)
+    Ok(rocket.into())
 }
 
 #[cfg(test)]

@@ -9,6 +9,5 @@ edition = "2021"
 [workspace]
 
 [dependencies]
-klyra-service = { path = "../../../../service" }
 klyra-runtime = { path = "../../../../runtime" }
 tokio = "1.22"
