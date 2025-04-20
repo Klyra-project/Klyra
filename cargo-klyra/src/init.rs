@@ -504,47 +504,47 @@ impl KlyraInit for KlyraInitPoise {
     fn get_boilerplate_code_for_framework(&self) -> &'static str {
         indoc! {r#"
         use anyhow::Context as _;
-		use poise::serenity_prelude as serenity;
-		use klyra_secrets::SecretStore;
-		use klyra_service::KlyraPoise;
+	use poise::serenity_prelude as serenity;
+	use klyra_secrets::SecretStore;
+	use klyra_service::KlyraPoise;
 
-		struct Data {} // User data, which is stored and accessible in all command invocations
-		type Error = Box<dyn std::error::Error + Send + Sync>;
-		type Context<'a> = poise::Context<'a, Data, Error>;
+	struct Data {} // User data, which is stored and accessible in all command invocations
+	type Error = Box<dyn std::error::Error + Send + Sync>;
+	type Context<'a> = poise::Context<'a, Data, Error>;
 
-		/// Responds with "world!"
-		#[poise::command(slash_command)]
-		async fn hello(ctx: Context<'_>) -> Result<(), Error> {
-			ctx.say("world!").await?;
-			Ok(())
-		}
+	/// Responds with "world!"
+	#[poise::command(slash_command)]
+	async fn hello(ctx: Context<'_>) -> Result<(), Error> {
+		ctx.say("world!").await?;
+		Ok(())
+	}
 
-		#[klyra_service::main]
-		async fn poise(#[klyra_secrets::Secrets] secret_store: SecretStore) -> KlyraPoise<Data, Error> {
-			// Get the discord token set in `Secrets.toml`
-			let discord_token = secret_store
-				.get("DISCORD_TOKEN")
-				.context("'DISCORD_TOKEN' was not found")?;
+	#[klyra_service::main]
+	async fn poise(#[klyra_secrets::Secrets] secret_store: SecretStore) -> KlyraPoise<Data, Error> {
+		// Get the discord token set in `Secrets.toml`
+		let discord_token = secret_store
+			.get("DISCORD_TOKEN")
+			.context("'DISCORD_TOKEN' was not found")?;
 
-			let framework = poise::Framework::builder()
-				.options(poise::FrameworkOptions {
-					commands: vec![hello()],
-					..Default::default()
+		let framework = poise::Framework::builder()
+			.options(poise::FrameworkOptions {
+				commands: vec![hello()],
+				..Default::default()
+			})
+			.token(discord_token)
+			.intents(serenity::GatewayIntents::non_privileged())
+			.setup(|ctx, _ready, framework| {
+				Box::pin(async move {
+					poise::builtins::register_globally(ctx, &framework.options().commands).await?;
+					Ok(Data {})
 				})
-				.token(discord_token)
-				.intents(serenity::GatewayIntents::non_privileged())
-				.setup(|ctx, _ready, framework| {
-					Box::pin(async move {
-						poise::builtins::register_globally(ctx, &framework.options().commands).await?;
-						Ok(Data {})
-					})
-				})
-				.build()
-				.await
-				.map_err(klyra_service::error::CustomError::new)?;
+			})
+			.build()
+			.await
+			.map_err(klyra_service::error::CustomError::new)?;
 
-			Ok(framework)
-		}"#}
+		Ok(framework)
+	}"#}
     }
 }
 

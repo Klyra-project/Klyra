@@ -14,19 +14,27 @@ klyra-persist = { path = "/usr/src/klyra/resources/persist" }
 klyra-shared-db = { path = "/usr/src/klyra/resources/shared-db" }
 klyra-secrets = { path = "/usr/src/klyra/resources/secrets" }
 klyra-static-folder = { path = "/usr/src/klyra/resources/static-folder" }' > $CARGO_HOME/config.toml
-
+#
 # Add the wasm32-wasi target
 rustup target add wasm32-wasi
 
 # Install the klyra runtime
-cargo install klyra-runtime --path "/usr/src/klyra/runtime" 
+cargo install klyra-runtime --path "/usr/src/klyra/runtime"
 
-# Make future crates requests to our own mirror
-echo '
+while getopts "p," o; do
+    case $o in
+        "p")
+            # Make future crates requests to our own mirror
+            echo '
 [source.klyra-crates-io-mirror]
 registry = "http://panamax:8080/git/crates.io-index"
 [source.crates-io]
 replace-with = "klyra-crates-io-mirror"' >> $CARGO_HOME/config.toml
+            ;;
+        *)
+            ;;
+    esac
+done
 
 # Prefetch crates.io index from our mirror
 # TODO: restore when we know how to prefetch from our mirror

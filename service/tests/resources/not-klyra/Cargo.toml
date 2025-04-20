@@ -9,4 +9,3 @@ edition = "2021"
 axum = "0.6.0"
 klyra-runtime = { path = "../../../../runtime" }
 klyra-service = { path = "../../../", features = ["web-axum"] }
-tokio = { version = "1.22.0" }
