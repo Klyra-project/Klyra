@@ -214,14 +214,14 @@
 //!
 //! You can also [open an issue or a discussion on GitHub](https://github.com/klyra-hq/klyra).
 //!
-mod legacy;
+mod alpha;
 mod logger;
 #[cfg(feature = "next")]
 mod next;
 mod provisioner_factory;
 
+pub use alpha::{start, Alpha};
 pub use async_trait::async_trait;
-pub use legacy::{start, Legacy};
 pub use logger::Logger;
 #[cfg(feature = "next")]
 pub use next::{AxumWasm, NextArgs};
