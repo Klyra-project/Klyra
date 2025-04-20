@@ -37,7 +37,7 @@ use klyra_service::builder::{build_crate, Runtime};
 use std::fmt::Write;
 use strum::IntoEnumIterator;
 use tar::Builder;
-use tracing::trace;
+use tracing::{trace, warn};
 use uuid::Uuid;
 
 use crate::args::{DeploymentCommand, ProjectCommand};
@@ -477,6 +477,8 @@ impl Klyra {
                     let path = std::fs::canonicalize(format!("{MANIFEST_DIR}/../runtime"))
                         .expect("path to klyra-runtime does not exist or is invalid");
 
+                    trace!(?path, "installing runtime from local filesystem");
+
                     // TODO: Add --features next here when https://github.com/klyra-hq/klyra/pull/688 is merged
                     std::process::Command::new("cargo")
                         .arg("install")
@@ -494,7 +496,7 @@ impl Klyra {
                     // or it isn't installed, try to install klyra-runtime from the production
                     // branch.
                     if let Err(err) = check_version(&runtime_path) {
-                        trace!("{}", err);
+                        warn!("{}", err);
 
                         trace!("installing klyra-runtime");
                         // TODO: Add --features next here when https://github.com/klyra-hq/klyra/pull/688 is merged
@@ -516,6 +518,7 @@ impl Klyra {
 
                 runtime_path
             } else {
+                trace!(path = ?executable_path, "using alpha runtime");
                 executable_path.clone()
             }
         };
@@ -580,7 +583,6 @@ impl Klyra {
         let addr = SocketAddr::new(addr, run_args.port);
 
         let start_request = StartRequest {
-            deployment_id: Uuid::default().as_bytes().to_vec(),
             ip: addr.to_string(),
         };
 
