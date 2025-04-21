@@ -479,7 +479,6 @@ impl Klyra {
 
                     trace!(?path, "installing runtime from local filesystem");
 
-                    // TODO: Add --features next here when https://github.com/klyra-hq/klyra/pull/688 is merged
                     std::process::Command::new("cargo")
                         .arg("install")
                         .arg("klyra-runtime")
@@ -493,22 +492,16 @@ impl Klyra {
                         .expect("failed to install the klyra runtime");
                 } else {
                     // If the version of cargo-klyra is different from klyra-runtime,
-                    // or it isn't installed, try to install klyra-runtime from the production
-                    // branch.
+                    // or it isn't installed, try to install klyra-runtime from crates.io.
                     if let Err(err) = check_version(&runtime_path) {
                         warn!("{}", err);
 
                         trace!("installing klyra-runtime");
-                        // TODO: Add --features next here when https://github.com/klyra-hq/klyra/pull/688 is merged
                         std::process::Command::new("cargo")
                             .arg("install")
                             .arg("klyra-runtime")
                             .arg("--bin")
                             .arg("klyra-next")
-                            .arg("--git")
-                            .arg("https://github.com/klyra-hq/klyra")
-                            .arg("--branch")
-                            .arg("production")
                             .arg("--features")
                             .arg("next")
                             .output()
