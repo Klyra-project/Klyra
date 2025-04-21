@@ -472,6 +472,8 @@ impl Klyra {
                     .expect("failed to find cargo home dir")
                     .join("bin/klyra-next");
 
+                println!("Installing klyra runtime. This can take a while...");
+
                 if cfg!(debug_assertions) {
                     // Canonicalized path to klyra-runtime for dev to work on windows
                     let path = std::fs::canonicalize(format!("{MANIFEST_DIR}/../runtime"))
