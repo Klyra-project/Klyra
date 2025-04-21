@@ -227,7 +227,7 @@ pub use logger::Logger;
 pub use next::{AxumWasm, NextArgs};
 pub use provisioner_factory::ProvisionerFactory;
 pub use klyra_common::storage_manager::StorageManager;
-pub use klyra_service::{main, CustomError, Error, ResourceBuilder, Service};
+pub use klyra_service::{main, CustomError, Error, Factory, ResourceBuilder, Service};
 
 // Dependencies required by the codegen
 pub use anyhow::Context;

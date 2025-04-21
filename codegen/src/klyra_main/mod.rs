@@ -232,7 +232,7 @@ impl ToTokens for Loader {
             None
         } else {
             Some(parse_quote!(
-                use klyra_runtime::ResourceBuilder;
+                use klyra_runtime::{Factory, ResourceBuilder};
             ))
         };
 
@@ -391,7 +391,7 @@ mod tests {
             ) -> KlyraComplex {
                 use klyra_runtime::Context;
                 use klyra_runtime::tracing_subscriber::prelude::*;
-                use klyra_runtime::ResourceBuilder;
+                use klyra_runtime::{Factory, ResourceBuilder};
 
                 let filter_layer =
                     klyra_runtime::tracing_subscriber::EnvFilter::try_from_default_env()
@@ -506,7 +506,7 @@ mod tests {
             ) -> KlyraComplex {
                 use klyra_runtime::Context;
                 use klyra_runtime::tracing_subscriber::prelude::*;
-                use klyra_runtime::ResourceBuilder;
+                use klyra_runtime::{Factory, ResourceBuilder};
 
                 let filter_layer =
                     klyra_runtime::tracing_subscriber::EnvFilter::try_from_default_env()

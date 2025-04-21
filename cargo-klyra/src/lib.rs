@@ -136,9 +136,9 @@ impl Klyra {
                 println!("First, let's log in to your Klyra account.");
                 self.login(args.login_args.clone()).await?;
                 println!();
-            } else if args.new && args.login_args.api_key.is_some() {
+            } else if args.login_args.api_key.is_some() {
                 self.login(args.login_args.clone()).await?;
-            } else {
+            } else if args.new {
                 bail!("Tried to login to create a Klyra environment, but no API key was set.")
             }
         }
