@@ -88,14 +88,17 @@ commands:
             cat\<< EOF > ~/.cargo/config.toml
             [patch.crates-io]
             klyra-service = { path = "$PWD/service" }
+            klyra-runtime = { path = "$PWD/runtime" }
+
             klyra-aws-rds = { path = "$PWD/resources/aws-rds" }
             klyra-persist = { path = "$PWD/resources/persist" }
-            klyra-runtime = { path = "$PWD/runtime" }
             klyra-shared-db = { path = "$PWD/resources/shared-db" }
             klyra-secrets = { path = "$PWD/resources/secrets" }
             klyra-static-folder = { path = "$PWD/resources/static-folder" }
+
             klyra-axum = { path = "$PWD/services/klyra-axum" }
             klyra-actix-web = { path = "$PWD/services/klyra-actix-web" }
+            klyra-next = { path = "$PWD/services/klyra-next" }
             klyra-poem = { path = "$PWD/services/klyra-poem" }
             klyra-poise = { path = "$PWD/services/klyra-poise" }
             klyra-rocket = { path = "$PWD/services/klyra-rocket" }

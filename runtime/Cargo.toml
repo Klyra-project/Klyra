@@ -41,7 +41,7 @@ wasmtime-wasi = { version = "4.0.0", optional = true }
 
 [dependencies.klyra-common]
 workspace = true
-features = ["claims"]
+features = ["claims", "backend"]
 
 [dependencies.klyra-proto]
 workspace = true

@@ -38,13 +38,29 @@ impl TempCargoHome {
                 write!(
                     config,
                     r#"[patch.crates-io]
-klyra-service = {{ path = "{}" }}
-klyra-aws-rds = {{ path = "{}" }}
-klyra-persist = {{ path = "{}" }}
-klyra-shared-db = {{ path = "{}" }}
-klyra-secrets = {{ path = "{}" }}
-klyra-static-folder = {{ path = "{}" }}"#,
+klyra-service = { path = "{}" }
+klyra-runtime = { path = "{}" }
+
+klyra-aws-rds = { path = "{}" }
+klyra-persist = { path = "{}" }
+klyra-shared-db = { path = "{}" }
+klyra-secrets = { path = "{}" }
+klyra-static-folder = { path = "{}" }
+
+klyra-axum = { path = "{}" }
+klyra-actix-web = { path = "{}" }
+klyra-next = { path = "{}" }
+klyra-poem = { path = "{}" }
+klyra-poise = { path = "{}" }
+klyra-rocket = { path = "{}" }
+klyra-salvo = { path = "{}" }
+klyra-serenity = { path = "{}" }
+klyra-thruster = { path = "{}" }
+klyra-tide = { path = "{}" }
+klyra-tower = { path = "{}" }
+klyra-warp = { path = "{}" }"#,
                     WORKSPACE_ROOT.join("service").display(),
+                    WORKSPACE_ROOT.join("runtime").display(),
                     WORKSPACE_ROOT.join("resources").join("aws-rds").display(),
                     WORKSPACE_ROOT.join("resources").join("persist").display(),
                     WORKSPACE_ROOT.join("resources").join("shared-db").display(),
@@ -52,6 +68,54 @@ klyra-static-folder = {{ path = "{}" }}"#,
                     WORKSPACE_ROOT
                         .join("resources")
                         .join("static-folder")
+                        .display(),
+                    WORKSPACE_ROOT
+                        .join("services")
+                        .join("klyra-axum")
+                        .display(),
+                    WORKSPACE_ROOT
+                        .join("services")
+                        .join("klyra-actix-web")
+                        .display(),
+                    WORKSPACE_ROOT
+                        .join("services")
+                        .join("klyra-next")
+                        .display(),
+                    WORKSPACE_ROOT
+                        .join("services")
+                        .join("klyra-poem")
+                        .display(),
+                    WORKSPACE_ROOT
+                        .join("services")
+                        .join("klyra-poise")
+                        .display(),
+                    WORKSPACE_ROOT
+                        .join("services")
+                        .join("klyra-rocket")
+                        .display(),
+                    WORKSPACE_ROOT
+                        .join("services")
+                        .join("klyra-salvo")
+                        .display(),
+                    WORKSPACE_ROOT
+                        .join("services")
+                        .join("klyra-serenity")
+                        .display(),
+                    WORKSPACE_ROOT
+                        .join("services")
+                        .join("klyra-thruster")
+                        .display(),
+                    WORKSPACE_ROOT
+                        .join("services")
+                        .join("klyra-tide")
+                        .display(),
+                    WORKSPACE_ROOT
+                        .join("services")
+                        .join("klyra-tower")
+                        .display(),
+                    WORKSPACE_ROOT
+                        .join("services")
+                        .join("klyra-warp")
                         .display(),
                 )
                 .unwrap();
