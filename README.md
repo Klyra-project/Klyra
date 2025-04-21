@@ -63,8 +63,8 @@ cargo klyra init --axum hello-world
 And to deploy it, write:
 
 ```bash
-cargo klyra project new
-cargo klyra project status // until the project is "ready"
+cd hello-world
+cargo klyra project new  # Only needed if project has not already been created during init
 cargo klyra deploy
 ```
 
