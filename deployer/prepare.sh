@@ -9,11 +9,32 @@
 mkdir -p $CARGO_HOME; \
 echo '[patch.crates-io]
 klyra-service = { path = "/usr/src/klyra/service" }
+klyra-runtime = { path = "/usr/src/klyra/runtime" }
+
 klyra-aws-rds = { path = "/usr/src/klyra/resources/aws-rds" }
 klyra-persist = { path = "/usr/src/klyra/resources/persist" }
 klyra-shared-db = { path = "/usr/src/klyra/resources/shared-db" }
 klyra-secrets = { path = "/usr/src/klyra/resources/secrets" }
-klyra-static-folder = { path = "/usr/src/klyra/resources/static-folder" }' > $CARGO_HOME/config.toml
+klyra-static-folder = { path = "/usr/src/klyra/resources/static-folder" }
+
+klyra-axum = { path = "/usr/src/klyra/services/klyra-axum" }
+klyra-actix-web = { path = "/usr/src/klyra/services/klyra-actix-web" }
+klyra-next = { path = "/usr/src/klyra/services/klyra-next" }
+klyra-poem = { path = "/usr/src/klyra/services/klyra-poem" }
+klyra-poise = { path = "/usr/src/klyra/services/klyra-poise" }
+klyra-rocket = { path = "/usr/src/klyra/services/klyra-rocket" }
+klyra-salvo = { path = "/usr/src/klyra/services/klyra-salvo" }
+klyra-serenity = { path = "/usr/src/klyra/services/klyra-serenity" }
+klyra-thruster = { path = "/usr/src/klyra/services/klyra-thruster" }
+klyra-tide = { path = "/usr/src/klyra/services/klyra-tide" }
+klyra-tower = { path = "/usr/src/klyra/services/klyra-tower" }
+klyra-warp = { path = "/usr/src/klyra/services/klyra-warp" }' > $CARGO_HOME/config.toml
+
+# Add the wasm32-wasi target
+rustup target add wasm32-wasi
+
+# Install the klyra runtime
+cargo install klyra-runtime --path "/usr/src/klyra/runtime" --bin klyra-next --features next
 
 while getopts "p," o; do
     case $o in

@@ -56,13 +56,26 @@ In order to test local changes to the library crates, you may want to add the be
 ```toml
 [patch.crates-io]
 klyra-service = { path = "[base]/klyra/service" }
-klyra-common = { path = "[base]/klyra/common" }
-klyra-proto = { path = "[base]/klyra/proto" }
+klyra-runtime = { path = "[base]/klyra/runtime" }
+
 klyra-aws-rds = { path = "[base]/klyra/resources/aws-rds" }
 klyra-persist = { path = "[base]/klyra/resources/persist" }
 klyra-shared-db = { path = "[base]/klyra/resources/shared-db" }
 klyra-secrets = { path = "[base]/klyra/resources/secrets" }
 klyra-static-folder = { path = "[base]/klyra/resources/static-folder" }
+
+klyra-axum = { path = "[base]/klyra/services/klyra-axum" }
+klyra-actix-web = { path = "[base]/klyra/services/klyra-actix-web" }
+klyra-next = { path = "[base]/klyra/services/klyra-next" }
+klyra-poem = { path = "[base]/klyra/services/klyra-poem" }
+klyra-poise = { path = "[base]/klyra/services/klyra-poise" }
+klyra-rocket = { path = "[base]/klyra/services/klyra-rocket" }
+klyra-salvo = { path = "[base]/klyra/services/klyra-salvo" }
+klyra-serenity = { path = "[base]/klyra/services/klyra-serenity" }
+klyra-thruster = { path = "[base]/klyra/services/klyra-thruster" }
+klyra-tide = { path = "[base]/klyra/services/klyra-tide" }
+klyra-tower = { path = "[base]/klyra/services/klyra-tower" }
+klyra-warp = { path = "[base]/klyra/services/klyra-warp" }
 ```
 
 Before we can login to our local instance of klyra, we need to create a user.

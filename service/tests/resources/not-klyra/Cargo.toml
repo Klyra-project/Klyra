@@ -3,10 +3,9 @@ name = "not-klyra"
 version = "0.1.0"
 edition = "2021"
 
-[lib]
-crate-type = ["cdylib"]
-
 [workspace]
 
 [dependencies]
-klyra-service = "0.11.0"
+axum = "0.6.0"
+klyra-runtime = { path = "../../../../runtime" }
+klyra-axum = { path = "../../../../services/klyra-axum" }

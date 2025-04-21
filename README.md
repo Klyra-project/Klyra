@@ -4,7 +4,7 @@
 </p>
 <br>
 <p align=center>
-  <a href="https://docs.rs/klyra-service">
+  <a href="https://docs.rs/klyra-runtime">
     <img alt="docs" src="https://img.shields.io/badge/docs-reference-orange">
   </a>
   <a href="https://github.com/klyra-hq/klyra/search?l=rust">
@@ -72,7 +72,7 @@ And that's... it.
 
 ```bash
 $ cargo klyra deploy
-   Finished dev [unoptimized + debuginfo] target(s) in 1m 01s
+   Finished release [optimized + debuginfo] target(s) in 1m 01s
 
         Project:            hello-world
         Deployment Id:      3d08ac34-ad63-41c1-836b-99afdc90af9f
