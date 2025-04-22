@@ -53,6 +53,9 @@ pub enum Command {
     /// manage deployments of a klyra service
     #[command(subcommand)]
     Deployment(DeploymentCommand),
+    /// manage resources of a klyra project
+    #[command(subcommand)]
+    Resource(ResourceCommand),
     /// create a new klyra service
     Init(InitArgs),
     /// generate shell completions
@@ -103,6 +106,12 @@ pub enum DeploymentCommand {
         /// ID of deployment to get status for
         id: Uuid,
     },
+}
+
+#[derive(Parser)]
+pub enum ResourceCommand {
+    /// list all the resources for a project
+    List,
 }
 
 #[derive(Parser)]

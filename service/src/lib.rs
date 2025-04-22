@@ -8,7 +8,7 @@ pub mod error;
 pub use error::{CustomError, Error};
 
 use serde::{de::DeserializeOwned, Serialize};
-pub use klyra_common::{database, resource::Type, DatabaseReadyInfo, SecretStore};
+pub use klyra_common::{database, resource::Type, DatabaseReadyInfo, DbOutput, SecretStore};
 
 #[cfg(feature = "codegen")]
 extern crate klyra_codegen;

@@ -6,8 +6,9 @@ mod provisioner_server;
 
 use cargo::util::ToSemver;
 use indicatif::ProgressBar;
+use klyra_common::models::deployment::get_deployments_table;
 use klyra_common::models::project::{State, IDLE_MINUTES};
-use klyra_common::models::service::get_resources_table;
+use klyra_common::models::resource::get_resources_table;
 use klyra_common::project::ProjectName;
 use klyra_common::resource;
 use klyra_proto::runtime::{self, LoadRequest, StartRequest, SubscribeLogsRequest};
@@ -43,7 +44,7 @@ use tar::Builder;
 use tracing::{error, trace, warn};
 use uuid::Uuid;
 
-use crate::args::{DeploymentCommand, ProjectCommand};
+use crate::args::{DeploymentCommand, ProjectCommand, ResourceCommand};
 use crate::client::Client;
 use crate::provisioner_server::LocalProvisioner;
 
@@ -66,6 +67,7 @@ impl Klyra {
             args.cmd,
             Command::Deploy(..)
                 | Command::Deployment(..)
+                | Command::Resource(..)
                 | Command::Project(..)
                 | Command::Stop
                 | Command::Clean
@@ -102,6 +104,7 @@ impl Klyra {
                     Command::Deployment(DeploymentCommand::Status { id }) => {
                         self.deployment_get(&client, id).await
                     }
+                    Command::Resource(ResourceCommand::List) => self.resources_list(&client).await,
                     Command::Stop => self.stop(&client).await,
                     Command::Clean => self.clean(&client).await,
                     Command::Secrets => self.secrets(&client).await,
@@ -300,7 +303,7 @@ impl Klyra {
             }
 
             progress_bar.set_message(format!("Stopping {}", deployment.id));
-            service = client.get_service_summary(self.ctx.project_name()).await?;
+            service = client.get_service(self.ctx.project_name()).await?;
         }
         progress_bar.finish_and_clear();
 
@@ -326,7 +329,7 @@ impl Klyra {
     }
 
     async fn status(&self, client: &Client) -> Result<()> {
-        let summary = client.get_service_summary(self.ctx.project_name()).await?;
+        let summary = client.get_service(self.ctx.project_name()).await?;
 
         println!("{summary}");
 
@@ -358,7 +361,7 @@ impl Klyra {
         let id = if let Some(id) = id {
             id
         } else {
-            let summary = client.get_service_summary(self.ctx.project_name()).await?;
+            let summary = client.get_service(self.ctx.project_name()).await?;
 
             if let Some(deployment) = summary.deployment {
                 deployment.id
@@ -389,9 +392,10 @@ impl Klyra {
     }
 
     async fn deployments_list(&self, client: &Client) -> Result<()> {
-        let details = client.get_service_details(self.ctx.project_name()).await?;
+        let deployments = client.get_deployments(self.ctx.project_name()).await?;
+        let table = get_deployments_table(&deployments, self.ctx.project_name().as_str());
 
-        println!("{details}");
+        println!("{table}");
 
         Ok(())
     }
@@ -402,6 +406,17 @@ impl Klyra {
             .await?;
 
         println!("{deployment}");
+
+        Ok(())
+    }
+
+    async fn resources_list(&self, client: &Client) -> Result<()> {
+        let resources = client
+            .get_service_resources(self.ctx.project_name())
+            .await?;
+        let table = get_resources_table(&resources);
+
+        println!("{table}");
 
         Ok(())
     }
@@ -673,11 +688,16 @@ impl Klyra {
             }
         }
 
-        let service = client.get_service_summary(self.ctx.project_name()).await?;
+        let service = client.get_service(self.ctx.project_name()).await?;
 
         // A deployment will only exist if there is currently one in the running state
         if let Some(ref new_deployment) = service.deployment {
-            println!("{service}");
+            let resources = client
+                .get_service_resources(self.ctx.project_name())
+                .await?;
+            let resources = get_resources_table(&resources);
+
+            println!("{resources}{service}");
 
             Ok(match new_deployment.state {
                 klyra_common::deployment::State::Crashed => CommandOutcome::DeploymentFailure,
