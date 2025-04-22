@@ -27,9 +27,9 @@
 //! be a binary crate with a few dependencies including `klyra-runtime` and `klyra-axum`.
 //!
 //! ```toml
-//! klyra-runtime = "0.12.0"
+//! klyra-runtime = "0.13.0"
 //! axum = "0.6.10"
-//! klyra-axum = "0.12.0"
+//! klyra-axum = "0.13.0"
 //! tokio = "1.26"
 //! ```
 //!
@@ -113,7 +113,7 @@
 //! `runtime-tokio-native-tls` and `postgres` features inside `Cargo.toml`:
 //!
 //! ```toml
-//! klyra-shared-db = { version = "0.12.0", features = ["postgres"] }
+//! klyra-shared-db = { version = "0.13.0", features = ["postgres"] }
 //! sqlx = { version = "0.6.2", features = ["runtime-tokio-native-tls", "postgres"] }
 //! ```
 //!

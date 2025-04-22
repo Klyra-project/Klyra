@@ -105,7 +105,10 @@ cargo klyra init --rocket my-rocket-app
 This should generate the following dependency in `Cargo.toml`:
 
 ```toml
-klyra-service = { version = "0.12.0", features = ["web-rocket"] }
+rocket = "0.5.0-rc.2"
+klyra-rocket = { version = "0.13.0" }
+klyra-runtime = { version = "0.13.0" }
+tokio = { version = "1.26.0" }
 ```
 
 The following boilerplate code should be generated into `src/lib.rs`:
@@ -119,11 +122,11 @@ fn index() -> &'static str {
     "Hello, world!"
 }
 
-#[klyra_service::main]
-async fn rocket() -> klyra_service::KlyraRocket {
+#[klyra_runtime::main]
+async fn rocket() -> klyra_rocket::KlyraRocket {
     let rocket = rocket::build().mount("/hello", routes![index]);
 
-    Ok(rocket)
+    Ok(rocket.into())
 }
 ```
 
