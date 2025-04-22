@@ -42,15 +42,30 @@ Klyra is built for productivity, reliability and performance:
 
 ## Getting Started
 
-Run the following command to install klyra:
+To run a klyra project, you need to install protoc, check out the [protoc installation guide](https://docs.klyra.rs/support/installing-protoc) in our docs.
 
-```bash
+The `cargo-klyra` CLI can be installed with a pre-built binary or from source with cargo.
+
+Klyra provides pre-built binaries of the `cargo-klyra` CLI with every release
+for most platforms, they can be found on [our GitHub](https://github.com/klyra-hq/klyra/releases/latest).
+
+Our binaries can also be installed using [cargo-binstall](https://github.com/cargo-bins/cargo-binstall),
+which will automatically install the correct target for your system.
+To install with `cargo-binstall`, run:
+
+```sh
+cargo binstall cargo-klyra
+```
+
+Although a bit slower, you can also install directly with cargo:
+
+```sh
 cargo install cargo-klyra
 ```
 
-And then login:
+After installing, log in with:
 
-```bash
+```sh
 cargo klyra login
 ```
 
