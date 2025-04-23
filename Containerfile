@@ -1,6 +1,6 @@
 #syntax=docker/dockerfile-upstream:1.4.0-rc1
 ARG RUSTUP_TOOLCHAIN
-FROM rust:${RUSTUP_TOOLCHAIN}-buster as klyra-build
+FROM docker.io/library/rust:${RUSTUP_TOOLCHAIN}-buster as klyra-build
 RUN apt-get update &&\
     apt-get install -y curl
 
