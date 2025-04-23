@@ -42,7 +42,7 @@ while getopts "p," o; do
             # Make future crates requests to our own mirror
             echo '
 [source.klyra-crates-io-mirror]
-registry = "http://panamax:8080/git/crates.io-index"
+registry = "sparse+http://panamax:8080/index/"
 [source.crates-io]
 replace-with = "klyra-crates-io-mirror"' >> $CARGO_HOME/config.toml
             ;;
