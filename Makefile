@@ -228,9 +228,9 @@ deploy-examples: deploy-examples/rocket/hello-world \
 	echo "All example have been redeployed"
 
 deploy-examples/%:
-	cd examples/$(*); $(klyra-command) project rm || echo -e "\x1B[33m>> Nothing to remove for $*\x1B[39m"
+	cd examples/$(*); $(klyra-command) project stop || echo -e "\x1B[33m>> Nothing to remove for $*\x1B[39m"
 	sleep 5
-	cd examples/$(*); $(klyra-command) project new
+	cd examples/$(*); $(klyra-command) project start
 	sleep 5
 	cd examples/$(*); $(klyra-command) deploy
 
