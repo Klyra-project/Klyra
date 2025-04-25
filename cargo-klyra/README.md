@@ -166,7 +166,7 @@ cargo klyra login --api-key <your-api-key-from-browser>
 To deploy your klyra project to the cloud, run:
 
 ```sh
-cargo klyra project new
+cargo klyra project start
 cargo klyra deploy
 ```
 

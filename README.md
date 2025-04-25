@@ -79,7 +79,7 @@ And to deploy it, write:
 
 ```bash
 cd hello-world
-cargo klyra project new  # Only needed if project has not already been created during init
+cargo klyra project start  # Only needed if project has not already been created during init
 cargo klyra deploy
 ```
 

@@ -84,7 +84,7 @@
 //! now if you did in in the `cargo klyra init` flow.
 //!
 //! ```bash
-//! $ cargo klyra project new
+//! $ cargo klyra project start
 //! ```
 //!
 //! Then, deploy the service with:
