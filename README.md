@@ -17,6 +17,14 @@
     <img alt="discord" src="https://img.shields.io/discord/803236282088161321?logo=discord"/>
   </a>
 </p>
+<p align="center">
+  <a href="https://console.algora.io/org/klyra/bounties?status=open">
+    <img alt="open bounties" src="https://img.shields.io/endpoint?url=https%3A%2F%2Fconsole.algora.io%2Fapi%2Fshields%2Fklyra%2Fbounties%3Fstatus%3Dopen"/>
+  </a>
+  <a href="https://console.algora.io/org/klyra/bounties?status=completed">
+    <img alt="rewarded bounties" src="https://img.shields.io/endpoint?url=https%3A%2F%2Fconsole.algora.io%2Fapi%2Fshields%2Fklyra%2Fbounties%3Fstatus%3Dcompleted"/>
+  </a>
+</p>
 <!-- markdownlint-restore -->
 
 ---
