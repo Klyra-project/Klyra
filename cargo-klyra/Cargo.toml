@@ -64,10 +64,6 @@ features = ["models"]
 [dependencies.klyra-proto]
 workspace = true
 
-[dependencies.klyra-secrets]
-version = "0.14.0"
-path = "../resources/secrets"
-
 [dependencies.klyra-service]
 workspace = true
 features = ["builder"]

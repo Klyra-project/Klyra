@@ -1094,7 +1094,6 @@ dependencies = [
  "serde_json",
  "klyra-common",
  "klyra-proto",
- "klyra-secrets",
  "klyra-service",
  "sqlx",
  "strum",
@@ -5326,15 +5325,6 @@ dependencies = [
  "wasi-common",
  "wasmtime",
  "wasmtime-wasi",
-]
-
-[[package]]
-name = "klyra-secrets"
-version = "0.14.0"
-dependencies = [
- "async-trait",
- "serde",
- "klyra-service",
 ]
 
 [[package]]
