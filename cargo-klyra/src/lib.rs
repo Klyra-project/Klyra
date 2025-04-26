@@ -970,8 +970,7 @@ fn check_version(runtime_path: &Path) -> Result<()> {
     }
 
     // Get runtime version from klyra-runtime cli
-    let runtime_version = std::process::Command::new("cargo")
-        .arg("klyra-runtime")
+    let runtime_version = std::process::Command::new(runtime_path)
         .arg("--version")
         .output()
         .context("failed to check the klyra-runtime version")?
