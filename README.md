@@ -50,8 +50,6 @@ Klyra is built for productivity, reliability and performance:
 
 ## Getting Started
 
-To run a klyra project, you need to install protoc, check out the [protoc installation guide](https://docs.klyra.rs/support/installing-protoc) in our docs.
-
 The `cargo-klyra` CLI can be installed with a pre-built binary or from source with cargo.
 
 Klyra provides pre-built binaries of the `cargo-klyra` CLI with every release
