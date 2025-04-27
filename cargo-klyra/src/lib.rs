@@ -526,7 +526,7 @@ impl Klyra {
                         // If the version of cargo-klyra is different from klyra-runtime,
                         // or it isn't installed, try to install klyra-runtime from crates.io.
                         if let Err(err) = check_version(&runtime_path) {
-                            warn!("{}", err);
+                            warn!(error = ?err, "failed to check installed runtime version");
 
                             trace!("installing klyra-runtime");
                             std::process::Command::new("cargo")
@@ -1002,7 +1002,8 @@ fn check_version(runtime_path: &Path) -> Result<()> {
             .expect("klyra-runtime version should be valid utf8")
             .split_once(' ')
             .expect("klyra-runtime version should be in the `name version` format")
-            .1,
+            .1
+            .trim(),
     )
     .context("failed to convert runtime version to semver")?
     .to_string();
