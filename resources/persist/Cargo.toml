@@ -1,6 +1,6 @@
 [package]
 name = "klyra-persist"
-version = "0.14.0"
+version = "0.15.0"
 edition = "2021"
 license = "Apache-2.0"
 description = "Plugin for persist objects"
@@ -10,6 +10,6 @@ keywords = ["klyra-service", "persistence"]
 async-trait = "0.1.56"
 bincode = "1.2.1"
 serde = { version = "1.0.0", features = ["derive"] }
-klyra-common = { path = "../../common", version = "0.14.0", default-features = false }
-klyra-service = { path = "../../service", version = "0.14.0", default-features = false }
+klyra-common = { path = "../../common", version = "0.15.0", default-features = false }
+klyra-service = { path = "../../service", version = "0.15.0", default-features = false }
 thiserror = "1.0.32"
