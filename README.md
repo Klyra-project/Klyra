@@ -81,6 +81,10 @@ To initialize your project, simply write:
 cargo klyra init --axum hello-world
 ```
 
+> Note: if you use [sparse registries](https://blog.rust-lang.org/inside-rust/2023/01/30/cargo-sparse-protocol.html) (which
+> is enabled by default on `nightly`), you may encounter [this bug](https://github.com/klyra-hq/klyra/issues/821) when 
+> running the `init` command. To resolve this, see [this comment](https://github.com/klyra-hq/klyra/issues/821#issuecomment-1525317860).
+
 And to deploy it, write:
 
 ```bash
