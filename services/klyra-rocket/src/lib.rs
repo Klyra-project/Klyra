@@ -19,9 +19,16 @@
 //! # }
 //! ```
 use std::net::SocketAddr;
+use rocket::http::Status;
+use rocket::response::status;
 
 /// A wrapper type for [rocket::Rocket<rocket::Build>] so we can implement [klyra_runtime::Service] for it.
 pub struct RocketService(pub rocket::Rocket<rocket::Build>);
+
+#[rocket::get("/healthz")]
+fn health_check() -> status::Custom<()> {
+    status::Custom(Status::Ok, ())
+}
 
 #[klyra_runtime::async_trait]
 impl klyra_runtime::Service for RocketService {
@@ -45,6 +52,7 @@ impl klyra_runtime::Service for RocketService {
         let _rocket = self
             .0
             .configure(config)
+            .mount("/", rocket::routes![health_check])
             .launch()
             .await
             .map_err(klyra_runtime::CustomError::new)?;
