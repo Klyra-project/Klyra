@@ -93,13 +93,15 @@ Before we can login to our local instance of klyra, we need to create a user.
 The following command inserts a user into the `auth` state with admin privileges:
 
 ```bash
-docker compose --file docker-compose.rendered.yml --project-name klyra-dev exec auth /usr/local/bin/service --state=/var/lib/klyra-auth init --name admin --key test-key
+# the --key needs to be 16 alphanumeric characters
+docker compose --file docker-compose.rendered.yml --project-name klyra-dev exec auth /usr/local/bin/service --state=/var/lib/klyra-auth init --name admin --key dh9z58jttoes3qvt
 ```
 
 Login to klyra service in a new terminal window from the root of the klyra directory:
 
 ```bash
-cargo run --bin cargo-klyra -- login --api-key "test-key"
+# the --api-kei should be the same one you inserted in the auth state
+cargo run --bin cargo-klyra -- login --api-key "dh9z58jttoes3qvt"
 ```
 
 The [klyra examples](https://github.com/klyra-hq/examples) are linked to the main repo as a [git submodule](https://git-scm.com/book/en/v2/Git-Tools-Submodules), to initialize it run the following commands:
