@@ -38,27 +38,27 @@ impl TempCargoHome {
                 write!(
                     config,
                     r#"[patch.crates-io]
-klyra-service = { path = "{}" }
-klyra-runtime = { path = "{}" }
+klyra-service = {{ path = "{}" }}
+klyra-runtime = {{ path = "{}" }}
 
-klyra-aws-rds = { path = "{}" }
-klyra-persist = { path = "{}" }
-klyra-shared-db = { path = "{}" }
-klyra-secrets = { path = "{}" }
-klyra-static-folder = { path = "{}" }
+klyra-aws-rds = {{ path = "{}" }}
+klyra-persist = {{ path = "{}" }}
+klyra-shared-db = {{ path = "{}" }}
+klyra-secrets = {{ path = "{}" }}
+klyra-static-folder = {{ path = "{}" }}
 
-klyra-axum = { path = "{}" }
-klyra-actix-web = { path = "{}" }
-klyra-next = { path = "{}" }
-klyra-poem = { path = "{}" }
-klyra-poise = { path = "{}" }
-klyra-rocket = { path = "{}" }
-klyra-salvo = { path = "{}" }
-klyra-serenity = { path = "{}" }
-klyra-thruster = { path = "{}" }
-klyra-tide = { path = "{}" }
-klyra-tower = { path = "{}" }
-klyra-warp = { path = "{}" }"#,
+klyra-axum = {{ path = "{}" }}
+klyra-actix-web = {{ path = "{}" }}
+klyra-next = {{ path = "{}" }}
+klyra-poem = {{ path = "{}" }}
+klyra-poise = {{ path = "{}" }}
+klyra-rocket = {{ path = "{}" }}
+klyra-salvo = {{ path = "{}" }}
+klyra-serenity = {{ path = "{}" }}
+klyra-thruster = {{ path = "{}" }}
+klyra-tide = {{ path = "{}" }}
+klyra-tower = {{ path = "{}" }}
+klyra-warp = {{ path = "{}" }}"#,
                     WORKSPACE_ROOT.join("service").display(),
                     WORKSPACE_ROOT.join("runtime").display(),
                     WORKSPACE_ROOT.join("resources").join("aws-rds").display(),
@@ -181,7 +181,7 @@ CARGO_HOME: {}
         let admin_key = if let Ok(key) = env::var("klyra_API_KEY") {
             key
         } else {
-            "e2e-test-key".to_string()
+            "dh9z58jttoes3qvt".to_string()
         };
 
         _ = Command::new(DOCKER.as_os_str())
@@ -192,9 +192,9 @@ CARGO_HOME: {}
                 "--project-name",
                 "klyra-dev",
                 "exec",
-                "gateway",
+                "auth",
                 "/usr/local/bin/service",
-                "--state=/var/lib/klyra",
+                "--state=/var/lib/klyra-auth",
                 "init",
                 "--name",
                 "test",
@@ -415,7 +415,7 @@ impl Services {
             let mut run = Command::new(WORKSPACE_ROOT.join("target/debug/cargo-klyra"));
 
             if env::var("klyra_API_KEY").is_err() {
-                run.env("klyra_API_KEY", "e2e-test-key");
+                run.env("klyra_API_KEY", "dh9z58jttoes3qvt");
             }
 
             run.env("CARGO_HOME", CARGO_HOME.path());
@@ -444,7 +444,7 @@ impl Services {
         let mut run = Command::new(WORKSPACE_ROOT.join("target/debug/cargo-klyra"));
 
         if env::var("klyra_API_KEY").is_err() {
-            run.env("klyra_API_KEY", "e2e-test-key");
+            run.env("klyra_API_KEY", "dh9z58jttoes3qvt");
         }
 
         run.env("CARGO_HOME", CARGO_HOME.path());
@@ -455,7 +455,7 @@ impl Services {
 
     /// Starts a project and deploys a service for the example in `self.example_path`
     pub fn deploy(&self) {
-        self.run_client(["project", "new"])
+        self.run_client(["project", "start"])
             .wait()
             .ensure_success("failed to run deploy");
 
@@ -484,6 +484,6 @@ impl Services {
 impl Drop for Services {
     fn drop(&mut self) {
         // Initiate project destruction on test completion
-        _ = self.run_client(["project", "rm"]).wait();
+        _ = self.run_client(["project", "stop"]).wait();
     }
 }
