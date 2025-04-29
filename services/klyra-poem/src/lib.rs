@@ -21,14 +21,23 @@
 /// A wrapper type for [poem::Endpoint] so we can implement [klyra_runtime::Service] for it.
 pub struct PoemService<T>(pub T);
 
+#[poem::handler]
+fn healthz() -> poem::http::StatusCode {
+    poem::http::StatusCode::OK
+}
+
 #[klyra_runtime::async_trait]
 impl<T> klyra_runtime::Service for PoemService<T>
 where
     T: poem::Endpoint + Send + 'static,
 {
     async fn bind(mut self, addr: std::net::SocketAddr) -> Result<(), klyra_runtime::Error> {
+        let app = poem::Route::new()
+            .at("/healthz", poem::get(healthz))
+            .nest("/", self.0);
+
         poem::Server::new(poem::listener::TcpListener::bind(addr))
-            .run(self.0)
+            .run(app)
             .await
             .map_err(klyra_runtime::CustomError::new)?;
 
