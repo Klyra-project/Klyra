@@ -103,7 +103,7 @@ impl KlyraInit for KlyraInitActixWeb {
         use actix_web::{get, web::ServiceConfig};
         use klyra_actix_web::KlyraActixWeb;
 
-        #[get("/hello")]
+        #[get("/")]
         async fn hello_world() -> &'static str {
             "Hello World!"
         }
@@ -168,7 +168,7 @@ impl KlyraInit for KlyraInitAxum {
 
         #[klyra_runtime::main]
         async fn axum() -> klyra_axum::KlyraAxum {
-            let router = Router::new().route("/hello", get(hello_world));
+            let router = Router::new().route("/", get(hello_world));
 
             Ok(router.into())
         }"#}
@@ -225,7 +225,7 @@ impl KlyraInit for KlyraInitRocket {
 
         #[klyra_runtime::main]
         async fn rocket() -> klyra_rocket::KlyraRocket {
-            let rocket = rocket::build().mount("/hello", routes![index]);
+            let rocket = rocket::build().mount("/", routes![index]);
 
             Ok(rocket.into())
         }"#}
@@ -277,7 +277,7 @@ impl KlyraInit for KlyraInitTide {
             let mut app = tide::new();
             app.with(tide::log::LogMiddleware::new());
 
-            app.at("/hello").get(|_| async { Ok("Hello, world!") });
+            app.at("/").get(|_| async { Ok("Hello, world!") });
 
             Ok(app.into())
         }"#}
@@ -334,7 +334,7 @@ impl KlyraInit for KlyraInitPoem {
 
         #[klyra_runtime::main]
         async fn poem() -> KlyraPoem<impl poem::Endpoint> {
-            let app = Route::new().at("/hello", get(hello_world));
+            let app = Route::new().at("/", get(hello_world));
 
             Ok(app.into())
         }"#}
@@ -841,7 +841,7 @@ impl KlyraInit for KlyraInitThruster {
         #[klyra_runtime::main]
         async fn thruster() -> klyra_thruster::KlyraThruster<HyperServer<Ctx, ()>> {
             let server = HyperServer::new(
-                App::<HyperRequest, Ctx, ()>::create(generate_context, ()).get("/hello", m![hello]),
+                App::<HyperRequest, Ctx, ()>::create(generate_context, ()).get("/", m![hello]),
             );
             
             Ok(server.into())

@@ -124,7 +124,7 @@ fn index() -> &'static str {
 
 #[klyra_runtime::main]
 async fn rocket() -> klyra_rocket::KlyraRocket {
-    let rocket = rocket::build().mount("/hello", routes![index]);
+    let rocket = rocket::build().mount("/", routes![index]);
 
     Ok(rocket.into())
 }
@@ -142,7 +142,7 @@ cargo klyra run
 This will compile your klyra project and start it on the default port `8000`. Test it by:
 
 ```sh
-$ curl http://localhost:8000/hello
+$ curl http://localhost:8000
 Hello, world!
 ```
 
@@ -173,7 +173,7 @@ cargo klyra deploy
 Your service will immediately be available at `{crate_name}.klyraapp.rs`. For instance:
 
 ```sh
-$ curl https://my-rocket-app.klyraapp.rs/hello
+$ curl https://my-rocket-app.klyraapp.rs
 Hello, world!
 ```
 
