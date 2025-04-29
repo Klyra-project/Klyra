@@ -15,8 +15,8 @@ The folder obtained will be consistent between deployments, but will not be in t
 
 | Framework | Link                                                                                                        |
 |-----------|-------------------------------------------------------------------------------------------------------------|
-| Axum      | [axum websocket example](https://github.com/klyra-hq/examples/tree/main/axum/websocket)                   |
-| Rocket    | [rocket dynamic template example](https://github.com/klyra-hq/examples/tree/main/rocket/dyn_template_hbs) |
+| Axum      | [axum websocket example](https://github.com/klyra-hq/klyra-examples/tree/main/axum/websocket)                   |
+| Rocket    | [rocket dynamic template example](https://github.com/klyra-hq/klyra-examples/tree/main/rocket/dyn_template_hbs) |
 
 
 ``` rust

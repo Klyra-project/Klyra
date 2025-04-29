@@ -104,7 +104,7 @@ Login to klyra service in a new terminal window from the root of the klyra direc
 cargo run --bin cargo-klyra -- login --api-key "dh9z58jttoes3qvt"
 ```
 
-The [klyra examples](https://github.com/klyra-hq/examples) are linked to the main repo as a [git submodule](https://git-scm.com/book/en/v2/Git-Tools-Submodules), to initialize it run the following commands:
+The [klyra examples](https://github.com/klyra-hq/klyra-examples) are linked to the main repo as a [git submodule](https://git-scm.com/book/en/v2/Git-Tools-Submodules), to initialize it run the following commands:
 
 ```bash
 git submodule init

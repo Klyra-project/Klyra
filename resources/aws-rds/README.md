@@ -16,7 +16,7 @@ Add `klyra-aws-rds` to the dependencies for your service. Every engine is behind
 | MySql    | mysql        | klyra_aws_rds::MySql    |
 | MariaDB  | mariadb      | klyra_aws_rds::MariaDB  |
 
-An example using the Tide framework can be found on [GitHub](https://github.com/klyra-hq/examples/tree/main/tide/postgres)
+An example using the Tide framework can be found on [GitHub](https://github.com/klyra-hq/klyra-examples/tree/main/tide/postgres)
 
 ### Options
 
