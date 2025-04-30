@@ -4,12 +4,12 @@ This plugin manages databases that are shared with other services on [klyra](htt
 
 ## Usage
 
-Add `klyra-shared-db` to the dependencies for your service. Every type of shareable database is behind the following feature flag and attribute path
+Add `klyra-shared-db` to the dependencies for your service. Every type of shareable database is behind the following feature flag and attribute path (`*-rustls` uses rustls for TLS, the default uses native-tls).
 
-| Engine   | Feature flag | Attribute path              |
-|----------|--------------|-----------------------------|
-| Postgres | postgres     | klyra_shared_db::Postgres |
-| MongoDB  | mongodb      | klyra_shared_db::MongoDb  |
+| Engine   | Feature flags                  | Attribute path              |
+|----------|--------------------------------|-----------------------------|
+| Postgres | `postgres` / `postgres-rustls` | klyra_shared_db::Postgres |
+| MongoDB  | `mongodb`                      | klyra_shared_db::MongoDb  |
 
 An example using the Rocket framework can be found on [GitHub](https://github.com/klyra-hq/klyra-examples/tree/main/rocket/postgres)
 
