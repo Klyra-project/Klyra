@@ -41,6 +41,23 @@
 cargo install cargo-klyra
 ```
 
+### Distro Packages
+
+<details>
+  <summary>Packaging status</summary>
+
+[![Packaging status](https://repology.org/badge/vertical-allrepos/cargo-klyra.svg)](https://repology.org/project/cargo-klyra/versions)
+
+</details>
+
+#### Arch Linux
+
+`cargo-klyra` can be installed from the [community repository](https://archlinux.org/packages/community/x86_64/cargo-klyra) using [pacman](https://wiki.archlinux.org/title/Pacman):
+
+```sh
+pacman -S cargo-klyra
+```
+
 ---
 
 <!-- markdownlint-disable-next-line -->
