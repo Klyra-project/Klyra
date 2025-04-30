@@ -142,7 +142,7 @@ fn check_return_type(signature: Signature) -> Option<TypePath> {
                 signature,
                 "klyra_runtime::main functions need to return a service";
                 hint = "See the docs for services with first class support";
-                doc = "https://docs.rs/klyra-service/latest/klyra_runtime/attr.main.html#klyra-supported-services"
+                doc = "https://docs.rs/klyra-service/latest/klyra_service/attr.main.html#klyra-supported-services"
             );
             None
         }
@@ -153,7 +153,7 @@ fn check_return_type(signature: Signature) -> Option<TypePath> {
                     r#type,
                     "klyra_runtime::main functions need to return a first class service or 'Result<impl Service, klyra_runtime::Error>";
                     hint = "See the docs for services with first class support";
-                    doc = "https://docs.rs/klyra-service/latest/klyra_runtime/attr.main.html#klyra-supported-services"
+                    doc = "https://docs.rs/klyra-service/latest/klyra_service/attr.main.html#klyra-supported-services"
                 );
                 None
             }

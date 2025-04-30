@@ -1,7 +1,7 @@
 error: klyra_runtime::main functions need to return a service
 
          = help: See the docs for services with first class support
-         = note: https://docs.rs/klyra-service/latest/klyra_runtime/attr.main.html#klyra-supported-services
+         = note: https://docs.rs/klyra-service/latest/klyra_service/attr.main.html#klyra-supported-services
 
  --> tests/ui/main/missing-return.rs:2:1
   |
