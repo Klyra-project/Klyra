@@ -29,7 +29,7 @@
 
 ---
 
-# klyra
+# Klyra
 
 [Klyra](https://www.klyra.rs/) is a Rust-native cloud development platform that lets you deploy your Rust apps for free.
 
@@ -46,7 +46,7 @@ Klyra is built for productivity, reliability and performance:
 
 🙋‍♂️ If you have any questions, join our [Discord](https://discord.gg/klyra) server.
 
-⭐ If you find klyra interesting, and would like to stay up-to-date, consider starring this repo to help spread the word.
+⭐ If you find Klyra interesting, and would like to stay up-to-date, consider starring this repo to help spread the word.
 
 ![star](https://i.imgur.com/kLWmThm.gif)
 
@@ -118,17 +118,17 @@ Feel free to build on-top of the generated `hello-world` boilerplate or take a s
 
 For the full documentation, visit [our docs](https://docs.klyra.rs).
 
-## Contributing to klyra
+## Contributing to Klyra
 
 Contributing to Klyra is highly encouraged!
 
-If you want to setup a local environment to test code changes to core `klyra` packages, or want to contribute to the project check out [our docs](https://docs.klyra.rs/community/contribute).
+If you want to setup a local environment to test code changes to core `Klyra` packages, or want to contribute to the project check out [our docs](https://docs.klyra.rs/community/contribute).
 
 Even if you are not planning to submit any code; joining our [Discord server](https://discord.gg/klyra) and providing feedback helps us a lot!
 
 ## Roadmap
 
-For a comprehensive view of the klyra roadmap check out this [project board](https://github.com/orgs/klyra-hq/projects/4).
+For a comprehensive view of the Klyra roadmap check out this [project board](https://github.com/orgs/klyra-hq/projects/4).
 
 If you have any requests or suggestions feel free to open an issue.
 
