@@ -215,6 +215,7 @@
 //! You can also [open an issue or a discussion on GitHub](https://github.com/klyra-hq/klyra).
 //!
 mod alpha;
+mod args;
 mod logger;
 #[cfg(feature = "next")]
 mod next;
