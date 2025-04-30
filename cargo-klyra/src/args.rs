@@ -124,7 +124,7 @@ pub enum Command {
     /// Login to the klyra platform
     Login(LoginArgs),
     /// Log out of the klyra platform
-    Logout,
+    Logout(LogoutArgs),
     /// Generate shell completions
     Generate {
         /// Which shell
@@ -188,6 +188,12 @@ pub struct LoginArgs {
     pub api_key: Option<String>,
 }
 
+#[derive(Parser, Clone, Debug)]
+pub struct LogoutArgs {
+    /// Reset the API key before logging out
+    #[arg(long)]
+    pub reset_api_key: bool,
+}
 #[derive(Parser)]
 pub struct DeployArgs {
     /// Allow deployment with uncommited files
