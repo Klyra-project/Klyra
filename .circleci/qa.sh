@@ -7,7 +7,7 @@ mkdir -p /tmp/qa-$1
 cd /tmp/qa-$1
 
 # Init app
-cargo klyra init --name qa-$1 --axum
+cargo klyra init --name qa-$1 --template axum
 
 # Start locally
 cargo klyra run &
