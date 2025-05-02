@@ -52,6 +52,7 @@ COPY --from=cache /build/ /usr/src/klyra/
 FROM klyra-common
 ARG folder
 ARG prepare_args
+ARG PROD
 COPY ${folder}/prepare.sh /prepare.sh
 RUN /prepare.sh "${prepare_args}"
 ARG CARGO_PROFILE
