@@ -601,6 +601,7 @@ jobs:
     resource_class: medium
     steps:
       - checkout
+      - install-protoc
       - run:
           name: Crate publishing in order
           command: |
@@ -860,7 +861,7 @@ workflows:
                   "services/klyra-rocket",
                   "services/klyra-salvo",
                   "services/klyra-serenity",
-                  "services/klyra-thruset",
+                  "services/klyra-thruster",
                   "services/klyra-tide",
                   "services/klyra-tower",
                   "services/klyra-warp"
@@ -868,6 +869,7 @@ workflows:
           name: publish-<< matrix.path >>
           requires:
             - publish-cargo-klyra
+            - publish-klyra-runtime
           filters:
             branches:
               only: production
