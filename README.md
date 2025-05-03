@@ -13,7 +13,7 @@
   <a href="https://circleci.com/gh/klyra-hq/klyra/">
     <img alt="build status" src="https://circleci.com/gh/klyra-hq/klyra.svg?style=shield"/>
   </a>
-  <a href="https://discord.gg/H33rRDTm3p">
+  <a href="https://discord.gg/klyra">
     <img alt="discord" src="https://img.shields.io/discord/803236282088161321?logo=discord"/>
   </a>
 </p>

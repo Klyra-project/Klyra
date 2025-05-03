@@ -791,11 +791,6 @@ impl Klyra {
             }
         }
 
-        println!(
-            "Run `cargo klyra project start` to create a project environment on Klyra.\n\
-             Run `cargo klyra deploy` to deploy your Klyra service."
-        );
-
         // If prior signal received is set to true we must stop all the existing runtimes and
         // exit the `local_run`.
         if signal_received {
@@ -855,6 +850,11 @@ impl Klyra {
                 }
             };
         }
+
+        println!(
+            "Run `cargo klyra project start` to create a project environment on Klyra.\n\
+             Run `cargo klyra deploy` to deploy your Klyra service."
+        );
 
         Ok(())
     }
