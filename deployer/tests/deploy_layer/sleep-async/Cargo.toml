@@ -7,5 +7,5 @@ edition = "2021"
 [workspace]
 
 [dependencies]
-klyra-runtime = "0.17.0"
+klyra-runtime = "0.18.0"
 tokio = { version = "1.0", features = ["time"]}
