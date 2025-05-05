@@ -1,13 +1,14 @@
-use std::fs::{read_to_string, File};
-use std::io::Write;
-use std::path::{Path, PathBuf};
+use std::{
+    fs::{read_to_string, OpenOptions},
+    io::{ErrorKind, Write},
+    path::{Path, PathBuf},
+};
 
-use anyhow::{bail, Result};
-use cargo_edit::{find, get_latest_dependency, registry_url};
+use anyhow::{anyhow, Context, Result};
+use cargo_generate::{GenerateArgs, TemplatePath, Vcs};
 use indoc::indoc;
 use klyra_common::project::ProjectName;
-use toml_edit::{value, Array, Document, Table};
-use url::Url;
+use toml_edit::{value, Document};
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, strum::Display, strum::EnumIter)]
 #[strum(serialize_all = "kebab-case")]
@@ -50,1465 +51,234 @@ impl Template {
 }
 
 pub trait KlyraInit {
-    fn set_cargo_dependencies(
-        &self,
-        dependencies: &mut Table,
-        manifest_path: &Path,
-        url: &Url,
-        get_dependency_version_fn: GetDependencyVersionFn,
-    );
-    fn get_boilerplate_code_for_framework(&self) -> &'static str;
+    fn get_repo_url(&self) -> &'static str;
+    fn get_sub_path(&self) -> Option<&'static str>;
 }
 
 pub struct KlyraInitActixWeb;
 
 impl KlyraInit for KlyraInitActixWeb {
-    fn set_cargo_dependencies(
-        &self,
-        dependencies: &mut Table,
-        manifest_path: &Path,
-        url: &Url,
-        get_dependency_version_fn: GetDependencyVersionFn,
-    ) {
-        set_key_value_dependency_version(
-            "actix-web",
-            dependencies,
-            manifest_path,
-            url,
-            true,
-            get_dependency_version_fn,
-        );
-
-        set_key_value_dependency_version(
-            "klyra-actix-web",
-            dependencies,
-            manifest_path,
-            url,
-            true,
-            get_dependency_version_fn,
-        );
-
-        set_key_value_dependency_version(
-            "tokio",
-            dependencies,
-            manifest_path,
-            url,
-            true,
-            get_dependency_version_fn,
-        );
+    fn get_repo_url(&self) -> &'static str {
+        "http://github.com/klyra-hq/klyra-examples.git"
     }
 
-    fn get_boilerplate_code_for_framework(&self) -> &'static str {
-        indoc! {r#"
-        use actix_web::{get, web::ServiceConfig};
-        use klyra_actix_web::KlyraActixWeb;
-
-        #[get("/")]
-        async fn hello_world() -> &'static str {
-            "Hello World!"
-        }
-
-        #[klyra_runtime::main]
-        async fn actix_web(
-        ) -> KlyraActixWeb<impl FnOnce(&mut ServiceConfig) + Send + Clone + 'static> {
-            let config = move |cfg: &mut ServiceConfig| {
-                cfg.service(hello_world);
-            };
-
-            Ok(config.into())
-        }"#}
+    fn get_sub_path(&self) -> Option<&'static str> {
+        Some("actix-web/hello-world")
     }
 }
 
 pub struct KlyraInitAxum;
 
 impl KlyraInit for KlyraInitAxum {
-    fn set_cargo_dependencies(
-        &self,
-        dependencies: &mut Table,
-        manifest_path: &Path,
-        url: &Url,
-        get_dependency_version_fn: GetDependencyVersionFn,
-    ) {
-        set_key_value_dependency_version(
-            "axum",
-            dependencies,
-            manifest_path,
-            url,
-            false,
-            get_dependency_version_fn,
-        );
-
-        set_key_value_dependency_version(
-            "klyra-axum",
-            dependencies,
-            manifest_path,
-            url,
-            true,
-            get_dependency_version_fn,
-        );
-
-        set_key_value_dependency_version(
-            "tokio",
-            dependencies,
-            manifest_path,
-            url,
-            true,
-            get_dependency_version_fn,
-        );
+    fn get_repo_url(&self) -> &'static str {
+        "http://github.com/klyra-hq/klyra-examples.git"
     }
 
-    fn get_boilerplate_code_for_framework(&self) -> &'static str {
-        indoc! {r#"
-        use axum::{routing::get, Router};
-
-        async fn hello_world() -> &'static str {
-            "Hello, world!"
-        }
-
-        #[klyra_runtime::main]
-        async fn axum() -> klyra_axum::KlyraAxum {
-            let router = Router::new().route("/", get(hello_world));
-
-            Ok(router.into())
-        }"#}
+    fn get_sub_path(&self) -> Option<&'static str> {
+        Some("axum/hello-world")
     }
 }
 
 pub struct KlyraInitRocket;
 
 impl KlyraInit for KlyraInitRocket {
-    fn set_cargo_dependencies(
-        &self,
-        dependencies: &mut Table,
-        manifest_path: &Path,
-        url: &Url,
-        get_dependency_version_fn: GetDependencyVersionFn,
-    ) {
-        set_key_value_dependency_version(
-            "rocket",
-            dependencies,
-            manifest_path,
-            url,
-            true,
-            get_dependency_version_fn,
-        );
-
-        set_key_value_dependency_version(
-            "klyra-rocket",
-            dependencies,
-            manifest_path,
-            url,
-            true,
-            get_dependency_version_fn,
-        );
-
-        set_key_value_dependency_version(
-            "tokio",
-            dependencies,
-            manifest_path,
-            url,
-            true,
-            get_dependency_version_fn,
-        );
+    fn get_repo_url(&self) -> &'static str {
+        "http://github.com/klyra-hq/klyra-examples.git"
     }
 
-    fn get_boilerplate_code_for_framework(&self) -> &'static str {
-        indoc! {r#"
-        #[macro_use]
-        extern crate rocket;
-
-        #[get("/")]
-        fn index() -> &'static str {
-            "Hello, world!"
-        }
-
-        #[klyra_runtime::main]
-        async fn rocket() -> klyra_rocket::KlyraRocket {
-            let rocket = rocket::build().mount("/", routes![index]);
-
-            Ok(rocket.into())
-        }"#}
+    fn get_sub_path(&self) -> Option<&'static str> {
+        Some("rocket/hello-world")
     }
 }
 
 pub struct KlyraInitTide;
 
 impl KlyraInit for KlyraInitTide {
-    fn set_cargo_dependencies(
-        &self,
-        dependencies: &mut Table,
-        manifest_path: &Path,
-        url: &Url,
-        get_dependency_version_fn: GetDependencyVersionFn,
-    ) {
-        set_key_value_dependency_version(
-            "klyra-tide",
-            dependencies,
-            manifest_path,
-            url,
-            true,
-            get_dependency_version_fn,
-        );
-
-        set_key_value_dependency_version(
-            "tokio",
-            dependencies,
-            manifest_path,
-            url,
-            true,
-            get_dependency_version_fn,
-        );
-
-        set_key_value_dependency_version(
-            "tide",
-            dependencies,
-            manifest_path,
-            url,
-            false,
-            get_dependency_version_fn,
-        );
+    fn get_repo_url(&self) -> &'static str {
+        "http://github.com/klyra-hq/klyra-examples.git"
     }
 
-    fn get_boilerplate_code_for_framework(&self) -> &'static str {
-        indoc! {r#"
-        #[klyra_runtime::main]
-        async fn tide() -> klyra_tide::KlyraTide<()> {
-            let mut app = tide::new();
-            app.with(tide::log::LogMiddleware::new());
-
-            app.at("/").get(|_| async { Ok("Hello, world!") });
-
-            Ok(app.into())
-        }"#}
+    fn get_sub_path(&self) -> Option<&'static str> {
+        Some("tide/hello-world")
     }
 }
 
 pub struct KlyraInitPoem;
 
 impl KlyraInit for KlyraInitPoem {
-    fn set_cargo_dependencies(
-        &self,
-        dependencies: &mut Table,
-        manifest_path: &Path,
-        url: &Url,
-        get_dependency_version_fn: GetDependencyVersionFn,
-    ) {
-        set_key_value_dependency_version(
-            "poem",
-            dependencies,
-            manifest_path,
-            url,
-            false,
-            get_dependency_version_fn,
-        );
-
-        set_key_value_dependency_version(
-            "klyra-poem",
-            dependencies,
-            manifest_path,
-            url,
-            true,
-            get_dependency_version_fn,
-        );
-
-        set_key_value_dependency_version(
-            "tokio",
-            dependencies,
-            manifest_path,
-            url,
-            true,
-            get_dependency_version_fn,
-        );
+    fn get_repo_url(&self) -> &'static str {
+        "http://github.com/klyra-hq/klyra-examples.git"
     }
 
-    fn get_boilerplate_code_for_framework(&self) -> &'static str {
-        indoc! {r#"
-        use poem::{get, handler, Route};
-        use klyra_poem::KlyraPoem;
-
-        #[handler]
-        fn hello_world() -> &'static str {
-            "Hello, world!"
-        }
-
-        #[klyra_runtime::main]
-        async fn poem() -> KlyraPoem<impl poem::Endpoint> {
-            let app = Route::new().at("/", get(hello_world));
-
-            Ok(app.into())
-        }"#}
+    fn get_sub_path(&self) -> Option<&'static str> {
+        Some("poem/hello-world")
     }
 }
 
 pub struct KlyraInitSalvo;
 
 impl KlyraInit for KlyraInitSalvo {
-    fn set_cargo_dependencies(
-        &self,
-        dependencies: &mut Table,
-        manifest_path: &Path,
-        url: &Url,
-        get_dependency_version_fn: GetDependencyVersionFn,
-    ) {
-        set_key_value_dependency_version(
-            "salvo",
-            dependencies,
-            manifest_path,
-            url,
-            false,
-            get_dependency_version_fn,
-        );
-
-        set_key_value_dependency_version(
-            "klyra-salvo",
-            dependencies,
-            manifest_path,
-            url,
-            true,
-            get_dependency_version_fn,
-        );
-
-        set_key_value_dependency_version(
-            "tokio",
-            dependencies,
-            manifest_path,
-            url,
-            true,
-            get_dependency_version_fn,
-        );
+    fn get_repo_url(&self) -> &'static str {
+        "http://github.com/klyra-hq/klyra-examples.git"
     }
 
-    fn get_boilerplate_code_for_framework(&self) -> &'static str {
-        indoc! {r#"
-        use salvo::prelude::*;
-
-        #[handler]
-        async fn hello_world(res: &mut Response) {
-            res.render(Text::Plain("Hello, world!"));
-        }
-
-        #[klyra_runtime::main]
-        async fn salvo() -> klyra_salvo::KlyraSalvo {
-            let router = Router::with_path("hello").get(hello_world);
-
-            Ok(router.into())
-        }"#}
+    fn get_sub_path(&self) -> Option<&'static str> {
+        Some("salvo/hello-world")
     }
 }
 
 pub struct KlyraInitSerenity;
 
 impl KlyraInit for KlyraInitSerenity {
-    fn set_cargo_dependencies(
-        &self,
-        dependencies: &mut Table,
-        manifest_path: &Path,
-        url: &Url,
-        get_dependency_version_fn: GetDependencyVersionFn,
-    ) {
-        set_key_value_dependency_version(
-            "anyhow",
-            dependencies,
-            manifest_path,
-            url,
-            false,
-            get_dependency_version_fn,
-        );
-
-        set_inline_table_dependency_version(
-            "serenity",
-            dependencies,
-            manifest_path,
-            url,
-            false,
-            get_dependency_version_fn,
-        );
-
-        dependencies["serenity"]["default-features"] = value(false);
-
-        set_inline_table_dependency_features(
-            "serenity",
-            dependencies,
-            vec![
-                "client".into(),
-                "gateway".into(),
-                "rustls_backend".into(),
-                "model".into(),
-            ],
-        );
-
-        set_key_value_dependency_version(
-            "klyra-secrets",
-            dependencies,
-            manifest_path,
-            url,
-            false,
-            get_dependency_version_fn,
-        );
-
-        set_key_value_dependency_version(
-            "klyra-serenity",
-            dependencies,
-            manifest_path,
-            url,
-            true,
-            get_dependency_version_fn,
-        );
-
-        set_key_value_dependency_version(
-            "tokio",
-            dependencies,
-            manifest_path,
-            url,
-            true,
-            get_dependency_version_fn,
-        );
-
-        set_key_value_dependency_version(
-            "tracing",
-            dependencies,
-            manifest_path,
-            url,
-            false,
-            get_dependency_version_fn,
-        );
+    fn get_repo_url(&self) -> &'static str {
+        "http://github.com/klyra-hq/klyra-examples.git"
     }
 
-    fn get_boilerplate_code_for_framework(&self) -> &'static str {
-        indoc! {r#"
-        use anyhow::anyhow;
-        use serenity::async_trait;
-        use serenity::model::channel::Message;
-        use serenity::model::gateway::Ready;
-        use serenity::prelude::*;
-        use klyra_secrets::SecretStore;
-        use tracing::{error, info};
-
-        struct Bot;
-
-        #[async_trait]
-        impl EventHandler for Bot {
-            async fn message(&self, ctx: Context, msg: Message) {
-                if msg.content == "!hello" {
-                    if let Err(e) = msg.channel_id.say(&ctx.http, "world!").await {
-                        error!("Error sending message: {:?}", e);
-                    }
-                }
-            }
-
-            async fn ready(&self, _: Context, ready: Ready) {
-                info!("{} is connected!", ready.user.name);
-            }
-        }
-
-        #[klyra_runtime::main]
-        async fn serenity(
-            #[klyra_secrets::Secrets] secret_store: SecretStore,
-        ) -> klyra_serenity::KlyraSerenity {
-            // Get the discord token set in `Secrets.toml`
-            let token = if let Some(token) = secret_store.get("DISCORD_TOKEN") {
-                token
-            } else {
-                return Err(anyhow!("'DISCORD_TOKEN' was not found").into());
-            };
-
-            // Set gateway intents, which decides what events the bot will be notified about
-            let intents = GatewayIntents::GUILD_MESSAGES | GatewayIntents::MESSAGE_CONTENT;
-
-            let client = Client::builder(&token, intents)
-                .event_handler(Bot)
-                .await
-                .expect("Err creating client");
-
-            Ok(client.into())
-        }"#}
+    fn get_sub_path(&self) -> Option<&'static str> {
+        Some("serenity/hello-world")
     }
 }
 
 pub struct KlyraInitPoise;
 
 impl KlyraInit for KlyraInitPoise {
-    fn set_cargo_dependencies(
-        &self,
-        dependencies: &mut Table,
-        manifest_path: &Path,
-        url: &Url,
-        get_dependency_version_fn: GetDependencyVersionFn,
-    ) {
-        set_key_value_dependency_version(
-            "anyhow",
-            dependencies,
-            manifest_path,
-            url,
-            false,
-            get_dependency_version_fn,
-        );
-
-        set_key_value_dependency_version(
-            "poise",
-            dependencies,
-            manifest_path,
-            url,
-            false,
-            get_dependency_version_fn,
-        );
-
-        set_key_value_dependency_version(
-            "klyra-poise",
-            dependencies,
-            manifest_path,
-            url,
-            true,
-            get_dependency_version_fn,
-        );
-
-        set_key_value_dependency_version(
-            "klyra-secrets",
-            dependencies,
-            manifest_path,
-            url,
-            false,
-            get_dependency_version_fn,
-        );
-
-        set_key_value_dependency_version(
-            "tokio",
-            dependencies,
-            manifest_path,
-            url,
-            true,
-            get_dependency_version_fn,
-        );
-
-        set_key_value_dependency_version(
-            "tracing",
-            dependencies,
-            manifest_path,
-            url,
-            false,
-            get_dependency_version_fn,
-        );
+    fn get_repo_url(&self) -> &'static str {
+        "http://github.com/klyra-hq/klyra-examples.git"
     }
 
-    fn get_boilerplate_code_for_framework(&self) -> &'static str {
-        indoc! {r#"
-        use anyhow::Context as _;
-        use poise::serenity_prelude as serenity;
-        use klyra_secrets::SecretStore;
-        use klyra_poise::KlyraPoise;
-
-        struct Data {} // User data, which is stored and accessible in all command invocations
-        type Error = Box<dyn std::error::Error + Send + Sync>;
-        type Context<'a> = poise::Context<'a, Data, Error>;
-
-        /// Responds with "world!"
-        #[poise::command(slash_command)]
-        async fn hello(ctx: Context<'_>) -> Result<(), Error> {
-            ctx.say("world!").await?;
-            Ok(())
-        }
-
-        #[klyra_runtime::main]
-        async fn poise(#[klyra_secrets::Secrets] secret_store: SecretStore) -> KlyraPoise<Data, Error> {
-            // Get the discord token set in `Secrets.toml`
-            let discord_token = secret_store
-                .get("DISCORD_TOKEN")
-                .context("'DISCORD_TOKEN' was not found")?;
-
-            let framework = poise::Framework::builder()
-                .options(poise::FrameworkOptions {
-                    commands: vec![hello()],
-                    ..Default::default()
-                })
-                .token(discord_token)
-                .intents(serenity::GatewayIntents::non_privileged())
-                .setup(|ctx, _ready, framework| {
-                    Box::pin(async move {
-                        poise::builtins::register_globally(ctx, &framework.options().commands).await?;
-                        Ok(Data {})
-                    })
-                })
-                .build()
-                .await
-                .map_err(klyra_runtime::CustomError::new)?;
-
-            Ok(framework.into())
-        }"#}
+    fn get_sub_path(&self) -> Option<&'static str> {
+        Some("poise/hello-world")
     }
 }
 
 pub struct KlyraInitTower;
 
 impl KlyraInit for KlyraInitTower {
-    fn set_cargo_dependencies(
-        &self,
-        dependencies: &mut Table,
-        manifest_path: &Path,
-        url: &Url,
-        get_dependency_version_fn: GetDependencyVersionFn,
-    ) {
-        set_inline_table_dependency_version(
-            "hyper",
-            dependencies,
-            manifest_path,
-            url,
-            false,
-            get_dependency_version_fn,
-        );
-
-        set_inline_table_dependency_features("hyper", dependencies, vec!["full".to_string()]);
-
-        set_key_value_dependency_version(
-            "klyra-tower",
-            dependencies,
-            manifest_path,
-            url,
-            true,
-            get_dependency_version_fn,
-        );
-
-        set_key_value_dependency_version(
-            "tokio",
-            dependencies,
-            manifest_path,
-            url,
-            true,
-            get_dependency_version_fn,
-        );
-
-        set_inline_table_dependency_version(
-            "tower",
-            dependencies,
-            manifest_path,
-            url,
-            false,
-            get_dependency_version_fn,
-        );
-
-        set_inline_table_dependency_features("tower", dependencies, vec!["full".to_string()]);
+    fn get_repo_url(&self) -> &'static str {
+        "http://github.com/klyra-hq/klyra-examples.git"
     }
 
-    fn get_boilerplate_code_for_framework(&self) -> &'static str {
-        indoc! {r#"
-        use std::convert::Infallible;
-        use std::future::Future;
-        use std::pin::Pin;
-        use std::task::{Context, Poll};
-
-        #[derive(Clone)]
-        struct HelloWorld;
-
-        impl tower::Service<hyper::Request<hyper::Body>> for HelloWorld {
-            type Response = hyper::Response<hyper::Body>;
-            type Error = Infallible;
-            type Future = Pin<Box<dyn Future<Output = Result<Self::Response, Self::Error>> + Send + Sync>>;
-
-            fn poll_ready(&mut self, _cx: &mut Context<'_>) -> Poll<Result<(), Self::Error>> {
-                Poll::Ready(Ok(()))
-            }
-
-            fn call(&mut self, _req: hyper::Request<hyper::Body>) -> Self::Future {
-                let body = hyper::Body::from("Hello, world!");
-                let resp = hyper::Response::builder()
-                    .status(200)
-                    .body(body)
-                    .expect("Unable to create the `hyper::Response` object");
-
-                let fut = async { Ok(resp) };
-
-                Box::pin(fut)
-            }
-        }
-
-        #[klyra_runtime::main]
-        async fn tower() -> klyra_tower::KlyraTower<HelloWorld> {
-            let service = HelloWorld;
-
-            Ok(service.into())
-        }"#}
+    fn get_sub_path(&self) -> Option<&'static str> {
+        Some("tower/hello-world")
     }
 }
 
 pub struct KlyraInitWarp;
 
 impl KlyraInit for KlyraInitWarp {
-    fn set_cargo_dependencies(
-        &self,
-        dependencies: &mut Table,
-        manifest_path: &Path,
-        url: &Url,
-        get_dependency_version_fn: GetDependencyVersionFn,
-    ) {
-        set_key_value_dependency_version(
-            "klyra-warp",
-            dependencies,
-            manifest_path,
-            url,
-            true,
-            get_dependency_version_fn,
-        );
-
-        set_key_value_dependency_version(
-            "tokio",
-            dependencies,
-            manifest_path,
-            url,
-            true,
-            get_dependency_version_fn,
-        );
-
-        set_key_value_dependency_version(
-            "warp",
-            dependencies,
-            manifest_path,
-            url,
-            false,
-            get_dependency_version_fn,
-        );
+    fn get_repo_url(&self) -> &'static str {
+        "http://github.com/klyra-hq/klyra-examples.git"
     }
 
-    fn get_boilerplate_code_for_framework(&self) -> &'static str {
-        indoc! {r#"
-        use warp::Filter;
-        use warp::Reply;
-        
-        #[klyra_runtime::main]
-        async fn warp() -> klyra_warp::KlyraWarp<(impl Reply,)> {
-            let route = warp::any().map(|| "Hello, World!");
-            Ok(route.boxed().into())
-        }"#}
+    fn get_sub_path(&self) -> Option<&'static str> {
+        Some("warp/hello-world")
     }
 }
 
 pub struct KlyraInitThruster;
 
 impl KlyraInit for KlyraInitThruster {
-    fn set_cargo_dependencies(
-        &self,
-        dependencies: &mut Table,
-        manifest_path: &Path,
-        url: &Url,
-        get_dependency_version_fn: GetDependencyVersionFn,
-    ) {
-        set_key_value_dependency_version(
-            "klyra-thruster",
-            dependencies,
-            manifest_path,
-            url,
-            true,
-            get_dependency_version_fn,
-        );
-
-        set_inline_table_dependency_version(
-            "thruster",
-            dependencies,
-            manifest_path,
-            url,
-            false,
-            get_dependency_version_fn,
-        );
-
-        set_inline_table_dependency_features(
-            "thruster",
-            dependencies,
-            vec!["hyper_server".to_string()],
-        );
-
-        set_key_value_dependency_version(
-            "tokio",
-            dependencies,
-            manifest_path,
-            url,
-            true,
-            get_dependency_version_fn,
-        );
+    fn get_repo_url(&self) -> &'static str {
+        "http://github.com/klyra-hq/klyra-examples.git"
     }
 
-    fn get_boilerplate_code_for_framework(&self) -> &'static str {
-        indoc! {r#"
-        use thruster::{
-            context::basic_hyper_context::{generate_context, BasicHyperContext as Ctx, HyperRequest},
-            m, middleware_fn, App, HyperServer, MiddlewareNext, MiddlewareResult, ThrusterServer,
-        };
-        
-        #[middleware_fn]
-        async fn hello(mut context: Ctx, _next: MiddlewareNext<Ctx>) -> MiddlewareResult<Ctx> {
-            context.body("Hello, World!");
-            Ok(context)
-        }
-        
-        #[klyra_runtime::main]
-        async fn thruster() -> klyra_thruster::KlyraThruster<HyperServer<Ctx, ()>> {
-            let server = HyperServer::new(
-                App::<HyperRequest, Ctx, ()>::create(generate_context, ()).get("/", m![hello]),
-            );
-            
-            Ok(server.into())
-        }"#}
+    fn get_sub_path(&self) -> Option<&'static str> {
+        Some("thruster/hello-world")
     }
 }
 
 pub struct KlyraInitNoOp;
 impl KlyraInit for KlyraInitNoOp {
-    fn set_cargo_dependencies(
-        &self,
-        _dependencies: &mut Table,
-        _manifest_path: &Path,
-        _url: &Url,
-        _get_dependency_version_fn: GetDependencyVersionFn,
-    ) {
+    fn get_repo_url(&self) -> &'static str {
+        "http://github.com/klyra-hq/klyra-examples.git"
     }
 
-    fn get_boilerplate_code_for_framework(&self) -> &'static str {
-        ""
+    fn get_sub_path(&self) -> Option<&'static str> {
+        Some("custom/none")
     }
 }
 
-pub fn cargo_init(path: PathBuf, name: ProjectName) -> Result<()> {
-    let mut cmd = std::process::Command::new("cargo");
-    cmd.arg("init")
-        .arg("--bin")
-        .arg("--name")
-        .arg(name.as_str())
-        .arg(path.as_os_str());
+pub fn cargo_generate(path: PathBuf, name: &ProjectName, framework: Template) -> Result<()> {
+    let config = framework.init_config();
+
     println!(r#"    Creating project "{name}" in {path:?}"#);
-    let output = cmd.output().expect("Failed to initialize with cargo init.");
-    let stderr = String::from_utf8(output.stderr).unwrap();
-    if !output.status.success() {
-        bail!("cargo init failed:\n{}", stderr)
-    }
-    print!("{}", stderr);
+    let generate_args = GenerateArgs {
+        init: true,
+        template_path: TemplatePath {
+            git: Some(config.get_repo_url().to_string()),
+            auto_path: config.get_sub_path().map(str::to_string),
+            ..Default::default()
+        },
+        name: Some(name.to_string()), // appears to do nothing...
+        destination: Some(path.clone()),
+        vcs: Some(Vcs::Git),
+        ..Default::default()
+    };
+    cargo_generate::generate(generate_args)
+        .with_context(|| "Failed to initialize with cargo generate.")?;
+
+    set_crate_name(&path, name.as_str()).with_context(|| "Failed to set crate name.")?;
+    remove_klyra_toml(&path);
+    create_gitignore_file(&path).with_context(|| "Failed to create .gitignore file.")?;
 
     Ok(())
 }
 
-/// Performs klyra init on the existing files generated by `cargo init [path]`.
-pub fn cargo_klyra_init(path: PathBuf, framework: Template) -> Result<()> {
-    println!(r#"     Setting up "{framework}" template"#);
-    let cargo_toml_path = path.join("Cargo.toml");
-    let mut cargo_doc = read_to_string(cargo_toml_path.clone())
-        .unwrap()
-        .parse::<Document>()
-        .unwrap();
+// since I can't get cargo-generate to do this for me...
+fn set_crate_name(path: &Path, name: &str) -> Result<()> {
+    // read the Cargo.toml file
+    let mut path = path.to_path_buf();
+    path.push("Cargo.toml");
 
-    // Add publish: false to avoid accidental `cargo publish`
-    cargo_doc["package"]["publish"] = value(false);
+    let toml_str = read_to_string(&path)?;
+    let mut doc = toml_str.parse::<Document>()?;
 
-    // Get `[dependencies]` table
-    let dependencies = cargo_doc["dependencies"]
-        .as_table_mut()
-        .expect("manifest to have a dependencies table");
+    // change the name
+    doc["package"]["name"] = value(name);
 
-    let manifest_path = find(Some(path.as_path())).unwrap();
-    let url = registry_url(manifest_path.as_path(), None).expect("Could not find registry URL");
-
-    let init_config = framework.init_config();
-
-    set_key_value_dependency_version(
-        "klyra-runtime",
-        dependencies,
-        &manifest_path,
-        &url,
-        true, // TODO: disallow pre-release when releasing 0.12?
-        get_latest_dependency_version,
-    );
-
-    // Set framework-specific dependencies to the `dependencies` table
-    init_config.set_cargo_dependencies(
-        dependencies,
-        &manifest_path,
-        &url,
-        get_latest_dependency_version,
-    );
-
-    // Truncate Cargo.toml and write the updated `Document` to it
-    let mut cargo_toml = File::create(cargo_toml_path)?;
-
-    cargo_toml.write_all(cargo_doc.to_string().as_bytes())?;
-
-    // Write boilerplate to `src/main.rs` file
-    let main_path = path.join("src").join("main.rs");
-    let boilerplate = init_config.get_boilerplate_code_for_framework();
-    if !boilerplate.is_empty() {
-        write_main_file(boilerplate, &main_path)?;
-    }
+    // write the Cargo.toml file back out
+    std::fs::write(&path, doc.to_string())?;
 
     Ok(())
 }
 
-/// Sets dependency version for a key-value pair:
-/// `crate_name = "version"`
-fn set_key_value_dependency_version(
-    crate_name: &str,
-    dependencies: &mut Table,
-    manifest_path: &Path,
-    url: &Url,
-    flag_allow_prerelease: bool,
-    get_dependency_version_fn: GetDependencyVersionFn,
-) {
-    let dependency_version =
-        get_dependency_version_fn(crate_name, flag_allow_prerelease, manifest_path, url);
-    dependencies[crate_name] = value(dependency_version);
+/*
+Currently Klyra.toml only has a project name override.
+This project name will already be in use, so the file is useless.
+
+If we start putting more things in Klyra.toml we may wish to re-evaluate.
+*/
+fn remove_klyra_toml(path: &Path) {
+    let mut path = path.to_path_buf();
+    path.push("Klyra.toml");
+
+    // this file only exists for some of the examples, it's fine if we don't find it
+    _ = std::fs::remove_file(path);
 }
 
-/// Sets dependency version for an inline table:
-/// `crate_name = { version = "version" }`
-fn set_inline_table_dependency_version(
-    crate_name: &str,
-    dependencies: &mut Table,
-    manifest_path: &Path,
-    url: &Url,
-    flag_allow_prerelease: bool,
-    get_dependency_version_fn: GetDependencyVersionFn,
-) {
-    let dependency_version =
-        get_dependency_version_fn(crate_name, flag_allow_prerelease, manifest_path, url);
-    dependencies[crate_name]["version"] = value(dependency_version);
-}
+fn create_gitignore_file(path: &Path) -> Result<()> {
+    let mut path = path.to_path_buf();
+    path.push(".gitignore");
 
-/// Sets dependency features for an inline table:
-/// `crate_name = { features = ["some-feature"] }`
-fn set_inline_table_dependency_features(
-    crate_name: &str,
-    dependencies: &mut Table,
-    features: Vec<String>,
-) {
-    let features = Array::from_iter(features);
-    dependencies[crate_name]["features"] = value(features);
-}
+    let mut file = match OpenOptions::new().create_new(true).write(true).open(path) {
+        Ok(f) => f,
+        Err(e) => {
+            match e.kind() {
+                ErrorKind::AlreadyExists => {
+                    // if the example already has a .gitignore file, just use that
+                    return Ok(());
+                }
+                _ => {
+                    return Err(anyhow!(e));
+                }
+            }
+        }
+    };
 
-/// Abstract type for `get_latest_dependency_version` function.
-type GetDependencyVersionFn = fn(&str, bool, &Path, &Url) -> String;
-
-/// Gets the latest version for a dependency of `crate_name`.
-/// This is a wrapper function for `cargo_edit::get_latest_dependency` function.
-fn get_latest_dependency_version(
-    crate_name: &str,
-    flag_allow_prerelease: bool,
-    manifest_path: &Path,
-    url: &Url,
-) -> String {
-    let latest_version =
-        get_latest_dependency(crate_name, flag_allow_prerelease, manifest_path, Some(url))
-            .unwrap_or_else(|_| panic!("Could not query the latest version of {crate_name}"));
-    let latest_version = latest_version
-        .version()
-        .expect("No latest klyra-service version available");
-
-    latest_version.to_string()
-}
-
-/// Writes `boilerplate` code to the specified `main.rs` file path.
-pub fn write_main_file(boilerplate: &'static str, main_path: &Path) -> Result<()> {
-    let mut main_file = File::create(main_path)?;
-    main_file.write_all(boilerplate.as_bytes())?;
+    file.write_all(indoc! {b"
+        /target
+        Secrets*.toml
+    "})?;
 
     Ok(())
-}
-
-#[cfg(test)]
-mod klyra_init_tests {
-    use super::*;
-
-    fn cargo_toml_factory() -> Document {
-        indoc! {r#"
-            [dependencies]
-        "#}
-        .parse::<Document>()
-        .unwrap()
-    }
-
-    fn mock_get_latest_dependency_version(
-        _crate_name: &str,
-        _flag_allow_prerelease: bool,
-        _manifest_path: &Path,
-        _url: &Url,
-    ) -> String {
-        "1.0".to_string()
-    }
-
-    #[test]
-    fn test_set_inline_table_dependency_features() {
-        let mut cargo_toml = cargo_toml_factory();
-        let dependencies = cargo_toml["dependencies"].as_table_mut().unwrap();
-
-        set_inline_table_dependency_features(
-            "klyra-service",
-            dependencies,
-            vec!["builder".to_string()],
-        );
-
-        let expected = indoc! {r#"
-            [dependencies]
-            klyra-service = { features = ["builder"] }
-        "#};
-
-        assert_eq!(cargo_toml.to_string(), expected);
-    }
-
-    #[test]
-    fn test_set_inline_table_dependency_version() {
-        let mut cargo_toml = cargo_toml_factory();
-        let dependencies = cargo_toml["dependencies"].as_table_mut().unwrap();
-        let manifest_path = PathBuf::new();
-        let url = Url::parse("https://klyra.rs").unwrap();
-
-        set_inline_table_dependency_version(
-            "klyra-service",
-            dependencies,
-            &manifest_path,
-            &url,
-            false,
-            mock_get_latest_dependency_version,
-        );
-
-        let expected = indoc! {r#"
-            [dependencies]
-            klyra-service = { version = "1.0" }
-        "#};
-
-        assert_eq!(cargo_toml.to_string(), expected);
-    }
-
-    #[test]
-    fn test_set_key_value_dependency_version() {
-        let mut cargo_toml = cargo_toml_factory();
-        let dependencies = cargo_toml["dependencies"].as_table_mut().unwrap();
-        let manifest_path = PathBuf::new();
-        let url = Url::parse("https://klyra.rs").unwrap();
-
-        set_key_value_dependency_version(
-            "klyra-service",
-            dependencies,
-            &manifest_path,
-            &url,
-            false,
-            mock_get_latest_dependency_version,
-        );
-
-        let expected = indoc! {r#"
-            [dependencies]
-            klyra-service = "1.0"
-        "#};
-
-        assert_eq!(cargo_toml.to_string(), expected);
-    }
-    #[test]
-    fn test_set_cargo_dependencies_actix_web() {
-        let mut cargo_toml = cargo_toml_factory();
-        let dependencies = cargo_toml["dependencies"].as_table_mut().unwrap();
-        let manifest_path = PathBuf::new();
-        let url = Url::parse("https://klyra.rs").unwrap();
-
-        set_key_value_dependency_version(
-            "klyra-runtime",
-            dependencies,
-            &manifest_path,
-            &url,
-            true,
-            mock_get_latest_dependency_version,
-        );
-
-        KlyraInitActixWeb.set_cargo_dependencies(
-            dependencies,
-            &manifest_path,
-            &url,
-            mock_get_latest_dependency_version,
-        );
-
-        let expected = indoc! {r#"
-            [dependencies]
-            klyra-runtime = "1.0"
-            actix-web = "1.0"
-            klyra-actix-web = "1.0"
-            tokio = "1.0"
-        "#};
-
-        assert_eq!(cargo_toml.to_string(), expected);
-    }
-
-    #[test]
-    fn test_set_cargo_dependencies_axum() {
-        let mut cargo_toml = cargo_toml_factory();
-        let dependencies = cargo_toml["dependencies"].as_table_mut().unwrap();
-        let manifest_path = PathBuf::new();
-        let url = Url::parse("https://klyra.rs").unwrap();
-
-        set_key_value_dependency_version(
-            "klyra-runtime",
-            dependencies,
-            &manifest_path,
-            &url,
-            true,
-            mock_get_latest_dependency_version,
-        );
-
-        KlyraInitAxum.set_cargo_dependencies(
-            dependencies,
-            &manifest_path,
-            &url,
-            mock_get_latest_dependency_version,
-        );
-
-        let expected = indoc! {r#"
-            [dependencies]
-            klyra-runtime = "1.0"
-            axum = "1.0"
-            klyra-axum = "1.0"
-            tokio = "1.0"
-        "#};
-
-        assert_eq!(cargo_toml.to_string(), expected);
-    }
-
-    #[test]
-    fn test_set_cargo_dependencies_rocket() {
-        let mut cargo_toml = cargo_toml_factory();
-        let dependencies = cargo_toml["dependencies"].as_table_mut().unwrap();
-        let manifest_path = PathBuf::new();
-        let url = Url::parse("https://klyra.rs").unwrap();
-
-        set_key_value_dependency_version(
-            "klyra-runtime",
-            dependencies,
-            &manifest_path,
-            &url,
-            true,
-            mock_get_latest_dependency_version,
-        );
-
-        KlyraInitRocket.set_cargo_dependencies(
-            dependencies,
-            &manifest_path,
-            &url,
-            mock_get_latest_dependency_version,
-        );
-
-        let expected = indoc! {r#"
-            [dependencies]
-            klyra-runtime = "1.0"
-            rocket = "1.0"
-            klyra-rocket = "1.0"
-            tokio = "1.0"
-        "#};
-
-        assert_eq!(cargo_toml.to_string(), expected);
-    }
-
-    #[test]
-    fn test_set_cargo_dependencies_tide() {
-        let mut cargo_toml = cargo_toml_factory();
-        let dependencies = cargo_toml["dependencies"].as_table_mut().unwrap();
-        let manifest_path = PathBuf::new();
-        let url = Url::parse("https://klyra.rs").unwrap();
-
-        set_key_value_dependency_version(
-            "klyra-runtime",
-            dependencies,
-            &manifest_path,
-            &url,
-            true,
-            mock_get_latest_dependency_version,
-        );
-
-        KlyraInitTide.set_cargo_dependencies(
-            dependencies,
-            &manifest_path,
-            &url,
-            mock_get_latest_dependency_version,
-        );
-
-        let expected = indoc! {r#"
-            [dependencies]
-            klyra-runtime = "1.0"
-            klyra-tide = "1.0"
-            tokio = "1.0"
-            tide = "1.0"
-        "#};
-
-        assert_eq!(cargo_toml.to_string(), expected);
-    }
-
-    #[test]
-    fn test_set_cargo_dependencies_tower() {
-        let mut cargo_toml = cargo_toml_factory();
-        let dependencies = cargo_toml["dependencies"].as_table_mut().unwrap();
-        let manifest_path = PathBuf::new();
-        let url = Url::parse("https://klyra.rs").unwrap();
-
-        set_key_value_dependency_version(
-            "klyra-runtime",
-            dependencies,
-            &manifest_path,
-            &url,
-            true,
-            mock_get_latest_dependency_version,
-        );
-
-        KlyraInitTower.set_cargo_dependencies(
-            dependencies,
-            &manifest_path,
-            &url,
-            mock_get_latest_dependency_version,
-        );
-
-        let expected = indoc! {r#"
-            [dependencies]
-            klyra-runtime = "1.0"
-            hyper = { version = "1.0", features = ["full"] }
-            klyra-tower = "1.0"
-            tokio = "1.0"
-            tower = { version = "1.0", features = ["full"] }
-        "#};
-
-        assert_eq!(cargo_toml.to_string(), expected);
-    }
-
-    #[test]
-    fn test_set_cargo_dependencies_poem() {
-        let mut cargo_toml = cargo_toml_factory();
-        let dependencies = cargo_toml["dependencies"].as_table_mut().unwrap();
-        let manifest_path = PathBuf::new();
-        let url = Url::parse("https://klyra.rs").unwrap();
-
-        set_key_value_dependency_version(
-            "klyra-runtime",
-            dependencies,
-            &manifest_path,
-            &url,
-            true,
-            mock_get_latest_dependency_version,
-        );
-
-        KlyraInitPoem.set_cargo_dependencies(
-            dependencies,
-            &manifest_path,
-            &url,
-            mock_get_latest_dependency_version,
-        );
-
-        let expected = indoc! {r#"
-            [dependencies]
-            klyra-runtime = "1.0"
-            poem = "1.0"
-            klyra-poem = "1.0"
-            tokio = "1.0"
-        "#};
-
-        assert_eq!(cargo_toml.to_string(), expected);
-    }
-
-    #[test]
-    fn test_set_cargo_dependencies_salvo() {
-        let mut cargo_toml = cargo_toml_factory();
-        let dependencies = cargo_toml["dependencies"].as_table_mut().unwrap();
-        let manifest_path = PathBuf::new();
-        let url = Url::parse("https://klyra.rs").unwrap();
-
-        set_key_value_dependency_version(
-            "klyra-runtime",
-            dependencies,
-            &manifest_path,
-            &url,
-            true,
-            mock_get_latest_dependency_version,
-        );
-
-        KlyraInitSalvo.set_cargo_dependencies(
-            dependencies,
-            &manifest_path,
-            &url,
-            mock_get_latest_dependency_version,
-        );
-
-        let expected = indoc! {r#"
-            [dependencies]
-            klyra-runtime = "1.0"
-            salvo = "1.0"
-            klyra-salvo = "1.0"
-            tokio = "1.0"
-        "#};
-
-        assert_eq!(cargo_toml.to_string(), expected);
-    }
-
-    #[test]
-    fn test_set_cargo_dependencies_serenity() {
-        let mut cargo_toml = cargo_toml_factory();
-        let dependencies = cargo_toml["dependencies"].as_table_mut().unwrap();
-        let manifest_path = PathBuf::new();
-        let url = Url::parse("https://klyra.rs").unwrap();
-
-        set_key_value_dependency_version(
-            "klyra-runtime",
-            dependencies,
-            &manifest_path,
-            &url,
-            true,
-            mock_get_latest_dependency_version,
-        );
-
-        KlyraInitSerenity.set_cargo_dependencies(
-            dependencies,
-            &manifest_path,
-            &url,
-            mock_get_latest_dependency_version,
-        );
-
-        let expected = indoc! {r#"
-            [dependencies]
-            klyra-runtime = "1.0"
-            anyhow = "1.0"
-            serenity = { version = "1.0", default-features = false, features = ["client", "gateway", "rustls_backend", "model"] }
-            klyra-secrets = "1.0"
-            klyra-serenity = "1.0"
-            tokio = "1.0"
-            tracing = "1.0"
-        "#};
-
-        assert_eq!(cargo_toml.to_string(), expected);
-    }
-
-    #[test]
-    fn test_set_cargo_dependencies_poise() {
-        let mut cargo_toml = cargo_toml_factory();
-        let dependencies = cargo_toml["dependencies"].as_table_mut().unwrap();
-        let manifest_path = PathBuf::new();
-        let url = Url::parse("https://klyra.rs").unwrap();
-
-        set_key_value_dependency_version(
-            "klyra-runtime",
-            dependencies,
-            &manifest_path,
-            &url,
-            true,
-            mock_get_latest_dependency_version,
-        );
-
-        KlyraInitPoise.set_cargo_dependencies(
-            dependencies,
-            &manifest_path,
-            &url,
-            mock_get_latest_dependency_version,
-        );
-
-        let expected = indoc! {r#"
-            [dependencies]
-            klyra-runtime = "1.0"
-            anyhow = "1.0"
-            poise = "1.0"
-            klyra-poise = "1.0"
-            klyra-secrets = "1.0"
-            tokio = "1.0"
-            tracing = "1.0"
-		"#};
-
-        assert_eq!(cargo_toml.to_string(), expected);
-    }
-
-    #[test]
-    fn test_set_cargo_dependencies_warp() {
-        let mut cargo_toml = cargo_toml_factory();
-        let dependencies = cargo_toml["dependencies"].as_table_mut().unwrap();
-        let manifest_path = PathBuf::new();
-        let url = Url::parse("https://klyra.rs").unwrap();
-
-        set_key_value_dependency_version(
-            "klyra-runtime",
-            dependencies,
-            &manifest_path,
-            &url,
-            true,
-            mock_get_latest_dependency_version,
-        );
-
-        KlyraInitWarp.set_cargo_dependencies(
-            dependencies,
-            &manifest_path,
-            &url,
-            mock_get_latest_dependency_version,
-        );
-
-        let expected = indoc! {r#"
-            [dependencies]
-            klyra-runtime = "1.0"
-            klyra-warp = "1.0"
-            tokio = "1.0"
-            warp = "1.0"
-        "#};
-
-        assert_eq!(cargo_toml.to_string(), expected);
-    }
-
-    #[test]
-    fn test_set_cargo_dependencies_thruster() {
-        let mut cargo_toml = cargo_toml_factory();
-        let dependencies = cargo_toml["dependencies"].as_table_mut().unwrap();
-        let manifest_path = PathBuf::new();
-        let url = Url::parse("https://klyra.rs").unwrap();
-
-        set_key_value_dependency_version(
-            "klyra-runtime",
-            dependencies,
-            &manifest_path,
-            &url,
-            true,
-            mock_get_latest_dependency_version,
-        );
-
-        KlyraInitThruster.set_cargo_dependencies(
-            dependencies,
-            &manifest_path,
-            &url,
-            mock_get_latest_dependency_version,
-        );
-
-        let expected = indoc! {r#"
-            [dependencies]
-            klyra-runtime = "1.0"
-            klyra-thruster = "1.0"
-            thruster = { version = "1.0", features = ["hyper_server"] }
-            tokio = "1.0"
-        "#};
-
-        assert_eq!(cargo_toml.to_string(), expected);
-    }
-
-    // TODO: unignore this test when we publish klyra-rocket
-    #[ignore]
-    #[test]
-    /// Makes sure that Rocket uses allow_prerelease flag when fetching the latest version
-    fn test_get_latest_dependency_version_rocket() {
-        let mut cargo_toml = cargo_toml_factory();
-        let dependencies = cargo_toml["dependencies"].as_table_mut().unwrap();
-        let manifest_path = PathBuf::new();
-        let url = Url::parse("https://github.com/rust-lang/crates.io-index").unwrap();
-
-        set_key_value_dependency_version(
-            "klyra-runtime",
-            dependencies,
-            &manifest_path,
-            &url,
-            true,
-            mock_get_latest_dependency_version,
-        );
-
-        KlyraInitRocket.set_cargo_dependencies(
-            dependencies,
-            &manifest_path,
-            &url,
-            get_latest_dependency_version,
-        );
-
-        let version = dependencies["rocket"].as_str().unwrap();
-
-        let expected = get_latest_dependency("rocket", true, &manifest_path, Some(&url))
-            .expect("Could not query the latest version of rocket")
-            .version()
-            .expect("no rocket version found")
-            .to_string();
-
-        assert_eq!(version, expected);
-    }
 }
