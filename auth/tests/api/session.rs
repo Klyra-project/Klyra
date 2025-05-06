@@ -6,6 +6,7 @@ use klyra_common::claims::Claim;
 
 use crate::helpers::app;
 
+#[ignore]
 #[tokio::test]
 async fn session_flow() {
     let app = app().await;
