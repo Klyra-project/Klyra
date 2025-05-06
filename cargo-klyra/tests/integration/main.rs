@@ -1,7 +1,7 @@
 mod init;
 mod run;
 
-use cargo_klyra::{Args, Command, CommandOutcome, ProjectArgs, Klyra};
+use cargo_klyra::{Command, CommandOutcome, ProjectArgs, Klyra, KlyraArgs};
 use std::path::Path;
 
 /// creates a `cargo-klyra` run instance with some reasonable defaults set.
@@ -13,7 +13,7 @@ async fn cargo_klyra_command(
 
     Klyra::new()
         .unwrap()
-        .run(Args {
+        .run(KlyraArgs {
             api_url: Some("http://klyra.invalid:80".to_string()),
             project_args: ProjectArgs {
                 working_directory,

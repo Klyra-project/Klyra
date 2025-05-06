@@ -6,218 +6,46 @@ use std::{
 
 use anyhow::{anyhow, Context, Result};
 use cargo_generate::{GenerateArgs, TemplatePath, Vcs};
+use git2::Repository;
 use indoc::indoc;
 use klyra_common::project::ProjectName;
 use toml_edit::{value, Document};
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq, strum::Display, strum::EnumIter)]
-#[strum(serialize_all = "kebab-case")]
-pub enum Template {
-    ActixWeb,
-    Axum,
-    Poise,
-    Poem,
-    Rocket,
-    Salvo,
-    Serenity,
-    Tide,
-    Thruster,
-    Tower,
-    Warp,
-    None,
-}
+use crate::args::TemplateLocation;
 
-impl Template {
-    /// Returns a framework-specific struct that implements the trait `KlyraInit`
-    /// for writing framework-specific dependencies to `Cargo.toml` and generating
-    /// boilerplate code in `src/main.rs`.
-    pub fn init_config(&self) -> Box<dyn KlyraInit> {
-        use Template::*;
-        match self {
-            ActixWeb => Box::new(KlyraInitActixWeb),
-            Axum => Box::new(KlyraInitAxum),
-            Rocket => Box::new(KlyraInitRocket),
-            Tide => Box::new(KlyraInitTide),
-            Tower => Box::new(KlyraInitTower),
-            Poem => Box::new(KlyraInitPoem),
-            Salvo => Box::new(KlyraInitSalvo),
-            Serenity => Box::new(KlyraInitSerenity),
-            Poise => Box::new(KlyraInitPoise),
-            Warp => Box::new(KlyraInitWarp),
-            Thruster => Box::new(KlyraInitThruster),
-            None => Box::new(KlyraInitNoOp),
-        }
-    }
-}
-
-pub trait KlyraInit {
-    fn get_repo_url(&self) -> &'static str;
-    fn get_sub_path(&self) -> Option<&'static str>;
-}
-
-pub struct KlyraInitActixWeb;
-
-impl KlyraInit for KlyraInitActixWeb {
-    fn get_repo_url(&self) -> &'static str {
-        "http://github.com/klyra-hq/klyra-examples.git"
-    }
-
-    fn get_sub_path(&self) -> Option<&'static str> {
-        Some("actix-web/hello-world")
-    }
-}
-
-pub struct KlyraInitAxum;
-
-impl KlyraInit for KlyraInitAxum {
-    fn get_repo_url(&self) -> &'static str {
-        "http://github.com/klyra-hq/klyra-examples.git"
-    }
-
-    fn get_sub_path(&self) -> Option<&'static str> {
-        Some("axum/hello-world")
-    }
-}
-
-pub struct KlyraInitRocket;
-
-impl KlyraInit for KlyraInitRocket {
-    fn get_repo_url(&self) -> &'static str {
-        "http://github.com/klyra-hq/klyra-examples.git"
-    }
-
-    fn get_sub_path(&self) -> Option<&'static str> {
-        Some("rocket/hello-world")
-    }
-}
-
-pub struct KlyraInitTide;
-
-impl KlyraInit for KlyraInitTide {
-    fn get_repo_url(&self) -> &'static str {
-        "http://github.com/klyra-hq/klyra-examples.git"
-    }
-
-    fn get_sub_path(&self) -> Option<&'static str> {
-        Some("tide/hello-world")
-    }
-}
-
-pub struct KlyraInitPoem;
-
-impl KlyraInit for KlyraInitPoem {
-    fn get_repo_url(&self) -> &'static str {
-        "http://github.com/klyra-hq/klyra-examples.git"
-    }
-
-    fn get_sub_path(&self) -> Option<&'static str> {
-        Some("poem/hello-world")
-    }
-}
-
-pub struct KlyraInitSalvo;
-
-impl KlyraInit for KlyraInitSalvo {
-    fn get_repo_url(&self) -> &'static str {
-        "http://github.com/klyra-hq/klyra-examples.git"
-    }
-
-    fn get_sub_path(&self) -> Option<&'static str> {
-        Some("salvo/hello-world")
-    }
-}
-
-pub struct KlyraInitSerenity;
-
-impl KlyraInit for KlyraInitSerenity {
-    fn get_repo_url(&self) -> &'static str {
-        "http://github.com/klyra-hq/klyra-examples.git"
-    }
-
-    fn get_sub_path(&self) -> Option<&'static str> {
-        Some("serenity/hello-world")
-    }
-}
-
-pub struct KlyraInitPoise;
-
-impl KlyraInit for KlyraInitPoise {
-    fn get_repo_url(&self) -> &'static str {
-        "http://github.com/klyra-hq/klyra-examples.git"
-    }
-
-    fn get_sub_path(&self) -> Option<&'static str> {
-        Some("poise/hello-world")
-    }
-}
-
-pub struct KlyraInitTower;
-
-impl KlyraInit for KlyraInitTower {
-    fn get_repo_url(&self) -> &'static str {
-        "http://github.com/klyra-hq/klyra-examples.git"
-    }
-
-    fn get_sub_path(&self) -> Option<&'static str> {
-        Some("tower/hello-world")
-    }
-}
-
-pub struct KlyraInitWarp;
-
-impl KlyraInit for KlyraInitWarp {
-    fn get_repo_url(&self) -> &'static str {
-        "http://github.com/klyra-hq/klyra-examples.git"
-    }
-
-    fn get_sub_path(&self) -> Option<&'static str> {
-        Some("warp/hello-world")
-    }
-}
-
-pub struct KlyraInitThruster;
-
-impl KlyraInit for KlyraInitThruster {
-    fn get_repo_url(&self) -> &'static str {
-        "http://github.com/klyra-hq/klyra-examples.git"
-    }
-
-    fn get_sub_path(&self) -> Option<&'static str> {
-        Some("thruster/hello-world")
-    }
-}
-
-pub struct KlyraInitNoOp;
-impl KlyraInit for KlyraInitNoOp {
-    fn get_repo_url(&self) -> &'static str {
-        "http://github.com/klyra-hq/klyra-examples.git"
-    }
-
-    fn get_sub_path(&self) -> Option<&'static str> {
-        Some("custom/none")
-    }
-}
-
-pub fn cargo_generate(path: PathBuf, name: &ProjectName, framework: Template) -> Result<()> {
-    let config = framework.init_config();
-
+/// More about how this works: https://cargo-generate.github.io/cargo-generate/
+pub fn cargo_generate(path: PathBuf, name: &ProjectName, temp_loc: TemplateLocation) -> Result<()> {
     println!(r#"    Creating project "{name}" in {path:?}"#);
+
+    let do_git_init = Repository::discover(&path).is_err();
+
     let generate_args = GenerateArgs {
-        init: true,
         template_path: TemplatePath {
-            git: Some(config.get_repo_url().to_string()),
-            auto_path: config.get_sub_path().map(str::to_string),
+            // Automatically guess location from:
+            // - cargo-generate "favorites", see their docs
+            // - git hosts (gh:, gl: etc.)
+            // - local path (check if exists)
+            // - github username+repo (klyra-hq/klyra-examples)
+            auto_path: Some(temp_loc.auto_path.clone()),
+            // subfolder in the source folder that was found
+            subfolder: temp_loc.subfolder,
             ..Default::default()
         },
-        name: Some(name.to_string()), // appears to do nothing...
+        // setting this prevents cargo-generate from prompting the user.
+        // it will then be used to try and replace a "{{project-name}}" placeholder in the cloned folder.
+        // (not intended with Klyra templates)
+        name: Some(name.to_string()),
         destination: Some(path.clone()),
+        init: true, // don't create a folder to place the template in
         vcs: Some(Vcs::Git),
+        force_git_init: do_git_init, // git init after cloning
         ..Default::default()
     };
     cargo_generate::generate(generate_args)
         .with_context(|| "Failed to initialize with cargo generate.")?;
 
-    set_crate_name(&path, name.as_str()).with_context(|| "Failed to set crate name.")?;
+    set_crate_name(&path, name.as_str())
+        .with_context(|| "Failed to set crate name. No Cargo.toml in template?")?;
     remove_klyra_toml(&path);
     create_gitignore_file(&path).with_context(|| "Failed to create .gitignore file.")?;
 
