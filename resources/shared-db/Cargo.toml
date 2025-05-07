@@ -10,7 +10,7 @@ keywords = ["klyra-service", "database"]
 async-trait = "0.1.56"
 mongodb = { version = "2.3.0", optional = true }
 serde = { version = "1.0.148", features = ["derive"] }
-klyra-service = { path = "../../service", version = "0.19.0", default-features = false }
+klyra-service = { path = "../../service", version = "0.19.0" }
 sqlx = { version = "0.6.2", optional = true }
 
 [features]
