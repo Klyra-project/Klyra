@@ -78,6 +78,7 @@ klyra-persist = { path = "[base]/klyra/resources/persist" }
 klyra-shared-db = { path = "[base]/klyra/resources/shared-db" }
 klyra-secrets = { path = "[base]/klyra/resources/secrets" }
 klyra-static-folder = { path = "[base]/klyra/resources/static-folder" }
+klyra-turso = { path = "[base]/klyra/resources/turso" }
 
 klyra-axum = { path = "[base]/klyra/services/klyra-axum" }
 klyra-actix-web = { path = "[base]/klyra/services/klyra-actix-web" }

@@ -30,6 +30,7 @@ if [[ $PROD != "true" ]]; then
     klyra-shared-db = { path = "/usr/src/klyra/resources/shared-db" }
     klyra-secrets = { path = "/usr/src/klyra/resources/secrets" }
     klyra-static-folder = { path = "/usr/src/klyra/resources/static-folder" }
+    klyra-turso = { path = "/usr/src/klyra/resources/turso" }
 
     klyra-actix-web = { path = "/usr/src/klyra/services/klyra-actix-web" }
     klyra-axum = { path = "/usr/src/klyra/services/klyra-axum" }

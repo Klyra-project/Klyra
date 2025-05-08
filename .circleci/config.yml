@@ -96,6 +96,7 @@ commands:
             klyra-shared-db = { path = "$PWD/resources/shared-db" }
             klyra-secrets = { path = "$PWD/resources/secrets" }
             klyra-static-folder = { path = "$PWD/resources/static-folder" }
+            klyra-turso = { path = "$PWD/resources/turso" }
 
             klyra-axum = { path = "$PWD/services/klyra-axum" }
             klyra-actix-web = { path = "$PWD/services/klyra-actix-web" }
@@ -605,6 +606,7 @@ workflows:
                 - resources/persist
                 - resources/secrets
                 - resources/static-folder
+                - resources/turso
                 - services/klyra-actix-web
                 - services/klyra-axum
                 - services/klyra-next
