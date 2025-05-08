@@ -15,6 +15,7 @@ use klyra_proto::provisioner::{
     aws_rds, database_request::DbType, shared, AwsRds, DatabaseRequest, DatabaseResponse, Shared,
 };
 use klyra_proto::provisioner::{provisioner_server::Provisioner, DatabaseDeletionResponse};
+use klyra_proto::provisioner::{Ping, Pong};
 use sqlx::{postgres::PgPoolOptions, ConnectOptions, Executor, PgPool};
 use tokio::time::sleep;
 use tonic::{Request, Response, Status};
@@ -464,6 +465,11 @@ impl Provisioner for MyProvisioner {
         };
 
         Ok(Response::new(reply))
+    }
+
+    #[tracing::instrument(skip(self))]
+    async fn health_check(&self, _request: Request<Ping>) -> Result<Response<Pong>, Status> {
+        Ok(Response::new(Pong {}))
     }
 }
 
