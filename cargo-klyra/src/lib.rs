@@ -1132,7 +1132,7 @@ impl Klyra {
             client,
         )
         .await?;
-        println!("Run `cargo klyra deploy` to deploy your Klyra service.");
+        println!("Run `cargo klyra deploy --allow-dirty` to deploy your Klyra service.");
 
         Ok(())
     }
