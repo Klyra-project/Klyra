@@ -36,13 +36,14 @@ impl From<Resource> for klyra_common::resource::Response {
     }
 }
 
-#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub enum Type {
     Database(DatabaseType),
     Secrets,
     StaticFolder,
     Persist,
     Turso,
+    Custom,
 }
 
 impl From<Type> for klyra_common::resource::Type {
@@ -53,6 +54,7 @@ impl From<Type> for klyra_common::resource::Type {
             Type::StaticFolder => Self::StaticFolder,
             Type::Persist => Self::Persist,
             Type::Turso => Self::Turso,
+            Type::Custom => Self::Custom,
         }
     }
 }
@@ -65,6 +67,7 @@ impl From<klyra_common::resource::Type> for Type {
             klyra_common::resource::Type::StaticFolder => Self::StaticFolder,
             klyra_common::resource::Type::Persist => Self::Persist,
             klyra_common::resource::Type::Turso => Self::Turso,
+            klyra_common::resource::Type::Custom => Self::Custom,
         }
     }
 }
@@ -77,6 +80,7 @@ impl Display for Type {
             Type::StaticFolder => write!(f, "static_folder"),
             Type::Persist => write!(f, "persist"),
             Type::Turso => write!(f, "turso"),
+            Type::Custom => write!(f, "custom"),
         }
     }
 }
@@ -96,6 +100,7 @@ impl FromStr for Type {
                 "static_folder" => Ok(Self::StaticFolder),
                 "persist" => Ok(Self::Persist),
                 "turso" => Ok(Self::Turso),
+                "custom" => Ok(Self::Custom),
                 _ => Err(format!("'{s}' is an unknown resource type")),
             }
         }
@@ -145,6 +150,7 @@ mod tests {
             Type::StaticFolder,
             Type::Persist,
             Type::Turso,
+            Type::Custom,
         ];
 
         for input in inputs {
