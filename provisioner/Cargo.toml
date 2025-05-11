@@ -23,7 +23,7 @@ tracing-subscriber = { workspace = true, features = ["default", "fmt"] }
 
 [dependencies.klyra-common]
 workspace = true
-features = ["backend"]
+features = ["backend", "tonic"]
 
 [dependencies.klyra-proto]
 workspace = true

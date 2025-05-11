@@ -646,6 +646,7 @@ workflows:
                   "klyra-deployer",
                   "klyra-proto",
                   "klyra-provisioner",
+                  "klyra-resource-recorder",
                   "klyra-runtime",
                   "klyra-service",
                 ]
