@@ -30,10 +30,10 @@ use klyra_proto::{
     },
 };
 use klyra_service::{Environment, Factory, Service, ServiceName};
-use tokio::sync::{broadcast, oneshot};
 use tokio::sync::{
-    broadcast::Sender,
+    broadcast::{self, Sender},
     mpsc::{self, UnboundedReceiver, UnboundedSender},
+    oneshot,
 };
 use tokio_stream::wrappers::ReceiverStream;
 use tonic::{
