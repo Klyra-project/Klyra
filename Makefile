@@ -64,6 +64,7 @@ DD_ENV=unstable
 USE_TLS?=disable
 CARGO_PROFILE=debug
 RUST_LOG?=klyra=trace,debug
+DEPLOYS_API_KEY?=gateway4deployes
 endif
 
 POSTGRES_EXTRA_PATH?=./extras/postgres
