@@ -296,5 +296,31 @@ pub mod runtime {
 }
 
 pub mod resource_recorder {
+    use std::str::FromStr;
+
     include!("generated/resource_recorder.rs");
+
+    impl From<record_request::Resource> for klyra_common::resource::Response {
+        fn from(resource: record_request::Resource) -> Self {
+            klyra_common::resource::Response {
+                r#type: klyra_common::resource::Type::from_str(resource.r#type.as_str())
+                    .expect("to have a valid resource string"),
+                config: serde_json::from_slice(&resource.config)
+                    .expect("to have JSON valid config"),
+                data: serde_json::from_slice(&resource.data).expect("to have JSON valid data"),
+            }
+        }
+    }
+
+    impl From<Resource> for klyra_common::resource::Response {
+        fn from(resource: Resource) -> Self {
+            klyra_common::resource::Response {
+                r#type: klyra_common::resource::Type::from_str(resource.r#type.as_str())
+                    .expect("to have a valid resource string"),
+                config: serde_json::from_slice(&resource.config)
+                    .expect("to have JSON valid config"),
+                data: serde_json::from_slice(&resource.data).expect("to have JSON valid data"),
+            }
+        }
+    }
 }
