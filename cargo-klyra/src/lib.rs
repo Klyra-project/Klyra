@@ -611,6 +611,28 @@ impl Klyra {
                 runtime_path
             } else {
                 trace!(path = ?executable_path, "using alpha runtime");
+                if let Err(err) = check_version(&executable_path) {
+                    warn!("{}", err);
+                    if let Some(mismatch) = err.downcast_ref::<VersionMismatchError>() {
+                        println!("Warning: {}.", mismatch);
+                        if mismatch.klyra_runtime > mismatch.cargo_klyra {
+                            // The runtime is newer than cargo-klyra so we
+                            // should help the user to update cargo-klyra.
+                            println!(
+                                "[HINT]: You should update cargo-klyra. \
+                                If cargo-klyra was installed using cargo, \
+                                you can get the latest version by running \
+                                `cargo install cargo-klyra`."
+                            );
+                        } else {
+                            println!(
+                                "[HINT]: A newer version of klyra-runtime is available. \
+                                Change its version to {} in this project's Cargo.toml to update it.",
+                                mismatch.cargo_klyra
+                            );
+                        }
+                    }
+                }
                 executable_path.clone()
             }
         };
@@ -1426,8 +1448,7 @@ impl Klyra {
 
 fn check_version(runtime_path: &Path) -> Result<()> {
     let valid_version = semver::Version::from_str(VERSION)
-        .context("failed to convert runtime version to semver")?
-        .to_string();
+        .context("failed to convert runtime version to semver")?;
 
     if !runtime_path.try_exists()? {
         bail!("klyra-runtime is not installed");
@@ -1450,15 +1471,49 @@ fn check_version(runtime_path: &Path) -> Result<()> {
             .1
             .trim(),
     )
-    .context("failed to convert runtime version to semver")?
-    .to_string();
+    .context("failed to convert runtime version to semver")?;
 
-    if runtime_version == valid_version {
+    if semvers_are_compatible(&valid_version, &runtime_version) {
         Ok(())
     } else {
-        bail!("klyra-runtime and cargo-klyra are not the same version")
+        Err(VersionMismatchError {
+            klyra_runtime: runtime_version,
+            cargo_klyra: valid_version,
+        })
+        .context("klyra-runtime and cargo-klyra have incompatible versions")
     }
 }
+
+/// Check if two versions are compatible based on the rule used by
+/// cargo: "Versions `a` and `b` are compatible if their left-most
+/// nonzero digit is the same."
+fn semvers_are_compatible(a: &semver::Version, b: &semver::Version) -> bool {
+    if a.major != 0 || b.major != 0 {
+        a.major == b.major
+    } else if a.minor != 0 || b.minor != 0 {
+        a.minor == b.minor
+    } else {
+        a.patch == b.patch
+    }
+}
+
+#[derive(Debug)]
+struct VersionMismatchError {
+    klyra_runtime: semver::Version,
+    cargo_klyra: semver::Version,
+}
+
+impl std::fmt::Display for VersionMismatchError {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(
+            f,
+            "klyra-runtime {} and cargo-klyra {} are incompatible",
+            self.klyra_runtime, self.cargo_klyra
+        )
+    }
+}
+
+impl std::error::Error for VersionMismatchError {}
 
 fn create_spinner() -> ProgressBar {
     let pb = indicatif::ProgressBar::new_spinner();
@@ -1659,5 +1714,23 @@ version = "0.1.0"
         entries.sort();
 
         assert_eq!(entries, vec!["Cargo.lock", "Cargo.toml", "src/main.rs"]);
+    }
+
+    #[test]
+    fn semver_compatibility_check_works() {
+        let semver_tests = &[
+            ("1.0.0", "1.0.0", true),
+            ("1.8.0", "1.0.0", true),
+            ("0.1.0", "0.2.1", false),
+            ("0.9.0", "0.2.0", false),
+        ];
+        for (version_a, version_b, are_compatible) in semver_tests {
+            let version_a = semver::Version::from_str(version_a).unwrap();
+            let version_b = semver::Version::from_str(version_b).unwrap();
+            assert_eq!(
+                super::semvers_are_compatible(&version_a, &version_b),
+                *are_compatible
+            );
+        }
     }
 }
