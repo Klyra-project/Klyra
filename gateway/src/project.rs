@@ -724,6 +724,7 @@ impl ProjectCreating {
                     "Labels": {
                         "klyra.prefix": prefix,
                         "klyra.project": project_name,
+                        "klyra.project_id": self.project_id.to_string(),
                         "klyra.idle_minutes": format!("{idle_minutes}"),
                     },
                     "Cmd": [
