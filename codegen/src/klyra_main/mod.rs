@@ -270,24 +270,53 @@ impl ToTokens for Loader {
             async fn loader(
                 mut #factory_ident: klyra_runtime::ProvisionerFactory,
                 mut #resource_tracker_ident: klyra_runtime::ResourceTracker,
-                logger: klyra_runtime::Logger,
+                logger_uri: String,
+                deployment_id: String,
             ) -> #return_type {
                 use klyra_runtime::Context;
                 use klyra_runtime::tracing_subscriber::prelude::*;
+                use klyra_runtime::opentelemetry_otlp::WithExportConfig;
                 #extra_imports
 
-                let filter_layer =
-                    klyra_runtime::tracing_subscriber::EnvFilter::try_from_default_env()
-                        .or_else(|_| klyra_runtime::tracing_subscriber::EnvFilter::try_new("INFO"))
-                        .unwrap();
+                let filter_layer = klyra_runtime::tracing_subscriber::EnvFilter::try_from_default_env()
+                    .or_else(|_| klyra_runtime::tracing_subscriber::EnvFilter::try_new("info"))
+                    .unwrap();
+
+                let tracer = klyra_runtime::opentelemetry_otlp::new_pipeline()
+                    .tracing()
+                    .with_exporter(
+                        klyra_runtime::opentelemetry_otlp::new_exporter()
+                            .tonic()
+                            .with_endpoint(logger_uri),
+                    )
+                    .with_trace_config(
+                        klyra_runtime::opentelemetry::sdk::trace::config()
+                            .with_resource(
+                                klyra_runtime::opentelemetry::sdk::Resource::new(
+                                    vec![
+                                        klyra_runtime::opentelemetry::KeyValue::new(
+                                            "service.name",
+                                            "klyra-runtime",
+                                        ),
+                                        klyra_runtime::opentelemetry::KeyValue::new(
+                                            "deployment_id",
+                                            deployment_id,
+                                        )
+                                    ]
+                                )
+                            ),
+                        )
+                    .install_batch(klyra_runtime::opentelemetry::runtime::Tokio)
+                    .unwrap();
+                let otel_layer = klyra_runtime::tracing_opentelemetry::layer().with_tracer(tracer);
 
                 let registry = klyra_runtime::tracing_subscriber::registry()
-                    .with(logger.with_filter(filter_layer));
+                    .with(filter_layer)
+                    .with(otel_layer);
 
                 #inject_tracing_layer
 
                 registry.init();
-
                 #vars
                 #(let #fn_inputs = klyra_runtime::get_resource(
                     #fn_inputs_builder::new()#fn_inputs_builder_options,
@@ -413,19 +442,48 @@ mod tests {
             async fn loader(
                 mut _factory: klyra_runtime::ProvisionerFactory,
                 mut _resource_tracker: klyra_runtime::ResourceTracker,
-                logger: klyra_runtime::Logger,
+                logger_uri: String,
+                deployment_id: String,
             ) -> KlyraSimple {
                 use klyra_runtime::Context;
                 use klyra_runtime::tracing_subscriber::prelude::*;
+                use klyra_runtime::opentelemetry_otlp::WithExportConfig;
 
-                let filter_layer =
-                    klyra_runtime::tracing_subscriber::EnvFilter::try_from_default_env()
-                        .or_else(|_| klyra_runtime::tracing_subscriber::EnvFilter::try_new("INFO"))
-                        .unwrap();
+                let filter_layer = klyra_runtime::tracing_subscriber::EnvFilter::try_from_default_env()
+                    .or_else(|_| klyra_runtime::tracing_subscriber::EnvFilter::try_new("info"))
+                    .unwrap();
+
+                let tracer = klyra_runtime::opentelemetry_otlp::new_pipeline()
+                    .tracing()
+                    .with_exporter(
+                        klyra_runtime::opentelemetry_otlp::new_exporter()
+                            .tonic()
+                            .with_endpoint(logger_uri),
+                    )
+                    .with_trace_config(
+                        klyra_runtime::opentelemetry::sdk::trace::config()
+                            .with_resource(
+                                klyra_runtime::opentelemetry::sdk::Resource::new(
+                                    vec![
+                                        klyra_runtime::opentelemetry::KeyValue::new(
+                                            "service.name",
+                                            "klyra-runtime",
+                                        ),
+                                        klyra_runtime::opentelemetry::KeyValue::new(
+                                            "deployment_id",
+                                            deployment_id,
+                                        )
+                                    ]
+                                )
+                            ),
+                        )
+                    .install_batch(klyra_runtime::opentelemetry::runtime::Tokio)
+                    .unwrap();
+                let otel_layer = klyra_runtime::tracing_opentelemetry::layer().with_tracer(tracer);
 
                 let registry = klyra_runtime::tracing_subscriber::registry()
-                    .with(logger.with_filter(filter_layer));
-
+                    .with(filter_layer)
+                    .with(otel_layer);
 
                 registry.init();
 
@@ -496,20 +554,49 @@ mod tests {
             async fn loader(
                 mut factory: klyra_runtime::ProvisionerFactory,
                 mut resource_tracker: klyra_runtime::ResourceTracker,
-                logger: klyra_runtime::Logger,
+                logger_uri: String,
+                deployment_id: String,
             ) -> KlyraComplex {
                 use klyra_runtime::Context;
                 use klyra_runtime::tracing_subscriber::prelude::*;
+                use klyra_runtime::opentelemetry_otlp::WithExportConfig;
                 use klyra_runtime::{Factory, ResourceBuilder};
 
-                let filter_layer =
-                    klyra_runtime::tracing_subscriber::EnvFilter::try_from_default_env()
-                        .or_else(|_| klyra_runtime::tracing_subscriber::EnvFilter::try_new("INFO"))
-                        .unwrap();
+                let filter_layer = klyra_runtime::tracing_subscriber::EnvFilter::try_from_default_env()
+                    .or_else(|_| klyra_runtime::tracing_subscriber::EnvFilter::try_new("info"))
+                    .unwrap();
+
+                let tracer = klyra_runtime::opentelemetry_otlp::new_pipeline()
+                    .tracing()
+                    .with_exporter(
+                        klyra_runtime::opentelemetry_otlp::new_exporter()
+                            .tonic()
+                            .with_endpoint(logger_uri),
+                    )
+                    .with_trace_config(
+                        klyra_runtime::opentelemetry::sdk::trace::config()
+                            .with_resource(
+                                klyra_runtime::opentelemetry::sdk::Resource::new(
+                                    vec![
+                                        klyra_runtime::opentelemetry::KeyValue::new(
+                                            "service.name",
+                                            "klyra-runtime",
+                                        ),
+                                        klyra_runtime::opentelemetry::KeyValue::new(
+                                            "deployment_id",
+                                            deployment_id,
+                                        )
+                                    ]
+                                )
+                            ),
+                        )
+                    .install_batch(klyra_runtime::opentelemetry::runtime::Tokio)
+                    .unwrap();
+                let otel_layer = klyra_runtime::tracing_opentelemetry::layer().with_tracer(tracer);
 
                 let registry = klyra_runtime::tracing_subscriber::registry()
-                    .with(logger.with_filter(filter_layer));
-
+                    .with(filter_layer)
+                    .with(otel_layer);
 
                 registry.init();
 
@@ -622,20 +709,49 @@ mod tests {
             async fn loader(
                 mut factory: klyra_runtime::ProvisionerFactory,
                 mut resource_tracker: klyra_runtime::ResourceTracker,
-                logger: klyra_runtime::Logger,
+                logger_uri: String,
+                deployment_id: String,
             ) -> KlyraComplex {
                 use klyra_runtime::Context;
                 use klyra_runtime::tracing_subscriber::prelude::*;
+                use klyra_runtime::opentelemetry_otlp::WithExportConfig;
                 use klyra_runtime::{Factory, ResourceBuilder};
 
-                let filter_layer =
-                    klyra_runtime::tracing_subscriber::EnvFilter::try_from_default_env()
-                        .or_else(|_| klyra_runtime::tracing_subscriber::EnvFilter::try_new("INFO"))
-                        .unwrap();
+                let filter_layer = klyra_runtime::tracing_subscriber::EnvFilter::try_from_default_env()
+                    .or_else(|_| klyra_runtime::tracing_subscriber::EnvFilter::try_new("info"))
+                    .unwrap();
+
+                let tracer = klyra_runtime::opentelemetry_otlp::new_pipeline()
+                    .tracing()
+                    .with_exporter(
+                        klyra_runtime::opentelemetry_otlp::new_exporter()
+                            .tonic()
+                            .with_endpoint(logger_uri),
+                    )
+                    .with_trace_config(
+                        klyra_runtime::opentelemetry::sdk::trace::config()
+                            .with_resource(
+                                klyra_runtime::opentelemetry::sdk::Resource::new(
+                                    vec![
+                                        klyra_runtime::opentelemetry::KeyValue::new(
+                                            "service.name",
+                                            "klyra-runtime",
+                                        ),
+                                        klyra_runtime::opentelemetry::KeyValue::new(
+                                            "deployment_id",
+                                            deployment_id,
+                                        )
+                                    ]
+                                )
+                            ),
+                        )
+                    .install_batch(klyra_runtime::opentelemetry::runtime::Tokio)
+                    .unwrap();
+                let otel_layer = klyra_runtime::tracing_opentelemetry::layer().with_tracer(tracer);
 
                 let registry = klyra_runtime::tracing_subscriber::registry()
-                    .with(logger.with_filter(filter_layer));
-
+                    .with(filter_layer)
+                    .with(otel_layer);
 
                 registry.init();
 
