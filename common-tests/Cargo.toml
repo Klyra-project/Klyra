@@ -10,3 +10,7 @@ publish = false
 hyper = { workspace = true }
 klyra-common = { workspace = true }
 tower = { workspace = true }
+cargo-klyra = { path = "../cargo-klyra" }
+portpicker = { workspace = true }
+tokio = { workspace = true }
+reqwest = { workspace = true }

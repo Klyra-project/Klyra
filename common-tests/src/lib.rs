@@ -1,3 +1,5 @@
+pub mod cargo_klyra;
+
 use klyra_common::claims::{Claim, Scope};
 
 /// Layer to set JwtScopes on a request.
