@@ -25,7 +25,7 @@ use std::net::SocketAddr;
 /// A wrapper type for [rocket::Rocket<rocket::Build>] so we can implement [klyra_runtime::Service] for it.
 pub struct RocketService(pub rocket::Rocket<rocket::Build>);
 
-#[rocket::get("/healthz")]
+#[rocket::get("/_klyra/healthz")]
 fn health_check() -> status::Custom<()> {
     status::Custom(Status::Ok, ())
 }

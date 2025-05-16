@@ -318,9 +318,11 @@ impl ToTokens for App {
             async fn __app(request: klyra_next::Request<klyra_next::body::BoxBody>,) -> klyra_next::response::Response
             {
                 use klyra_next::Service;
+                use klyra_next::routing::get;
 
                 let mut router = klyra_next::Router::new()
-                    #(#endpoint_chains)*;
+                    #(#endpoint_chains)*
+                    .route("/_klyra/healthz", get(|| async {}));
 
                 let response = router.call(request).await.unwrap();
 

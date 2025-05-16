@@ -34,7 +34,7 @@ where
     async fn bind(mut self, addr: std::net::SocketAddr) -> Result<(), klyra_runtime::Error> {
         let app = poem::Route::new()
             .at("/", self.0)
-            .at("/healthz", poem::get(healthz));
+            .at("/_klyra/healthz", poem::get(healthz));
 
         poem::Server::new(poem::listener::TcpListener::bind(addr))
             .run(app)

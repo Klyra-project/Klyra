@@ -26,7 +26,7 @@ where
     /// and binds to an address passed in by klyra.
     async fn bind(mut self, addr: SocketAddr) -> Result<(), Error> {
         self.0
-            .at("/healthz")
+            .at("/_klyra/healthz")
             .get(|_| async { Ok(tide::StatusCode::Ok) });
         self.0.listen(addr).await.map_err(CustomError::new)?;
         Ok(())
