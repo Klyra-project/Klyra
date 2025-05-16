@@ -65,7 +65,7 @@ use crate::provisioner_server::LocalProvisioner;
 
 const VERSION: &str = env!("CARGO_PKG_VERSION");
 const MANIFEST_DIR: &str = env!("CARGO_MANIFEST_DIR");
-const klyra_LOGIN_URL: &str = "https://klyra.rs/login";
+const klyra_LOGIN_URL: &str = "https://console.klyra.rs/new-project";
 const klyra_GH_ISSUE_URL: &str = "https://github.com/klyra-hq/klyra/issues/new";
 const klyra_CLI_DOCS_URL: &str = "https://docs.klyra.rs/introduction/klyra-commands";
 
