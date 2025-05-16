@@ -40,7 +40,7 @@ pub struct KlyraArgs {
 #[derive(Parser, Debug)]
 pub struct ProjectArgs {
     /// Specify the working directory
-    #[arg(global = true, long, default_value = ".", value_parser = OsStringValueParser::new().try_map(parse_init_path))]
+    #[arg(global = true, long, alias = "wd", default_value = ".", value_parser = OsStringValueParser::new().try_map(parse_init_path))]
     pub working_directory: PathBuf,
     /// Specify the name of the project (overrides crate name)
     #[arg(global = true, long)]
@@ -82,26 +82,26 @@ impl ProjectArgs {
     }
 }
 
-/// A cargo command for the klyra platform (https://www.klyra.rs/)
+/// A cargo command for the Klyra platform (https://www.klyra.rs/)
 ///
 /// See the CLI docs (https://docs.klyra.rs/introduction/klyra-commands)
 /// for more information.
 #[derive(Parser)]
 pub enum Command {
-    /// Create a new klyra project
+    /// Create a new Klyra project
     Init(InitArgs),
-    /// Run a klyra service locally
+    /// Run a Klyra service locally
     Run(RunArgs),
-    /// Deploy a klyra service
+    /// Deploy a Klyra service
     Deploy(DeployArgs),
-    /// Manage deployments of a klyra service
+    /// Manage deployments of a Klyra service
     #[command(subcommand)]
     Deployment(DeploymentCommand),
-    /// View the status of a klyra service
+    /// View the status of a Klyra service
     Status,
-    /// Stop this klyra service
+    /// Stop this Klyra service
     Stop,
-    /// View the logs of a deployment in this klyra service
+    /// View the logs of a deployment in this Klyra service
     Logs {
         /// Deployment ID to get logs for. Defaults to currently running deployment
         id: Option<Uuid>,
@@ -112,19 +112,19 @@ pub enum Command {
         /// Follow log output
         follow: bool,
     },
-    /// List or manage projects on klyra
+    /// List or manage projects on Klyra
     #[command(subcommand)]
     Project(ProjectCommand),
-    /// Manage resources of a klyra project
+    /// Manage resources of a Klyra project
     #[command(subcommand)]
     Resource(ResourceCommand),
-    /// Manage secrets for this klyra service
+    /// Manage secrets for this Klyra service
     Secrets,
-    /// Remove cargo build artifacts in the klyra environment
+    /// Remove cargo build artifacts in the Klyra environment
     Clean,
-    /// Login to the klyra platform
+    /// Login to the Klyra platform
     Login(LoginArgs),
-    /// Log out of the klyra platform
+    /// Log out of the Klyra platform
     Logout(LogoutArgs),
     /// Generate shell completions
     Generate {
@@ -166,17 +166,17 @@ pub enum ResourceCommand {
 
 #[derive(Parser)]
 pub enum ProjectCommand {
-    /// Create an environment for this project on klyra
+    /// Create an environment for this project on Klyra
     Start(ProjectStartArgs),
-    /// Check the status of this project's environment on klyra
+    /// Check the status of this project's environment on Klyra
     Status {
         #[arg(short, long)]
         /// Follow status of project command
         follow: bool,
     },
-    /// Destroy this project's environment (container) on klyra
+    /// Destroy this project's environment (container) on Klyra
     Stop,
-    /// Destroy and create an environment for this project on klyra
+    /// Destroy and create an environment for this project on Klyra
     Restart(ProjectStartArgs),
     /// List all projects belonging to the calling account
     List {
@@ -200,7 +200,7 @@ pub struct ProjectStartArgs {
 
 #[derive(Parser, Clone, Debug)]
 pub struct LoginArgs {
-    /// API key for the klyra platform
+    /// API key for the Klyra platform
     #[arg(long)]
     pub api_key: Option<String>,
 }
@@ -214,10 +214,10 @@ pub struct LogoutArgs {
 #[derive(Parser)]
 pub struct DeployArgs {
     /// Allow deployment with uncommited files
-    #[arg(long)]
+    #[arg(long, alias = "ad")]
     pub allow_dirty: bool,
     /// Don't run pre-deploy tests
-    #[arg(long)]
+    #[arg(long, alias = "nt")]
     pub no_test: bool,
 }
 
@@ -236,7 +236,7 @@ pub struct RunArgs {
 
 #[derive(Parser, Clone, Debug)]
 pub struct InitArgs {
-    /// Clone a starter template from klyra's official examples
+    /// Clone a starter template from Klyra's official examples
     #[arg(long, short, value_enum, conflicts_with_all = &["from", "subfolder"])]
     pub template: Option<InitTemplateArg>,
     /// Clone a template from a git repository or local path using cargo-generate
@@ -246,11 +246,11 @@ pub struct InitArgs {
     #[arg(long, requires = "from")]
     pub subfolder: Option<String>,
 
-    /// Path where to place the new klyra project
+    /// Path where to place the new Klyra project
     #[arg(default_value = ".", value_parser = OsStringValueParser::new().try_map(parse_init_path))]
     pub path: PathBuf,
 
-    /// Whether to create the environment for this project on klyra
+    /// Whether to create the environment for this project on Klyra
     #[arg(long)]
     pub create_env: bool,
     #[command(flatten)]
