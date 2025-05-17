@@ -11,8 +11,11 @@ touch $CARGO_HOME/config.toml
 if [[ $PROD != "true" ]]; then
     echo '
     [patch.crates-io]
-    klyra-service = { path = "/usr/src/klyra/service" }
+    klyra-codegen = { path = "/usr/src/klyra/codegen" }
+    klyra-common = { path = "/usr/src/klyra/common" }
+    klyra-proto = { path = "/usr/src/klyra/proto" }
     klyra-runtime = { path = "/usr/src/klyra/runtime" }
+    klyra-service = { path = "/usr/src/klyra/service" }
 
     klyra-aws-rds = { path = "/usr/src/klyra/resources/aws-rds" }
     klyra-persist = { path = "/usr/src/klyra/resources/persist" }

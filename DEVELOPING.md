@@ -136,8 +136,11 @@ In order to test local changes to the library crates, you may want to add the be
 
 ```toml
 [patch.crates-io]
-klyra-service = { path = "[base]/klyra/service" }
+klyra-codegen = { path = "[base]/klyra/codegen" }
+klyra-common = { path = "[base]/klyra/common" }
+klyra-proto = { path = "[base]/klyra/proto" }
 klyra-runtime = { path = "[base]/klyra/runtime" }
+klyra-service = { path = "[base]/klyra/service" }
 
 klyra-aws-rds = { path = "[base]/klyra/resources/aws-rds" }
 klyra-persist = { path = "[base]/klyra/resources/persist" }
