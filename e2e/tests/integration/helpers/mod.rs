@@ -46,6 +46,7 @@ klyra-persist = {{ path = "{}" }}
 klyra-shared-db = {{ path = "{}" }}
 klyra-secrets = {{ path = "{}" }}
 klyra-static-folder = {{ path = "{}" }}
+klyra-service-info = {{ path = "{}" }}
 
 klyra-axum = {{ path = "{}" }}
 klyra-actix-web = {{ path = "{}" }}
@@ -68,6 +69,10 @@ klyra-warp = {{ path = "{}" }}"#,
                     WORKSPACE_ROOT
                         .join("resources")
                         .join("static-folder")
+                        .display(),
+                    WORKSPACE_ROOT
+                        .join("resources")
+                        .join("service-info")
                         .display(),
                     WORKSPACE_ROOT
                         .join("services")
