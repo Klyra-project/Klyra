@@ -3,20 +3,20 @@ mod next;
 #[cfg(feature = "frameworks")]
 mod klyra_main;
 
-use proc_macro::TokenStream;
-use proc_macro_error::proc_macro_error;
-
 #[cfg(feature = "frameworks")]
-#[proc_macro_error]
+#[proc_macro_error::proc_macro_error]
 #[proc_macro_attribute]
-pub fn main(attr: TokenStream, item: TokenStream) -> TokenStream {
+pub fn main(
+    attr: proc_macro::TokenStream,
+    item: proc_macro::TokenStream,
+) -> proc_macro::TokenStream {
     klyra_main::r#impl(attr, item)
 }
 
 #[cfg(feature = "next")]
-#[proc_macro_error]
+#[proc_macro_error::proc_macro_error]
 #[proc_macro]
-pub fn app(item: TokenStream) -> TokenStream {
+pub fn app(item: proc_macro::TokenStream) -> proc_macro::TokenStream {
     use next::App;
     use syn::{parse_macro_input, File};
 
