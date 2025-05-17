@@ -268,7 +268,7 @@ publish-resources: publish-resources/aws-rds \
 	publish-resources/persist \
 	publish-resources/shared-db \
 	publish-resources/static-folder \
-	publish-resources/service-info
+	publish-resources/metadata
 
 publish-cargo-klyra: publish-resources/secrets
 	cd cargo-klyra; cargo publish

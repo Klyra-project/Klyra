@@ -66,7 +66,7 @@ pub enum Type {
     StaticFolder,
     Persist,
     Turso,
-    ServiceInfo,
+    Metadata,
     Custom,
 }
 
@@ -78,7 +78,7 @@ impl From<Type> for klyra_common::resource::Type {
             Type::StaticFolder => Self::StaticFolder,
             Type::Persist => Self::Persist,
             Type::Turso => Self::Turso,
-            Type::ServiceInfo => Self::ServiceInfo,
+            Type::Metadata => Self::Metadata,
             Type::Custom => Self::Custom,
         }
     }
@@ -92,7 +92,7 @@ impl From<klyra_common::resource::Type> for Type {
             klyra_common::resource::Type::StaticFolder => Self::StaticFolder,
             klyra_common::resource::Type::Persist => Self::Persist,
             klyra_common::resource::Type::Turso => Self::Turso,
-            klyra_common::resource::Type::ServiceInfo => Self::ServiceInfo,
+            klyra_common::resource::Type::Metadata => Self::Metadata,
             klyra_common::resource::Type::Custom => Self::Custom,
         }
     }
@@ -106,7 +106,7 @@ impl Display for Type {
             Type::StaticFolder => write!(f, "static_folder"),
             Type::Persist => write!(f, "persist"),
             Type::Turso => write!(f, "turso"),
-            Type::ServiceInfo => write!(f, "service_info"),
+            Type::Metadata => write!(f, "metadata"),
             Type::Custom => write!(f, "custom"),
         }
     }
@@ -127,7 +127,7 @@ impl FromStr for Type {
                 "static_folder" => Ok(Self::StaticFolder),
                 "persist" => Ok(Self::Persist),
                 "turso" => Ok(Self::Turso),
-                "service_info" => Ok(Self::ServiceInfo),
+                "metadata" => Ok(Self::Metadata),
                 "custom" => Ok(Self::Custom),
                 _ => Err(format!("'{s}' is an unknown resource type")),
             }
@@ -178,7 +178,7 @@ mod tests {
             Type::StaticFolder,
             Type::Persist,
             Type::Turso,
-            Type::ServiceInfo,
+            Type::Metadata,
             Type::Custom,
         ];
 

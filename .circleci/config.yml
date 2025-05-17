@@ -97,7 +97,7 @@ commands:
             klyra-shared-db = { path = "$PWD/resources/shared-db" }
             klyra-secrets = { path = "$PWD/resources/secrets" }
             klyra-static-folder = { path = "$PWD/resources/static-folder" }
-            klyra-service-info = { path = "$PWD/resources/service-info" }
+            klyra-metadata = { path = "$PWD/resources/metadata" }
             klyra-turso = { path = "$PWD/resources/turso" }
 
             klyra-axum = { path = "$PWD/services/klyra-axum" }
@@ -621,7 +621,7 @@ workflows:
                 - resources/persist
                 - resources/secrets
                 - resources/static-folder
-                - resources/service-info
+                - resources/metadata
                 - resources/turso
                 - services/klyra-actix-web
                 - services/klyra-axum
@@ -836,7 +836,7 @@ workflows:
                   "resources/secrets",
                   "resources/shared-db",
                   "resources/static-folder",
-                  "resources/service-info",
+                  "resources/metadata",
                   "resources/turso",
                 ]
           name: publish-<< matrix.path >>

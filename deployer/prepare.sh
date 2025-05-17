@@ -41,7 +41,7 @@ if [[ $PROD != "true" ]]; then
     klyra-shared-db = { path = "/usr/src/klyra/resources/shared-db" }
     klyra-secrets = { path = "/usr/src/klyra/resources/secrets" }
     klyra-static-folder = { path = "/usr/src/klyra/resources/static-folder" }
-    klyra-service-info = { path = "/usr/src/klyra/resources/service-info" }
+    klyra-metadata = { path = "/usr/src/klyra/resources/metadata" }
     klyra-turso = { path = "/usr/src/klyra/resources/turso" }
 
     klyra-actix-web = { path = "/usr/src/klyra/services/klyra-actix-web" }
