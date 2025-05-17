@@ -1180,7 +1180,6 @@ dependencies = [
  "klyra-common-tests",
  "klyra-proto",
  "klyra-service",
- "sqlx",
  "strum",
  "tar",
  "tempfile",

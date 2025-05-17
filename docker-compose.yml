@@ -77,7 +77,6 @@ services:
       - ${DOCKER_SOCK}:/var/run/docker.sock
     environment:
       - RUST_LOG=${RUST_LOG}
-      - LD_LIBRARY_PATH=/usr/src/klyra/gateway
     command:
       - "--state=/var/lib/klyra"
       - "start"
