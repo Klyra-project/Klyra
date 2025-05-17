@@ -56,7 +56,7 @@ CONTAINER_REGISTRY=public.ecr.aws/klyra
 DD_ENV=production
 # make sure we only ever go to production with `--tls=enable`
 USE_TLS=enable
-RUST_LOG=debug
+RUST_LOG?=klyra=debug,info
 else
 DOCKER_COMPOSE_FILES=docker-compose.yml docker-compose.dev.yml
 STACK?=klyra-dev
@@ -65,7 +65,7 @@ DB_FQDN=db.unstable.klyra.rs
 CONTAINER_REGISTRY=public.ecr.aws/klyra-dev
 DD_ENV=unstable
 USE_TLS?=disable
-RUST_LOG?=klyra=trace,debug
+RUST_LOG?=klyra=debug,info
 DEPLOYS_API_KEY?=gateway4deployes
 endif
 
