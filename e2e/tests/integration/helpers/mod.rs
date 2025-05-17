@@ -38,10 +38,14 @@ impl TempCargoHome {
                 write!(
                     config,
                     r#"[patch.crates-io]
-klyra-service = {{ path = "{}" }}
+klyra-codegen = {{ path = "{}" }}
+klyra-common = {{ path = "{}" }}
+klyra-proto = {{ path = "{}" }}
 klyra-runtime = {{ path = "{}" }}
+klyra-service = {{ path = "{}" }}
 
 klyra-aws-rds = {{ path = "{}" }}
+klyra-metadata = {{ path = "{}" }}
 klyra-persist = {{ path = "{}" }}
 klyra-shared-db = {{ path = "{}" }}
 klyra-secrets = {{ path = "{}" }}
@@ -59,9 +63,13 @@ klyra-thruster = {{ path = "{}" }}
 klyra-tide = {{ path = "{}" }}
 klyra-tower = {{ path = "{}" }}
 klyra-warp = {{ path = "{}" }}"#,
-                    WORKSPACE_ROOT.join("service").display(),
+                    WORKSPACE_ROOT.join("codegen").display(),
+                    WORKSPACE_ROOT.join("common").display(),
+                    WORKSPACE_ROOT.join("proto").display(),
                     WORKSPACE_ROOT.join("runtime").display(),
+                    WORKSPACE_ROOT.join("service").display(),
                     WORKSPACE_ROOT.join("resources").join("aws-rds").display(),
+                    WORKSPACE_ROOT.join("resources").join("metadata").display(),
                     WORKSPACE_ROOT.join("resources").join("persist").display(),
                     WORKSPACE_ROOT.join("resources").join("shared-db").display(),
                     WORKSPACE_ROOT.join("resources").join("secrets").display(),

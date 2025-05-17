@@ -1,10 +1,7 @@
-SRC_CRATES=auth cargo-klyra codegen common deployer gateway logger proto provisioner resource-recorder service
-SRC=$(shell find $(SRC_CRATES) -name "*.rs" -type f -not -path "**/target/*")
+COMMIT_SHA?=$(shell git rev-parse --short HEAD)
 
-COMMIT_SHA ?= $(shell git rev-parse --short HEAD)
-
-BUILDX_CACHE?=/tmp/cache/buildx
 ifeq ($(CI),true)
+BUILDX_CACHE?=/tmp/cache/buildx
 CACHE_FLAGS=--cache-to type=local,dest=$(BUILDX_CACHE),mode=max --cache-from type=local,src=$(BUILDX_CACHE)
 endif
 
@@ -34,7 +31,6 @@ RESOURCE_RECORDER_TAG?=$(TAG)
 RESOURCE_RECORDER_TAG?=$(TAG)
 
 DOCKER_BUILD?=docker buildx build
-
 ifeq ($(CI),true)
 DOCKER_BUILD+= --progress plain
 endif
@@ -50,6 +46,7 @@ POSTGRES_PASSWORD?=postgres
 MONGO_INITDB_ROOT_USERNAME?=mongodb
 MONGO_INITDB_ROOT_PASSWORD?=password
 
+
 ifeq ($(PROD),true)
 DOCKER_COMPOSE_FILES=docker-compose.yml
 STACK=klyra-prod
@@ -59,7 +56,8 @@ CONTAINER_REGISTRY=public.ecr.aws/klyra
 DD_ENV=production
 # make sure we only ever go to production with `--tls=enable`
 USE_TLS=enable
-RUST_LOG=debug
+CARGO_PROFILE=release
+RUST_LOG?=klyra=debug,info
 else
 DOCKER_COMPOSE_FILES=docker-compose.yml docker-compose.dev.yml
 STACK?=klyra-dev
@@ -68,8 +66,16 @@ DB_FQDN=db.unstable.klyra.rs
 CONTAINER_REGISTRY=public.ecr.aws/klyra-dev
 DD_ENV=unstable
 USE_TLS?=disable
-RUST_LOG?=klyra=trace,debug
+# default for local run
+CARGO_PROFILE?=debug
+RUST_LOG?=klyra=debug,info
+DEV_SUFFIX=-dev
 DEPLOYS_API_KEY?=gateway4deployes
+endif
+
+ifeq ($(CI),true)
+# default for staging
+CARGO_PROFILE=release
 endif
 
 POSTGRES_EXTRA_PATH?=./extras/postgres
@@ -83,8 +89,14 @@ OTEL_TAG?=0.72.0
 
 USE_PANAMAX?=enable
 ifeq ($(USE_PANAMAX), enable)
-PREPARE_ARGS+=-p 
+PREPARE_ARGS+=-p
 COMPOSE_PROFILES+=panamax
+endif
+
+ifeq ($(klyra_DETACH), disable)
+klyra_DETACH=
+else
+klyra_DETACH=--detach
 endif
 
 DOCKER_COMPOSE_ENV=\
@@ -111,13 +123,31 @@ DOCKER_COMPOSE_ENV=\
 	COMPOSE_PROFILES=$(COMPOSE_PROFILES)\
 	DOCKER_SOCK=$(DOCKER_SOCK)
 
-.PHONY: clean images postgres panamax otel deploy test docker-compose.rendered.yml up down klyra-%
+.PHONY: clean images the-klyra-images klyra-% postgres panamax otel deploy test docker-compose.rendered.yml up down
 
 clean:
 	rm .klyra-*
 	rm docker-compose.rendered.yml
 
-images: klyra-auth klyra-deployer klyra-gateway klyra-logger klyra-provisioner klyra-resource-recorder otel panamax postgres
+images: the-klyra-images postgres panamax otel
+
+the-klyra-images: klyra-auth klyra-deployer klyra-gateway klyra-logger klyra-provisioner klyra-resource-recorder
+
+klyra-%:
+	$(DOCKER_BUILD) \
+		--target $(@)$(DEV_SUFFIX) \
+		--build-arg folder=$(*) \
+		--build-arg crate=$(@) \
+		--build-arg prepare_args=$(PREPARE_ARGS) \
+		--build-arg PROD=$(PROD) \
+		--build-arg RUSTUP_TOOLCHAIN=$(RUSTUP_TOOLCHAIN) \
+		--build-arg CARGO_PROFILE=$(CARGO_PROFILE) \
+		--tag $(CONTAINER_REGISTRY)/$(*):$(COMMIT_SHA) \
+		--tag $(CONTAINER_REGISTRY)/$(*):$(TAG) \
+		--tag $(CONTAINER_REGISTRY)/$(*):latest \
+		$(BUILDX_FLAGS) \
+		-f Containerfile \
+		.
 
 postgres:
 	$(DOCKER_BUILD) \
@@ -158,20 +188,12 @@ docker-compose.rendered.yml: docker-compose.yml docker-compose.dev.yml
 # to start panamax locally run this command with an override for the profiles:
 # `make COMPOSE_PROFILES=panamax up`
 up: $(DOCKER_COMPOSE_FILES)
-	if [ "$(klyra_DETACH)" = "disable" ]; then $(DOCKER_COMPOSE_ENV) $(DOCKER_COMPOSE) $(addprefix -f ,$(DOCKER_COMPOSE_FILES)) -p $(STACK) up; else $(DOCKER_COMPOSE_ENV) $(DOCKER_COMPOSE) $(addprefix -f ,$(DOCKER_COMPOSE_FILES)) -p $(STACK) up --detach; fi
+	$(DOCKER_COMPOSE_ENV) \
+	$(DOCKER_COMPOSE) \
+	$(addprefix -f ,$(DOCKER_COMPOSE_FILES)) \
+	-p $(STACK) \
+	up \
+	$(klyra_DETACH)
 
 down: $(DOCKER_COMPOSE_FILES)
 	$(DOCKER_COMPOSE_ENV) $(DOCKER_COMPOSE) $(addprefix -f ,$(DOCKER_COMPOSE_FILES)) -p $(STACK) down
-
-klyra-%: ${SRC} Cargo.lock
-	$(DOCKER_BUILD) \
-		--build-arg folder=$(*) \
-		--build-arg prepare_args=$(PREPARE_ARGS) \
-		--build-arg PROD=$(PROD) \
-		--build-arg RUSTUP_TOOLCHAIN=$(RUSTUP_TOOLCHAIN) \
-		--tag $(CONTAINER_REGISTRY)/$(*):$(COMMIT_SHA) \
-		--tag $(CONTAINER_REGISTRY)/$(*):$(TAG) \
-		--tag $(CONTAINER_REGISTRY)/$(*):latest \
-		$(BUILDX_FLAGS) \
-		-f Containerfile \
-		.

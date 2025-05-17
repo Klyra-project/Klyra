@@ -1,32 +1,27 @@
 #![doc = include_str!("../README.md")]
 
-use async_trait::async_trait;
-use paste::paste;
-use serde::Serialize;
-use klyra_service::{
-    database::{self, AwsRdsEngine},
-    error::CustomError,
-    DbInput, DbOutput, Factory, ResourceBuilder, Type,
-};
-
 macro_rules! aws_engine {
     ($feature:expr, $pool_path:path, $options_path:path, $struct_ident:ident) => {
-        paste! {
-            #[derive(Serialize)]
+        paste::paste! {
+            #[derive(serde::Serialize)]
             #[cfg(feature = $feature)]
             #[doc = "A resource connected to an AWS RDS " $struct_ident " instance"]
             pub struct $struct_ident{
-                config: DbInput,
+                config: klyra_service::DbInput,
             }
 
             #[cfg(feature = $feature)]
             #[doc = "Gets a `sqlx::Pool` connected to an AWS RDS " $struct_ident " instance"]
-            #[async_trait]
-            impl ResourceBuilder<$pool_path> for $struct_ident {
-                const TYPE: Type = Type::Database(database::Type::AwsRds(AwsRdsEngine::$struct_ident));
+            #[async_trait::async_trait]
+            impl klyra_service::ResourceBuilder<$pool_path> for $struct_ident {
+                const TYPE: klyra_service::Type = klyra_service::Type::Database(
+                    klyra_service::database::Type::AwsRds(
+                        klyra_service::database::AwsRdsEngine::$struct_ident
+                    )
+                );
 
-                type Config = DbInput;
-                type Output = DbOutput;
+                type Config = klyra_service::DbInput;
+                type Output = klyra_service::DbOutput;
 
                 fn new() -> Self {
                     Self { config: Default::default() }
@@ -36,20 +31,20 @@ macro_rules! aws_engine {
                     &self.config
                 }
 
-                async fn output(self, factory: &mut dyn Factory) -> Result<Self::Output, klyra_service::Error> {
+                async fn output(self, factory: &mut dyn klyra_service::Factory) -> Result<Self::Output, klyra_service::Error> {
                     let info = match factory.get_environment() {
-                        klyra_service::Environment::Production => DbOutput::Info(
+                        klyra_service::Environment::Production => klyra_service::DbOutput::Info(
                             factory
-                                .get_db_connection(database::Type::AwsRds(AwsRdsEngine::$struct_ident))
+                                .get_db_connection(klyra_service::database::Type::AwsRds(klyra_service::database::AwsRdsEngine::$struct_ident))
                                 .await?
                         ),
                         klyra_service::Environment::Local => {
                             if let Some(local_uri) = self.config.local_uri {
-                                DbOutput::Local(local_uri)
+                                klyra_service::DbOutput::Local(local_uri)
                             } else {
-                                DbOutput::Info(
+                                klyra_service::DbOutput::Info(
                                     factory
-                                        .get_db_connection(database::Type::AwsRds(AwsRdsEngine::$struct_ident))
+                                        .get_db_connection(klyra_service::database::Type::AwsRds(klyra_service::database::AwsRdsEngine::$struct_ident))
                                         .await?
                                 )
                             }
@@ -61,8 +56,8 @@ macro_rules! aws_engine {
 
                 async fn build(build_data: &Self::Output) -> Result<$pool_path, klyra_service::Error> {
                     let connection_string = match build_data {
-                        DbOutput::Local(local_uri) => local_uri.clone(),
-                        DbOutput::Info(info) => info.connection_string_private(),
+                        klyra_service::DbOutput::Local(local_uri) => local_uri.clone(),
+                        klyra_service::DbOutput::Info(info) => info.connection_string_private(),
                     };
 
                     let pool = $options_path::new()
@@ -70,7 +65,7 @@ macro_rules! aws_engine {
                         .max_connections(5)
                         .connect(&connection_string)
                         .await
-                        .map_err(CustomError::new)?;
+                        .map_err(klyra_service::error::CustomError::new)?;
 
                     Ok(pool)
                 }
