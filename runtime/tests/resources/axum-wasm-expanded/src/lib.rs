@@ -24,12 +24,12 @@ async fn app(request: klyra_next::Request<BoxBody>) -> klyra_next::response::Res
 }
 
 async fn hello() -> &'static str {
-    debug!("in hello()");
+    println!("in hello()");
     "Hello, World!"
 }
 
 async fn goodbye() -> &'static str {
-    debug!("in goodbye()");
+    println!("in goodbye()");
     "Goodbye, World!"
 }
 
@@ -48,22 +48,12 @@ async fn uppercase(body: BodyStream) -> impl IntoResponse {
 #[no_mangle]
 #[allow(non_snake_case)]
 pub extern "C" fn __klyra_Axum_call(
-    logs_fd: std::os::wasi::prelude::RawFd,
     parts_fd: std::os::wasi::prelude::RawFd,
     body_fd: std::os::wasi::prelude::RawFd,
 ) {
     use klyra_next::body::{Body, HttpBody};
-    use klyra_next::tracing_prelude::*;
-    use klyra_next::Logger;
     use std::io::{Read, Write};
     use std::os::wasi::io::FromRawFd;
-
-    // file descriptor 2 for writing logs to
-    let logs_fd = unsafe { std::fs::File::from_raw_fd(logs_fd) };
-
-    klyra_next::tracing_registry()
-        .with(Logger::new(logs_fd))
-        .init(); // this sets the subscriber as the global default and also adds a compatibility layer for capturing `log::Record`s
 
     // file descriptor 3 for reading and writing http parts
     let mut parts_fd = unsafe { std::fs::File::from_raw_fd(parts_fd) };
