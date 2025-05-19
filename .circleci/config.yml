@@ -697,7 +697,6 @@ workflows:
                 - klyra-auth
                 - klyra-codegen
                 - klyra-deployer
-                - klyra-logger
                 - klyra-proto
                 - klyra-resource-recorder
                 - klyra-runtime
@@ -710,6 +709,7 @@ workflows:
                 # need to spawn docker containers, therefore in a machine
                 - cargo-klyra
                 - klyra-provisioner
+                - klyra-logger
       - e2e-test:
           requires:
             - test-standalone
