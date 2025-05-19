@@ -13,9 +13,30 @@ pub(crate) fn r#impl(_attr: TokenStream, item: TokenStream) -> TokenStream {
 
     let loader = Loader::from_item_fn(&mut fn_decl);
 
+    let tracing_setup = if cfg!(feature = "setup-tracing") {
+        Some(quote! {
+                use klyra_runtime::colored::*;
+                klyra_runtime::colored::control::set_override(true);
+                klyra_runtime::tracing_subscriber::fmt::init();
+                println!(
+                    "{}\n{}\nTo disable tracing, remove the default features from {}:\n{}\n{}",
+                    "Klyra's default tracing subscriber is initialized!".yellow().bold(),
+                    "=".repeat(52).yellow(),
+                    "klyra-runtime".italic(),
+                    "klyra-runtime = { version = \"*\", default-features = false }"
+                        .white()
+                        .italic(),
+                    "=".repeat(52).yellow()
+                );
+        })
+    } else {
+        None
+    };
+
     quote! {
         #[tokio::main]
         async fn main() {
+            #tracing_setup
             klyra_runtime::start(loader).await;
         }
 
