@@ -1,9 +1,12 @@
 use std::time::Duration;
 
 use clap::Parser;
-use klyra_common::backends::{
-    auth::{AuthPublicKey, JwtAuthenticationLayer},
-    tracing::{setup_tracing, ExtractPropagationLayer},
+use klyra_common::{
+    backends::{
+        auth::{AuthPublicKey, JwtAuthenticationLayer},
+        tracing::{setup_tracing, ExtractPropagationLayer},
+    },
+    log::Backend,
 };
 use klyra_logger::{args::Args, Postgres, Service};
 use klyra_proto::logger::logger_server::LoggerServer;
@@ -14,7 +17,7 @@ use tracing::trace;
 async fn main() {
     let args = Args::parse();
 
-    setup_tracing(tracing_subscriber::registry(), "logger");
+    setup_tracing(tracing_subscriber::registry(), Backend::Logger);
 
     trace!(args = ?args, "parsed args");
 
