@@ -13,4 +13,8 @@ tower = { workspace = true }
 cargo-klyra = { path = "../cargo-klyra" }
 portpicker = { workspace = true }
 tokio = { workspace = true }
+tonic = { workspace = true }
 reqwest = { workspace = true }
+
+[dependencies.klyra-proto]
+workspace = true

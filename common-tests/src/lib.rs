@@ -1,4 +1,5 @@
 pub mod cargo_klyra;
+pub mod logger;
 
 use klyra_common::claims::{Claim, Scope};
 
