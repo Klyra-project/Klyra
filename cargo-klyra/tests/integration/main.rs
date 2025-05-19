@@ -13,14 +13,17 @@ async fn cargo_klyra_command(
 
     Klyra::new()
         .unwrap()
-        .run(KlyraArgs {
-            api_url: Some("http://klyra.invalid:80".to_string()),
-            project_args: ProjectArgs {
-                working_directory,
-                name: None,
+        .run(
+            KlyraArgs {
+                api_url: Some("http://klyra.invalid:80".to_string()),
+                project_args: ProjectArgs {
+                    working_directory,
+                    name: None,
+                },
+                cmd,
             },
-            cmd,
-        })
+            false,
+        )
         .await
 }
 
