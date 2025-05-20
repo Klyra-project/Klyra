@@ -256,7 +256,6 @@ impl ToTokens for Loader {
             async fn loader(
                 mut #factory_ident: klyra_runtime::ProvisionerFactory,
                 mut #resource_tracker_ident: klyra_runtime::ResourceTracker,
-                deployment_id: String,
             ) -> #return_type {
                 use klyra_runtime::Context;
                 #extra_imports
@@ -326,7 +325,6 @@ mod tests {
             async fn loader(
                 mut _factory: klyra_runtime::ProvisionerFactory,
                 mut _resource_tracker: klyra_runtime::ResourceTracker,
-                deployment_id: String,
             ) -> KlyraSimple {
                 use klyra_runtime::Context;
                 simple().await
@@ -395,7 +393,6 @@ mod tests {
             async fn loader(
                 mut factory: klyra_runtime::ProvisionerFactory,
                 mut resource_tracker: klyra_runtime::ResourceTracker,
-                deployment_id: String,
             ) -> KlyraComplex {
                 use klyra_runtime::Context;
                 use klyra_runtime::{Factory, ResourceBuilder};
@@ -507,7 +504,6 @@ mod tests {
             async fn loader(
                 mut factory: klyra_runtime::ProvisionerFactory,
                 mut resource_tracker: klyra_runtime::ResourceTracker,
-                deployment_id: String,
             ) -> KlyraComplex {
                 use klyra_runtime::Context;
                 use klyra_runtime::{Factory, ResourceBuilder};

@@ -15,6 +15,7 @@ portpicker = { workspace = true }
 tokio = { workspace = true }
 tonic = { workspace = true }
 reqwest = { workspace = true }
+tokio-stream = { workspace = true }
 
 [dependencies.klyra-proto]
 workspace = true
