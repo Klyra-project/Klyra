@@ -13,52 +13,9 @@ pub(crate) fn r#impl(_attr: TokenStream, item: TokenStream) -> TokenStream {
 
     let loader = Loader::from_item_fn(&mut fn_decl);
 
-    let tracing_setup = if cfg!(feature = "setup-tracing") {
-        Some(quote! {
-            use klyra_runtime::colored::{control, Colorize};
-            control::set_override(true); // always apply color
-
-            use klyra_runtime::tracing_subscriber::prelude::*;
-            let level = if cfg!(debug_assertions) {
-                "debug,klyra=trace,h2=info,tower=info,hyper=info"
-            } else {
-                "info,klyra=trace"
-            };
-            klyra_runtime::tracing_subscriber::registry()
-                .with(klyra_runtime::tracing_subscriber::fmt::layer().without_time())
-                .with(
-                    // let user override RUST_LOG in local run if they want to
-                    klyra_runtime::tracing_subscriber::EnvFilter::try_from_default_env()
-                        // otherwise use our default
-                        .or_else(|_| klyra_runtime::tracing_subscriber::EnvFilter::try_new(level))
-                        .unwrap()
-                )
-                .init();
-            eprintln!( // stderr to not interfere with runtime's --version output on stdout
-                "{}\n\
-                {}\n\
-                To disable the subscriber and use your own,\n\
-                remove the default features for {}:\n\
-                \n\
-                {}\n\
-                {}",
-                "=".repeat(63).yellow(),
-                "Klyra's default tracing subscriber is initialized!".yellow().bold(),
-                "klyra-runtime".italic(),
-                r#"klyra-runtime = { version = "...", default-features = false }"#
-                    .white()
-                    .italic(),
-                "=".repeat(63).yellow()
-            );
-        })
-    } else {
-        None
-    };
-
     quote! {
         #[tokio::main]
         async fn main() {
-            #tracing_setup
             klyra_runtime::start(loader).await;
         }
 

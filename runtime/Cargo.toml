@@ -73,5 +73,4 @@ setup-tracing = [
     "tracing-subscriber/default",
     "tracing-subscriber/env-filter",
     "colored",
-    "klyra-codegen/setup-tracing",
 ]
