@@ -70,7 +70,8 @@ next = [
     "klyra-common/wasm",
 ]
 setup-tracing = [
-    "tracing-subscriber",
+    "tracing-subscriber/default",
+    "tracing-subscriber/env-filter",
     "colored",
     "klyra-codegen/setup-tracing",
 ]

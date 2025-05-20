@@ -56,7 +56,8 @@ impl BuiltService {
 }
 
 fn extract_klyra_toml_name(path: PathBuf) -> anyhow::Result<String> {
-    let klyra_toml = read_to_string(path).context("Klyra.toml not found")?;
+    let klyra_toml =
+        read_to_string(path.as_path()).map_err(|_| anyhow!("{} not found", path.display()))?;
 
     let toml: toml::Value =
         toml::from_str(&klyra_toml).context("failed to parse Klyra.toml")?;
