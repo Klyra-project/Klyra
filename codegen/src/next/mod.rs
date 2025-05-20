@@ -347,6 +347,12 @@ pub(crate) fn wasi_bindings(app: App) -> proc_macro2::TokenStream {
             use std::io::{Read, Write};
             use std::os::wasi::io::FromRawFd;
 
+            use klyra_next::tracing_prelude::*;
+
+            klyra_next::tracing_registry()
+                .with(klyra_next::tracing_fmt::layer().without_time())
+                .init();
+
             // file descriptor 3 for reading and writing http parts
             let mut parts_fd = unsafe { std::fs::File::from_raw_fd(parts_fd) };
 
