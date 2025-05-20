@@ -1,12 +1,11 @@
 use anyhow::Result;
-use cargo_klyra::{CommandOutcome, Klyra, KlyraArgs};
-use clap::Parser;
+use cargo_klyra::{CommandOutcome, Klyra};
 
 #[tokio::main(flavor = "multi_thread")]
 async fn main() -> Result<()> {
     tracing_subscriber::fmt::init();
 
-    let result = Klyra::new()?.run(KlyraArgs::parse()).await;
+    let result = Klyra::new()?.parse_args_and_run().await;
 
     if matches!(result, Ok(CommandOutcome::DeploymentFailure)) {
         // Deployment failure results in a shell error exit code being returned (this allows

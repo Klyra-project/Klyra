@@ -18,7 +18,7 @@ use klyra_runtime::{CustomError, Error};
 use std::net::SocketAddr;
 
 /// A wrapper type for [axum::Router] so we can implement [klyra_runtime::Service] for it.
-pub struct AxumService<S = ()>(pub axum::Router<S>);
+pub struct AxumService(pub axum::Router);
 
 #[klyra_runtime::async_trait]
 impl klyra_runtime::Service for AxumService {
@@ -34,11 +34,10 @@ impl klyra_runtime::Service for AxumService {
     }
 }
 
-impl<S> From<axum::Router<S>> for AxumService<S> {
-    fn from(router: axum::Router<S>) -> Self {
+impl From<axum::Router> for AxumService {
+    fn from(router: axum::Router) -> Self {
         Self(router)
     }
 }
-
 /// The return type that should be returned from the [klyra_runtime::main] function.
 pub type KlyraAxum = Result<AxumService, Error>;

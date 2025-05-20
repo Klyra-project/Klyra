@@ -1,6 +1,6 @@
 [package]
 name = "klyra-metadata"
-version = "0.24.0"
+version = "0.25.0"
 edition = "2021"
 license = "Apache-2.0"
 description = "Plugin to get Klyra service information"
@@ -9,4 +9,4 @@ keywords = ["klyra-service", "metadata"]
 [dependencies]
 async-trait = "0.1.56"
 serde = { version = "1.0.0", features = ["derive"] }
-klyra-service = { path = "../../service", version = "0.24.0" }
+klyra-service = { path = "../../service", version = "0.25.0" }
