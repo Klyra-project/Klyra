@@ -1,9 +1,12 @@
 use std::time::Duration;
 
 use clap::Parser;
-use klyra_common::backends::{
-    auth::{AuthPublicKey, JwtAuthenticationLayer},
-    tracing::{setup_tracing, ExtractPropagationLayer},
+use klyra_common::{
+    backends::{
+        auth::{AuthPublicKey, JwtAuthenticationLayer},
+        tracing::{setup_tracing, ExtractPropagationLayer},
+    },
+    log::Backend,
 };
 use klyra_proto::resource_recorder::resource_recorder_server::ResourceRecorderServer;
 use klyra_resource_recorder::{args::Args, Service, Sqlite};
@@ -14,7 +17,7 @@ use tracing::trace;
 async fn main() {
     let args = Args::parse();
 
-    setup_tracing(tracing_subscriber::registry(), "resource-recorder");
+    setup_tracing(tracing_subscriber::registry(), Backend::ResourceRecorder);
 
     trace!(args = ?args, "parsed args");
 

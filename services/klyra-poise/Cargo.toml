@@ -10,7 +10,7 @@ keywords = ["klyra-service", "poise", "discord-bot", "serenity"]
 
 [dependencies]
 poise = { version = "0.5.2" }
-klyra-runtime = { path = "../../runtime", version = "0.25.0" }
+klyra-runtime = { path = "../../runtime", version = "0.25.0", default-features = false }
 
 [dev-dependencies]
 klyra-secrets = { path = "../../resources/secrets" }

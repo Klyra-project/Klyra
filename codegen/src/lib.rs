@@ -3,9 +3,6 @@ mod next;
 #[cfg(feature = "frameworks")]
 mod klyra_main;
 
-use proc_macro::TokenStream;
-use proc_macro_error::proc_macro_error;
-
 /// Helper macro that generates the entrypoint required by any service - likely the only macro you need in this crate.
 ///
 /// ## Without klyra managed resources
@@ -57,16 +54,19 @@ use proc_macro_error::proc_macro_error;
 ///
 /// More [klyra managed resources can be found here](https://github.com/klyra-hq/klyra/tree/main/resources)
 #[cfg(feature = "frameworks")]
-#[proc_macro_error]
+#[proc_macro_error::proc_macro_error]
 #[proc_macro_attribute]
-pub fn main(attr: TokenStream, item: TokenStream) -> TokenStream {
+pub fn main(
+    attr: proc_macro::TokenStream,
+    item: proc_macro::TokenStream,
+) -> proc_macro::TokenStream {
     klyra_main::r#impl(attr, item)
 }
 
 #[cfg(feature = "next")]
-#[proc_macro_error]
+#[proc_macro_error::proc_macro_error]
 #[proc_macro]
-pub fn app(item: TokenStream) -> TokenStream {
+pub fn app(item: proc_macro::TokenStream) -> proc_macro::TokenStream {
     use next::App;
     use syn::{parse_macro_input, File};
 

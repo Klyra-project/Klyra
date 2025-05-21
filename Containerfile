@@ -45,8 +45,9 @@ RUN cargo build \
     $(if [ "$CARGO_PROFILE" = "release" ]; then echo --release; fi) \
     --bin klyra-auth \
     --bin klyra-deployer \
-    --bin klyra-provisioner \
     --bin klyra-gateway \
+    --bin klyra-logger \
+    --bin klyra-provisioner \
     --bin klyra-resource-recorder \
     --bin klyra-next -F next
 
@@ -91,6 +92,9 @@ COPY --from=builder /build/target/${CARGO_PROFILE}/klyra-gateway /usr/local/bin/
 FROM klyra-gateway AS klyra-gateway-dev
 # For testing certificates locally
 COPY --from=planner /build/*.pem /usr/src/klyra/
+
+FROM klyra-crate-base AS klyra-logger
+FROM klyra-logger AS klyra-logger-dev
 
 FROM klyra-crate-base AS klyra-provisioner
 ARG CARGO_PROFILE
