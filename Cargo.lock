@@ -1128,7 +1128,7 @@ checksum = "e11c675378efb449ed3ce8de78d75d0d80542fc98487c26aba28eb3b82feac72"
 dependencies = [
  "semver 1.0.18",
  "serde",
- "toml 0.7.6",
+ "toml 0.7.8",
  "url",
 ]
 
@@ -5458,7 +5458,7 @@ dependencies = [
  "tempfile",
  "thiserror",
  "tokio",
- "toml 0.5.11",
+ "toml 0.7.8",
  "tonic",
  "tracing",
  "tracing-subscriber",
@@ -8125,3 +8125,75 @@ dependencies = [
  "libc",
  "pkg-config",
 ]
+
+[[patch.unused]]
+name = "klyra-actix-web"
+version = "0.26.0"
+
+[[patch.unused]]
+name = "klyra-aws-rds"
+version = "0.26.0"
+
+[[patch.unused]]
+name = "klyra-axum"
+version = "0.26.0"
+
+[[patch.unused]]
+name = "klyra-next"
+version = "0.26.0"
+
+[[patch.unused]]
+name = "klyra-persist"
+version = "0.26.0"
+
+[[patch.unused]]
+name = "klyra-poem"
+version = "0.26.0"
+
+[[patch.unused]]
+name = "klyra-poise"
+version = "0.26.0"
+
+[[patch.unused]]
+name = "klyra-rocket"
+version = "0.26.0"
+
+[[patch.unused]]
+name = "klyra-salvo"
+version = "0.26.0"
+
+[[patch.unused]]
+name = "klyra-secrets"
+version = "0.26.0"
+
+[[patch.unused]]
+name = "klyra-serenity"
+version = "0.26.0"
+
+[[patch.unused]]
+name = "klyra-shared-db"
+version = "0.26.0"
+
+[[patch.unused]]
+name = "klyra-static-folder"
+version = "0.26.0"
+
+[[patch.unused]]
+name = "klyra-thruster"
+version = "0.26.0"
+
+[[patch.unused]]
+name = "klyra-tide"
+version = "0.26.0"
+
+[[patch.unused]]
+name = "klyra-tower"
+version = "0.26.0"
+
+[[patch.unused]]
+name = "klyra-turso"
+version = "0.26.0"
+
+[[patch.unused]]
+name = "klyra-warp"
+version = "0.26.0"
