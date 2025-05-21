@@ -55,6 +55,10 @@ RUN cargo build \
 # Base image for running each "klyra-..." binary
 ARG RUSTUP_TOOLCHAIN
 FROM docker.io/library/rust:${RUSTUP_TOOLCHAIN}-buster as klyra-crate-base
+ARG folder
+# Some crates need additional libs
+COPY ${folder}/*.so /usr/lib/
+ENV LD_LIBRARY_PATH=/usr/lib/
 ENTRYPOINT ["/usr/local/bin/service"]
 
 
@@ -74,10 +78,6 @@ ARG RUSTUP_TOOLCHAIN
 ENV RUSTUP_TOOLCHAIN=${RUSTUP_TOOLCHAIN}
 # Used as env variable in prepare script
 ARG PROD
-ARG folder
-# Some crates need additional libs
-COPY ${folder}/*.so /usr/lib/
-ENV LD_LIBRARY_PATH=/usr/lib/
 COPY deployer/prepare.sh /prepare.sh
 RUN /prepare.sh "${prepare_args}"
 COPY --from=builder /build/target/${CARGO_PROFILE}/klyra-deployer /usr/local/bin/service
@@ -97,6 +97,8 @@ FROM klyra-gateway AS klyra-gateway-dev
 COPY --from=planner /build/*.pem /usr/src/klyra/
 
 FROM klyra-crate-base AS klyra-logger
+ARG CARGO_PROFILE
+COPY --from=builder /build/target/${CARGO_PROFILE}/klyra-logger /usr/local/bin/service
 FROM klyra-logger AS klyra-logger-dev
 
 FROM klyra-crate-base AS klyra-provisioner
