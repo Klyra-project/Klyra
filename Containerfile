@@ -44,6 +44,7 @@ COPY --from=planner /build .
 RUN cargo build \
     $(if [ "$CARGO_PROFILE" = "release" ]; then echo --release; fi) \
     --bin klyra-auth \
+    --bin klyra-builder \
     --bin klyra-deployer \
     --bin klyra-gateway \
     --bin klyra-logger \
@@ -110,3 +111,8 @@ FROM klyra-crate-base AS klyra-resource-recorder
 ARG CARGO_PROFILE
 COPY --from=builder /build/target/${CARGO_PROFILE}/klyra-resource-recorder /usr/local/bin/service
 FROM klyra-resource-recorder AS klyra-resource-recorder-dev
+
+FROM klyra-crate-base AS klyra-builder
+ARG CARGO_PROFILE
+COPY --from=builder /build/target/${CARGO_PROFILE}/klyra-builder /usr/local/bin/service
+FROM klyra-builder AS klyra-builder-dev
