@@ -47,12 +47,13 @@ klyra-service = {{ path = "{}" }}
 klyra-aws-rds = {{ path = "{}" }}
 klyra-metadata = {{ path = "{}" }}
 klyra-persist = {{ path = "{}" }}
-klyra-shared-db = {{ path = "{}" }}
 klyra-secrets = {{ path = "{}" }}
+klyra-shared-db = {{ path = "{}" }}
 klyra-static-folder = {{ path = "{}" }}
+klyra-turso = {{ path = "{}" }}
 
-klyra-axum = {{ path = "{}" }}
 klyra-actix-web = {{ path = "{}" }}
+klyra-axum = {{ path = "{}" }}
 klyra-next = {{ path = "{}" }}
 klyra-poem = {{ path = "{}" }}
 klyra-poise = {{ path = "{}" }}
@@ -71,12 +72,13 @@ klyra-warp = {{ path = "{}" }}"#,
                     WORKSPACE_ROOT.join("resources").join("aws-rds").display(),
                     WORKSPACE_ROOT.join("resources").join("metadata").display(),
                     WORKSPACE_ROOT.join("resources").join("persist").display(),
-                    WORKSPACE_ROOT.join("resources").join("shared-db").display(),
                     WORKSPACE_ROOT.join("resources").join("secrets").display(),
+                    WORKSPACE_ROOT.join("resources").join("shared-db").display(),
                     WORKSPACE_ROOT
                         .join("resources")
                         .join("static-folder")
                         .display(),
+                    WORKSPACE_ROOT.join("resources").join("turso").display(),
                     WORKSPACE_ROOT
                         .join("services")
                         .join("klyra-axum")

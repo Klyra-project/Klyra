@@ -99,15 +99,15 @@ commands:
             klyra-service = { path = "$PWD/service" }
 
             klyra-aws-rds = { path = "$PWD/resources/aws-rds" }
-            klyra-persist = { path = "$PWD/resources/persist" }
-            klyra-shared-db = { path = "$PWD/resources/shared-db" }
-            klyra-secrets = { path = "$PWD/resources/secrets" }
-            klyra-static-folder = { path = "$PWD/resources/static-folder" }
             klyra-metadata = { path = "$PWD/resources/metadata" }
+            klyra-persist = { path = "$PWD/resources/persist" }
+            klyra-secrets = { path = "$PWD/resources/secrets" }
+            klyra-shared-db = { path = "$PWD/resources/shared-db" }
+            klyra-static-folder = { path = "$PWD/resources/static-folder" }
             klyra-turso = { path = "$PWD/resources/turso" }
 
-            klyra-axum = { path = "$PWD/services/klyra-axum" }
             klyra-actix-web = { path = "$PWD/services/klyra-actix-web" }
+            klyra-axum = { path = "$PWD/services/klyra-axum" }
             klyra-next = { path = "$PWD/services/klyra-next" }
             klyra-poem = { path = "$PWD/services/klyra-poem" }
             klyra-poise = { path = "$PWD/services/klyra-poise" }
@@ -659,7 +659,6 @@ workflows:
                 - resources/metadata
                 - resources/persist
                 - resources/secrets
-                - resources/static-folder
                 - resources/turso
                 - services/klyra-actix-web
                 - services/klyra-axum
@@ -885,11 +884,10 @@ workflows:
               path:
                 [
                   "resources/aws-rds",
+                  "resources/metadata",
                   "resources/persist",
                   "resources/secrets",
                   "resources/shared-db",
-                  "resources/static-folder",
-                  "resources/metadata",
                   "resources/turso",
                 ]
           name: publish-<< matrix.path >>

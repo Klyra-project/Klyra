@@ -31,7 +31,6 @@ use klyra_common::models::deployment::{
 };
 use klyra_common::models::secret;
 use klyra_common::project::ProjectName;
-use klyra_common::storage_manager::StorageManager;
 use klyra_common::{request_span, LogItem};
 use klyra_proto::logger::LogsRequest;
 use klyra_service::builder::clean_crate;
@@ -746,12 +745,13 @@ pub async fn clean_project(
     Extension(deployment_manager): Extension<DeploymentManager>,
     Path(project_name): Path<String>,
 ) -> Result<Json<Vec<String>>> {
-    let project_path = deployment_manager
-        .storage_manager()
-        .service_build_path(&project_name)
-        .map_err(anyhow::Error::new)?;
-
-    let lines = clean_crate(&project_path).await?;
+    let lines = clean_crate(
+        deployment_manager
+            .builds_path()
+            .join(project_name)
+            .as_path(),
+    )
+    .await?;
 
     Ok(Json(lines))
 }

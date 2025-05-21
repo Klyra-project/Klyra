@@ -1,2 +1,2 @@
 # output files from tests
-klyra_persist/**/*.bin
+test_output

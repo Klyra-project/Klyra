@@ -32,8 +32,8 @@ macro_rules! aws_engine {
                 }
 
                 async fn output(self, factory: &mut dyn klyra_service::Factory) -> Result<Self::Output, klyra_service::Error> {
-                    let info = match factory.get_environment() {
-                        klyra_service::Environment::Production => klyra_service::DbOutput::Info(
+                    let info = match factory.get_metadata().env {
+                        klyra_service::Environment::Deployment => klyra_service::DbOutput::Info(
                             factory
                                 .get_db_connection(klyra_service::database::Type::AwsRds(klyra_service::database::AwsRdsEngine::$struct_ident))
                                 .await?
