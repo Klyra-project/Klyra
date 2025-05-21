@@ -7,15 +7,15 @@ repository.workspace = true
 publish = false
 
 [dependencies]
-hyper = { workspace = true }
-klyra-common = { workspace = true }
-tower = { workspace = true }
 cargo-klyra = { path = "../cargo-klyra" }
+hyper = { workspace = true }
 portpicker = { workspace = true }
-tokio = { workspace = true }
-tonic = { workspace = true }
 reqwest = { workspace = true }
+klyra-common = { workspace = true }
+tokio = { workspace = true }
 tokio-stream = { workspace = true }
+tonic = { workspace = true }
+tower = { workspace = true }
 
 [dependencies.klyra-proto]
 workspace = true
