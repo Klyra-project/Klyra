@@ -55,39 +55,40 @@ RUN cargo build \
 # Base image for running each "klyra-..." binary
 ARG RUSTUP_TOOLCHAIN
 FROM docker.io/library/rust:${RUSTUP_TOOLCHAIN}-buster as klyra-crate-base
-ARG CARGO_PROFILE
 ARG folder
-ARG crate
+# Some crates need additional libs
+COPY ${folder}/*.so /usr/lib/
+ENV LD_LIBRARY_PATH=/usr/lib/
+ENTRYPOINT ["/usr/local/bin/service"]
+
+
+# Targets for each crate
+# Copying of each binary is non-DRY to allow other steps to be cached
+
+FROM klyra-crate-base AS klyra-auth
+ARG CARGO_PROFILE
+COPY --from=builder /build/target/${CARGO_PROFILE}/klyra-auth /usr/local/bin/service
+FROM klyra-auth AS klyra-auth-dev
+
+FROM klyra-crate-base AS klyra-deployer
+ARG CARGO_PROFILE
 ARG prepare_args
 # Fixes some dependencies compiled with incompatible versions of rustc
 ARG RUSTUP_TOOLCHAIN
 ENV RUSTUP_TOOLCHAIN=${RUSTUP_TOOLCHAIN}
 # Used as env variable in prepare script
 ARG PROD
-
-# Some crates need additional libs
-COPY ${folder}/*.so /usr/lib/
-ENV LD_LIBRARY_PATH=/usr/lib/
-
-COPY --from=builder /build/target/${CARGO_PROFILE}/${crate} /usr/local/bin/service
-ENTRYPOINT ["/usr/local/bin/service"]
-
-
-# Targets for each crate
-
-FROM klyra-crate-base AS klyra-auth
-FROM klyra-auth AS klyra-auth-dev
-
-FROM klyra-crate-base AS klyra-deployer
-ARG CARGO_PROFILE
-COPY --from=builder /build/target/${CARGO_PROFILE}/klyra-next /usr/local/cargo/bin/
 COPY deployer/prepare.sh /prepare.sh
 RUN /prepare.sh "${prepare_args}"
+COPY --from=builder /build/target/${CARGO_PROFILE}/klyra-deployer /usr/local/bin/service
+COPY --from=builder /build/target/${CARGO_PROFILE}/klyra-next /usr/local/cargo/bin/
 FROM klyra-deployer AS klyra-deployer-dev
 # Source code needed for compiling with [patch.crates-io]
 COPY --from=planner /build /usr/src/klyra/
 
 FROM klyra-crate-base AS klyra-gateway
+ARG CARGO_PROFILE
+COPY --from=builder /build/target/${CARGO_PROFILE}/klyra-gateway /usr/local/bin/service
 FROM klyra-gateway AS klyra-gateway-dev
 # For testing certificates locally
 COPY --from=planner /build/*.pem /usr/src/klyra/
@@ -96,7 +97,11 @@ FROM klyra-crate-base AS klyra-logger
 FROM klyra-logger AS klyra-logger-dev
 
 FROM klyra-crate-base AS klyra-provisioner
+ARG CARGO_PROFILE
+COPY --from=builder /build/target/${CARGO_PROFILE}/klyra-provisioner /usr/local/bin/service
 FROM klyra-provisioner AS klyra-provisioner-dev
 
 FROM klyra-crate-base AS klyra-resource-recorder
+ARG CARGO_PROFILE
+COPY --from=builder /build/target/${CARGO_PROFILE}/klyra-resource-recorder /usr/local/bin/service
 FROM klyra-resource-recorder AS klyra-resource-recorder-dev
