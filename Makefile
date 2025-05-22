@@ -132,11 +132,14 @@ DOCKER_COMPOSE_ENV=\
 	COMPOSE_PROFILES=$(COMPOSE_PROFILES)\
 	DOCKER_SOCK=$(DOCKER_SOCK)
 
-.PHONY: clean images the-klyra-images klyra-% postgres panamax otel deploy test docker-compose.rendered.yml up down
+.PHONY: clean cargo-clean images the-klyra-images klyra-% postgres panamax otel deploy test docker-compose.rendered.yml up down
 
 clean:
 	rm .klyra-*
 	rm docker-compose.rendered.yml
+
+cargo-clean:
+	find . -type d \( -name target -or -name .klyra-executables \) | xargs rm -rf
 
 images: the-klyra-images postgres panamax otel
 

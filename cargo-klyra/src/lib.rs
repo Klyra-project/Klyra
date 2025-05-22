@@ -711,10 +711,10 @@ impl Klyra {
                         );
                     } else {
                         println!(
-                                "[HINT]: A newer version of klyra-runtime is available. \
-                                Change its version to {} in this project's Cargo.toml to update it.",
-                                mismatch.cargo_klyra
-                            );
+                            "[HINT]: A newer version of klyra-runtime is available. \
+                            Change its version to {} in this project's Cargo.toml to update it.",
+                            mismatch.cargo_klyra
+                        );
                     }
                 }
             }
@@ -1512,7 +1512,7 @@ impl Klyra {
 
     fn make_archive(&self) -> Result<Vec<u8>> {
         let include_patterns = self.ctx.assets();
-        let encoder = GzEncoder::new(Vec::new(), Compression::fast());
+        let encoder = GzEncoder::new(Vec::new(), Compression::best());
         let mut tar = Builder::new(encoder);
 
         let working_directory = self.ctx.working_directory();
