@@ -37,9 +37,11 @@ pub async fn start(
             klyra_common::claims::InjectPropagation<tonic::transport::Channel>,
         >,
     >,
-    builder_client: BuilderClient<
-        klyra_common::claims::ClaimService<
-            klyra_common::claims::InjectPropagation<tonic::transport::Channel>,
+    builder_client: Option<
+        BuilderClient<
+            klyra_common::claims::ClaimService<
+                klyra_common::claims::InjectPropagation<tonic::transport::Channel>,
+            >,
         >,
     >,
     args: Args,
