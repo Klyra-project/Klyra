@@ -839,42 +839,26 @@ workflows:
             branches:
               only: production
       - publish-crates:
-          name: publish-klyra-codegen
-          path: codegen
+          matrix:
+            parameters:
+              path:
+                - codegen
+                - common
+          name: publish-<< matrix.path >>
           requires:
             - approve-publish-crates
           filters:
             branches:
               only: production
       - publish-crates:
-          name: publish-klyra-common
-          path: common
+          matrix:
+            parameters:
+              path:
+                - proto
+                - service
+          name: publish-<< matrix.path >>
           requires:
-            - publish-klyra-codegen
-          filters:
-            branches:
-              only: production
-      - publish-crates:
-          name: publish-klyra-proto
-          path: proto
-          requires:
-            - publish-klyra-common
-          filters:
-            branches:
-              only: production
-      - publish-crates:
-          name: publish-klyra-service
-          path: service
-          requires:
-            - publish-klyra-proto
-          filters:
-            branches:
-              only: production
-      - publish-crates:
-          name: publish-klyra-runtime
-          path: runtime
-          requires:
-            - publish-klyra-service
+            - publish-common
           filters:
             branches:
               only: production
@@ -882,25 +866,17 @@ workflows:
           matrix:
             parameters:
               path:
-                [
-                  "resources/aws-rds",
-                  "resources/metadata",
-                  "resources/persist",
-                  "resources/secrets",
-                  "resources/shared-db",
-                  "resources/turso",
-                ]
+                - runtime
+                - cargo-klyra
+                - resources/aws-rds
+                - resources/metadata
+                - resources/persist
+                - resources/secrets
+                - resources/shared-db
+                - resources/turso
           name: publish-<< matrix.path >>
           requires:
-            - publish-klyra-runtime
-          filters:
-            branches:
-              only: production
-      - publish-crates:
-          name: publish-cargo-klyra
-          path: cargo-klyra
-          requires:
-            - publish-klyra-service
+            - publish-service
           filters:
             branches:
               only: production
@@ -908,24 +884,21 @@ workflows:
           matrix:
             parameters:
               path:
-                [
-                  "services/klyra-actix-web",
-                  "services/klyra-axum",
-                  "services/klyra-next",
-                  "services/klyra-poem",
-                  "services/klyra-poise",
-                  "services/klyra-rocket",
-                  "services/klyra-salvo",
-                  "services/klyra-serenity",
-                  "services/klyra-thruster",
-                  "services/klyra-tide",
-                  "services/klyra-tower",
-                  "services/klyra-warp",
-                ]
+                - services/klyra-actix-web
+                - services/klyra-axum
+                - services/klyra-next
+                - services/klyra-poem
+                - services/klyra-poise
+                - services/klyra-rocket
+                - services/klyra-salvo
+                - services/klyra-serenity
+                - services/klyra-thruster
+                - services/klyra-tide
+                - services/klyra-tower
+                - services/klyra-warp
           name: publish-<< matrix.path >>
           requires:
-            - publish-cargo-klyra
-            - publish-klyra-runtime
+            - publish-runtime
           filters:
             branches:
               only: production
