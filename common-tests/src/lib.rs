@@ -1,3 +1,4 @@
+pub mod builder;
 pub mod cargo_klyra;
 pub mod logger;
 
