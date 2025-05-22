@@ -1,10 +1,11 @@
 use async_trait::async_trait;
-use klyra_service::{error::Error, DeploymentMetadata, Factory, ResourceBuilder, Type};
+pub use klyra_service::DeploymentMetadata as Metadata;
+use klyra_service::{error::Error, Factory, ResourceBuilder, Type};
 
 pub struct KlyraMetadata;
 
 #[async_trait]
-impl ResourceBuilder<DeploymentMetadata> for KlyraMetadata {
+impl ResourceBuilder<Metadata> for KlyraMetadata {
     fn new() -> Self {
         Self
     }
@@ -13,7 +14,7 @@ impl ResourceBuilder<DeploymentMetadata> for KlyraMetadata {
 
     type Config = ();
 
-    type Output = DeploymentMetadata;
+    type Output = Metadata;
 
     fn config(&self) -> &Self::Config {
         &()
@@ -23,7 +24,7 @@ impl ResourceBuilder<DeploymentMetadata> for KlyraMetadata {
         Ok(factory.get_metadata())
     }
 
-    async fn build(build_data: &Self::Output) -> Result<DeploymentMetadata, Error> {
+    async fn build(build_data: &Self::Output) -> Result<Metadata, Error> {
         Ok(build_data.clone())
     }
 }
