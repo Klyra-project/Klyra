@@ -23,7 +23,7 @@ use klyra_common::backends::metrics::{Metrics, TraceLayer};
 use klyra_common::claims::{Scope, EXP_MINUTES};
 use klyra_common::models::error::ErrorKind;
 use klyra_common::models::{project, stats};
-use klyra_common::request_span;
+use klyra_common::{request_span, VersionInfo};
 use klyra_proto::provisioner::provisioner_client::ProvisionerClient;
 use klyra_proto::provisioner::Ping;
 use tokio::sync::mpsc::Sender;
@@ -848,9 +848,28 @@ impl ApiBuilder {
             .merge(SwaggerUi::new("/swagger-ui").url("/api-docs/openapi.json", ApiDoc::openapi()))
             .layer(ScopedLayer::new(vec![Scope::Admin]));
 
+        const CARGO_klyra_VERSION: &str = env!("CARGO_PKG_VERSION");
+
         self.router = self
             .router
             .route("/", get(get_status))
+            .route(
+                "/versions",
+                get(|| async {
+                    axum::Json(VersionInfo {
+                        gateway: env!("CARGO_PKG_VERSION").parse().unwrap(),
+                        // For now, these use the same version as gateway (we release versions in lockstep).
+                        // Only one version is officially compatible, but more are in reality.
+                        cargo_klyra: env!("CARGO_PKG_VERSION").parse().unwrap(),
+                        deployer: env!("CARGO_PKG_VERSION").parse().unwrap(),
+                        runtime: CARGO_klyra_VERSION.parse().unwrap(),
+                    })
+                }),
+            )
+            .route(
+                "/version/cargo-klyra",
+                get(|| async { CARGO_klyra_VERSION }),
+            )
             .route(
                 "/projects",
                 get(get_projects_list.layer(ScopedLayer::new(vec![Scope::Project]))),
