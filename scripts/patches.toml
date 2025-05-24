@@ -10,7 +10,6 @@ klyra-metadata = { path = "BASE/resources/metadata" }
 klyra-persist = { path = "BASE/resources/persist" }
 klyra-shared-db = { path = "BASE/resources/shared-db" }
 klyra-secrets = { path = "BASE/resources/secrets" }
-klyra-static-folder = { path = "BASE/resources/static-folder" }
 klyra-turso = { path = "BASE/resources/turso" }
 
 klyra-axum = { path = "BASE/services/klyra-axum" }
