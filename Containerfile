@@ -59,6 +59,9 @@ RUN cargo build \
 #### AUTH
 FROM docker.io/library/debian:bookworm-20230904-slim AS klyra-auth
 ARG CARGO_PROFILE
+ARG prepare_args
+COPY auth/prepare.sh /prepare.sh
+RUN /prepare.sh "${prepare_args}"
 COPY --from=chef-builder /build/target/${CARGO_PROFILE}/klyra-auth /usr/local/bin
 ENTRYPOINT ["/usr/local/bin/klyra-auth"]
 FROM klyra-auth AS klyra-auth-dev
