@@ -5,3 +5,5 @@
 #     source scripts/production.sh
 
 export klyra_API="https://api.klyra.rs"
+unset klyra_API_KEY
+export PS1="(klyra: production) $PS1"

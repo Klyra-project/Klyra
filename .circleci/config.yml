@@ -107,37 +107,8 @@ commands:
   apply-patches:
     steps:
       - run:
-          name: Patch service
-          command: |
-            cat\<< EOF > ~/.cargo/config.toml
-            [patch.crates-io]
-            klyra-codegen = { path = "$PWD/codegen" }
-            klyra-common = { path = "$PWD/common" }
-            klyra-proto = { path = "$PWD/proto" }
-            klyra-runtime = { path = "$PWD/runtime" }
-            klyra-service = { path = "$PWD/service" }
-
-            klyra-aws-rds = { path = "$PWD/resources/aws-rds" }
-            klyra-metadata = { path = "$PWD/resources/metadata" }
-            klyra-persist = { path = "$PWD/resources/persist" }
-            klyra-secrets = { path = "$PWD/resources/secrets" }
-            klyra-shared-db = { path = "$PWD/resources/shared-db" }
-            klyra-static-folder = { path = "$PWD/resources/static-folder" }
-            klyra-turso = { path = "$PWD/resources/turso" }
-
-            klyra-actix-web = { path = "$PWD/services/klyra-actix-web" }
-            klyra-axum = { path = "$PWD/services/klyra-axum" }
-            klyra-next = { path = "$PWD/services/klyra-next" }
-            klyra-poem = { path = "$PWD/services/klyra-poem" }
-            klyra-poise = { path = "$PWD/services/klyra-poise" }
-            klyra-rocket = { path = "$PWD/services/klyra-rocket" }
-            klyra-salvo = { path = "$PWD/services/klyra-salvo" }
-            klyra-serenity = { path = "$PWD/services/klyra-serenity" }
-            klyra-thruster = { path = "$PWD/services/klyra-thruster" }
-            klyra-tide = { path = "$PWD/services/klyra-tide" }
-            klyra-tower = { path = "$PWD/services/klyra-tower" }
-            klyra-warp = { path = "$PWD/services/klyra-warp" }
-            EOF
+          name: Patch crates
+          command: ./scripts/apply-patches.sh
   install-rust:
     steps:
       - run:

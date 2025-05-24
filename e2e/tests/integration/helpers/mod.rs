@@ -35,98 +35,11 @@ impl TempCargoHome {
 
                 // Apply the `patch.crates-io` for `klyra-service`
                 let mut config = std::fs::File::create(dir.path().join("config.toml")).unwrap();
+                let p = include_str!("../../../../scripts/patches.toml");
                 write!(
                     config,
-                    r#"[patch.crates-io]
-klyra-codegen = {{ path = "{}" }}
-klyra-common = {{ path = "{}" }}
-klyra-proto = {{ path = "{}" }}
-klyra-runtime = {{ path = "{}" }}
-klyra-service = {{ path = "{}" }}
-
-klyra-aws-rds = {{ path = "{}" }}
-klyra-metadata = {{ path = "{}" }}
-klyra-persist = {{ path = "{}" }}
-klyra-secrets = {{ path = "{}" }}
-klyra-shared-db = {{ path = "{}" }}
-klyra-static-folder = {{ path = "{}" }}
-klyra-turso = {{ path = "{}" }}
-
-klyra-actix-web = {{ path = "{}" }}
-klyra-axum = {{ path = "{}" }}
-klyra-next = {{ path = "{}" }}
-klyra-poem = {{ path = "{}" }}
-klyra-poise = {{ path = "{}" }}
-klyra-rocket = {{ path = "{}" }}
-klyra-salvo = {{ path = "{}" }}
-klyra-serenity = {{ path = "{}" }}
-klyra-thruster = {{ path = "{}" }}
-klyra-tide = {{ path = "{}" }}
-klyra-tower = {{ path = "{}" }}
-klyra-warp = {{ path = "{}" }}"#,
-                    WORKSPACE_ROOT.join("codegen").display(),
-                    WORKSPACE_ROOT.join("common").display(),
-                    WORKSPACE_ROOT.join("proto").display(),
-                    WORKSPACE_ROOT.join("runtime").display(),
-                    WORKSPACE_ROOT.join("service").display(),
-                    WORKSPACE_ROOT.join("resources").join("aws-rds").display(),
-                    WORKSPACE_ROOT.join("resources").join("metadata").display(),
-                    WORKSPACE_ROOT.join("resources").join("persist").display(),
-                    WORKSPACE_ROOT.join("resources").join("secrets").display(),
-                    WORKSPACE_ROOT.join("resources").join("shared-db").display(),
-                    WORKSPACE_ROOT
-                        .join("resources")
-                        .join("static-folder")
-                        .display(),
-                    WORKSPACE_ROOT.join("resources").join("turso").display(),
-                    WORKSPACE_ROOT
-                        .join("services")
-                        .join("klyra-axum")
-                        .display(),
-                    WORKSPACE_ROOT
-                        .join("services")
-                        .join("klyra-actix-web")
-                        .display(),
-                    WORKSPACE_ROOT
-                        .join("services")
-                        .join("klyra-next")
-                        .display(),
-                    WORKSPACE_ROOT
-                        .join("services")
-                        .join("klyra-poem")
-                        .display(),
-                    WORKSPACE_ROOT
-                        .join("services")
-                        .join("klyra-poise")
-                        .display(),
-                    WORKSPACE_ROOT
-                        .join("services")
-                        .join("klyra-rocket")
-                        .display(),
-                    WORKSPACE_ROOT
-                        .join("services")
-                        .join("klyra-salvo")
-                        .display(),
-                    WORKSPACE_ROOT
-                        .join("services")
-                        .join("klyra-serenity")
-                        .display(),
-                    WORKSPACE_ROOT
-                        .join("services")
-                        .join("klyra-thruster")
-                        .display(),
-                    WORKSPACE_ROOT
-                        .join("services")
-                        .join("klyra-tide")
-                        .display(),
-                    WORKSPACE_ROOT
-                        .join("services")
-                        .join("klyra-tower")
-                        .display(),
-                    WORKSPACE_ROOT
-                        .join("services")
-                        .join("klyra-warp")
-                        .display(),
+                    "{}",
+                    p.replace("BASE", &format!("{}", WORKSPACE_ROOT.display()))
                 )
                 .unwrap();
 
@@ -203,7 +116,7 @@ CARGO_HOME: {}
                 "klyra-dev",
                 "exec",
                 "auth",
-                "/usr/local/bin/service",
+                "/usr/local/bin/klyra-auth",
                 "--state=/var/lib/klyra-auth",
                 "init",
                 "--name",

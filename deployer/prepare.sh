@@ -1,45 +1,17 @@
 #!/usr/bin/env bash
 
-###############################################################################
-# This file is used by our common Containerfile incase the container for this #
-# service might need some extra preparation steps for its final image         #
-###############################################################################
+##############################################################################################
+# This file is run by Containerfile for extra preparation steps for this crate's final image #
+##############################################################################################
 
 # Patch crates to be on same versions
 mkdir -p $CARGO_HOME
 touch $CARGO_HOME/config.toml
 if [[ $PROD != "true" ]]; then
-    echo '
-    [patch.crates-io]
-    klyra-codegen = { path = "/usr/src/klyra/codegen" }
-    klyra-common = { path = "/usr/src/klyra/common" }
-    klyra-proto = { path = "/usr/src/klyra/proto" }
-    klyra-runtime = { path = "/usr/src/klyra/runtime" }
-    klyra-service = { path = "/usr/src/klyra/service" }
-
-    klyra-aws-rds = { path = "/usr/src/klyra/resources/aws-rds" }
-    klyra-metadata = { path = "/usr/src/klyra/resources/metadata" }
-    klyra-persist = { path = "/usr/src/klyra/resources/persist" }
-    klyra-secrets = { path = "/usr/src/klyra/resources/secrets" }
-    klyra-shared-db = { path = "/usr/src/klyra/resources/shared-db" }
-    klyra-static-folder = { path = "/usr/src/klyra/resources/static-folder" }
-    klyra-turso = { path = "/usr/src/klyra/resources/turso" }
-
-    klyra-actix-web = { path = "/usr/src/klyra/services/klyra-actix-web" }
-    klyra-axum = { path = "/usr/src/klyra/services/klyra-axum" }
-    klyra-next = { path = "/usr/src/klyra/services/klyra-next" }
-    klyra-poem = { path = "/usr/src/klyra/services/klyra-poem" }
-    klyra-poise = { path = "/usr/src/klyra/services/klyra-poise" }
-    klyra-rocket = { path = "/usr/src/klyra/services/klyra-rocket" }
-    klyra-salvo = { path = "/usr/src/klyra/services/klyra-salvo" }
-    klyra-serenity = { path = "/usr/src/klyra/services/klyra-serenity" }
-    klyra-thruster = { path = "/usr/src/klyra/services/klyra-thruster" }
-    klyra-tide = { path = "/usr/src/klyra/services/klyra-tide" }
-    klyra-tower = { path = "/usr/src/klyra/services/klyra-tower" }
-    klyra-warp = { path = "/usr/src/klyra/services/klyra-warp" }' > $CARGO_HOME/config.toml
+    bash scripts/apply-patches.sh $CARGO_HOME/config.toml /usr/src/klyra
 fi
 
-# Add the wasm32-wasi target for next
+# Add the wasm32-wasi target for klyra-next
 rustup target add wasm32-wasi
 # Add the wasm32 target for frontend frameworks
 rustup target add wasm32-unknown-unknown

@@ -1,0 +1,27 @@
+[patch.crates-io]
+klyra-codegen = { path = "BASE/codegen" }
+klyra-common = { path = "BASE/common" }
+klyra-proto = { path = "BASE/proto" }
+klyra-runtime = { path = "BASE/runtime" }
+klyra-service = { path = "BASE/service" }
+
+klyra-aws-rds = { path = "BASE/resources/aws-rds" }
+klyra-metadata = { path = "BASE/resources/metadata" }
+klyra-persist = { path = "BASE/resources/persist" }
+klyra-shared-db = { path = "BASE/resources/shared-db" }
+klyra-secrets = { path = "BASE/resources/secrets" }
+klyra-static-folder = { path = "BASE/resources/static-folder" }
+klyra-turso = { path = "BASE/resources/turso" }
+
+klyra-axum = { path = "BASE/services/klyra-axum" }
+klyra-actix-web = { path = "BASE/services/klyra-actix-web" }
+klyra-next = { path = "BASE/services/klyra-next" }
+klyra-poem = { path = "BASE/services/klyra-poem" }
+klyra-poise = { path = "BASE/services/klyra-poise" }
+klyra-rocket = { path = "BASE/services/klyra-rocket" }
+klyra-salvo = { path = "BASE/services/klyra-salvo" }
+klyra-serenity = { path = "BASE/services/klyra-serenity" }
+klyra-thruster = { path = "BASE/services/klyra-thruster" }
+klyra-tide = { path = "BASE/services/klyra-tide" }
+klyra-tower = { path = "BASE/services/klyra-tower" }
+klyra-warp = { path = "BASE/services/klyra-warp" }
