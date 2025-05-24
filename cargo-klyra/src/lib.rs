@@ -836,9 +836,8 @@ impl Klyra {
                         // should help the user to update cargo-klyra.
                         println!(
                             "[HINT]: You should update cargo-klyra. \
-                                If cargo-klyra was installed using cargo, \
-                                you can get the latest version by running \
-                                `cargo install cargo-klyra`."
+                            Check out the installation docs for how to update: \
+                            https://docs.klyra.rs/getting-started/installation"
                         );
                     } else {
                         println!(

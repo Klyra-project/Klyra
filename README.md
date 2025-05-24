@@ -78,15 +78,19 @@ The `cargo-klyra` CLI can be installed with a pre-built binary or from source wi
 Klyra provides pre-built binaries of the `cargo-klyra` CLI with every release
 for most platforms, they can be found on [our GitHub](https://github.com/klyra-hq/klyra/releases/latest).
 
-Our binaries can also be installed using [cargo-binstall](https://github.com/cargo-bins/cargo-binstall),
-which will automatically install the correct target for your system.
+On Linux and macOS, you can use this install script, which will automatically install the correct target for your OS and distro:
+
+```sh
+curl -sSfL https://www.klyra.rs/install | bash
+```
+
+Our binaries can also be installed using [cargo-binstall](https://github.com/cargo-bins/cargo-binstall).
 To install with `cargo-binstall`, run:
 
 ```sh
 # cargo-binstall can also be installed directly as a binary to skip the compilation time: https://github.com/cargo-bins/cargo-binstall#installation
 cargo install cargo-binstall
 cargo binstall cargo-klyra
-# If installing binstall or cargo-klyra fails, try adding `--locked` to the install command
 ```
 
 Although a bit slower, you can also install directly with cargo:
@@ -94,6 +98,8 @@ Although a bit slower, you can also install directly with cargo:
 ```sh
 cargo install cargo-klyra
 ```
+
+> If installing binstall or cargo-klyra fails, try adding `--locked` to the install command
 
 After installing, log in with:
 
