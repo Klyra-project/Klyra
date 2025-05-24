@@ -95,6 +95,7 @@ RUN for target_platform in "linux/arm64" "linux/arm64/v8"; do \
 ARG PROD
 # Easy way to check if you are running in Klyra's container
 ARG klyra=true
+ENV klyra=${klyra}
 COPY deployer/prepare.sh /prepare.sh
 COPY scripts/apply-patches.sh /scripts/apply-patches.sh
 COPY scripts/patches.toml /scripts/patches.toml

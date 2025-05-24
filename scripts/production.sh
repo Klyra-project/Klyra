@@ -6,4 +6,4 @@
 
 export klyra_API="https://api.klyra.rs"
 unset klyra_API_KEY
-export PS1="(klyra: production) $PS1"
+export PS1="(klyra: production) $(echo $PS1 | sed -e "s/(klyra: .*) //")"

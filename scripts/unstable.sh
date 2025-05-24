@@ -5,4 +5,4 @@
 
 export klyra_API="https://api.unstable.klyra.rs"
 unset klyra_API_KEY
-export PS1="(klyra: unstable) $PS1"
+export PS1="(klyra: unstable) $(echo $PS1 | sed -e "s/(klyra: .*) //")"

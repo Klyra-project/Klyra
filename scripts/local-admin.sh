@@ -7,6 +7,6 @@
 key="dh9z58jttoes3qvt" # arbitrary test key
 export klyra_API_KEY=$key
 export klyra_API="http://localhost:8001"
-export PS1="(klyra: local admin key) $PS1"
+export PS1="(klyra: local admin key) $(echo $PS1 | sed -e "s/(klyra: .*) //")"
 
 docker compose --file docker-compose.rendered.yml --project-name klyra-dev exec auth /usr/local/bin/klyra-auth --state=/var/lib/klyra-auth init-admin --name admin --key $key

@@ -1,6 +1,6 @@
 use async_trait::async_trait;
-pub use klyra_service::DeploymentMetadata as Metadata;
 use klyra_service::{error::Error, Factory, ResourceBuilder, Type};
+pub use klyra_service::{DeploymentMetadata as Metadata, Environment, ProjectName};
 
 pub struct KlyraMetadata;
 
