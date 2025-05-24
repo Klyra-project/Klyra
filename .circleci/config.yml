@@ -888,7 +888,6 @@ workflows:
             parameters:
               path:
                 - runtime
-                - cargo-klyra
                 - resources/aws-rds
                 - resources/metadata
                 - resources/persist
@@ -898,6 +897,11 @@ workflows:
           name: publish-<< matrix.path >>
           requires:
             - publish-service
+      - publish-crates:
+          path: cargo-klyra
+          requires:
+            - publish-service
+            - publish-proto
       - publish-crates:
           matrix:
             parameters:
