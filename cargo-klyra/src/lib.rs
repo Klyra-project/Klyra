@@ -184,6 +184,7 @@ impl Klyra {
                 | Command::Deploy(..)
                 | Command::Status
                 | Command::Logs { .. }
+                | Command::Logout(..)
                 | Command::Deployment(..)
                 | Command::Resource(..)
                 | Command::Stop
