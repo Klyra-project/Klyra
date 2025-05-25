@@ -399,8 +399,7 @@ fn assert_valid_rocket_project(path: &Path, name: &str) {
 
     let main_file = read_to_string(path.join("src").join("main.rs")).unwrap();
     let expected = indoc! {r#"
-    #[macro_use]
-    extern crate rocket;
+    use rocket::{get, routes};
 
     #[get("/")]
     fn index() -> &'static str {
@@ -408,7 +407,7 @@ fn assert_valid_rocket_project(path: &Path, name: &str) {
     }
 
     #[klyra_runtime::main]
-    async fn rocket() -> klyra_rocket::KlyraRocket {
+    async fn main() -> klyra_rocket::KlyraRocket {
         let rocket = rocket::build().mount("/", routes![index]);
 
         Ok(rocket.into())
