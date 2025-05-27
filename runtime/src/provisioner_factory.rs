@@ -4,7 +4,9 @@ use async_trait::async_trait;
 use klyra_common::{
     claims::{Claim, ClaimService, InjectPropagation},
     constants::STORAGE_DIRNAME,
-    database, DatabaseReadyInfo,
+    database,
+    secrets::Secret,
+    DatabaseReadyInfo,
 };
 use klyra_proto::provisioner::{provisioner_client::ProvisionerClient, DatabaseRequest};
 use klyra_service::{DeploymentMetadata, Environment, Factory, ProjectName};
@@ -14,7 +16,7 @@ use tonic::{transport::Channel, Request};
 pub struct ProvisionerFactory {
     service_name: ProjectName,
     provisioner_client: ProvisionerClient<ClaimService<InjectPropagation<Channel>>>,
-    secrets: BTreeMap<String, String>,
+    secrets: BTreeMap<String, Secret<String>>,
     env: Environment,
     claim: Option<Claim>,
 }
@@ -23,7 +25,7 @@ impl ProvisionerFactory {
     pub(crate) fn new(
         provisioner_client: ProvisionerClient<ClaimService<InjectPropagation<Channel>>>,
         service_name: ProjectName,
-        secrets: BTreeMap<String, String>,
+        secrets: BTreeMap<String, Secret<String>>,
         env: Environment,
         claim: Option<Claim>,
     ) -> Self {
@@ -64,7 +66,9 @@ impl Factory for ProvisionerFactory {
         Ok(info)
     }
 
-    async fn get_secrets(&mut self) -> Result<BTreeMap<String, String>, klyra_service::Error> {
+    async fn get_secrets(
+        &mut self,
+    ) -> Result<BTreeMap<String, Secret<String>>, klyra_service::Error> {
         Ok(self.secrets.clone())
     }
 
