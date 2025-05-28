@@ -5,7 +5,7 @@ use std::{
 
 use klyra_common::backends::tracing::ExtractPropagationLayer;
 use klyra_proto::runtime::runtime_server::RuntimeServer;
-use klyra_runtime::{print_version, AxumWasm, NextArgs};
+use klyra_runtime::__internals::{print_version, AxumWasm, NextArgs};
 use tonic::transport::Server;
 
 #[tokio::main(flavor = "multi_thread")]
