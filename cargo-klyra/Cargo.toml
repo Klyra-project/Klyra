@@ -6,6 +6,7 @@ license.workspace = true
 repository.workspace = true
 description = "A cargo command for the klyra platform (https://www.klyra.rs/)"
 homepage = "https://www.klyra.rs"
+rust-version = "1.70"
 
 [dependencies]
 anyhow = { workspace = true }
