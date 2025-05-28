@@ -1,5 +1,7 @@
 //! Klyra service integration for the Actix Web framework.
+//!
 //! ## Example
+//!
 //! ```rust,no_run
 //! use actix_web::{get, web::ServiceConfig};
 //! use klyra_actix_web::KlyraActixWeb;
@@ -10,8 +12,7 @@
 //! }
 //!
 //! #[klyra_runtime::main]
-//! async fn actix_web(
-//! ) -> KlyraActixWeb<impl FnOnce(&mut ServiceConfig) + Send + Clone + 'static> {
+//! async fn actix_web() -> KlyraActixWeb<impl FnOnce(&mut ServiceConfig) + Send + Clone + 'static> {
 //!     let config = move |cfg: &mut ServiceConfig| {
 //!         cfg.service(hello_world);
 //!     };
@@ -19,6 +20,7 @@
 //!     Ok(config.into())
 //! }
 //! ```
+
 use std::net::SocketAddr;
 
 /// A wrapper type for a closure that returns an [actix_web::web::ServiceConfig] so we can implement
@@ -56,5 +58,17 @@ where
     }
 }
 
-/// The return type that should be returned from the [klyra_runtime::main] function.
+/// Return type from the `[klyra_runtime::main]` macro for an Actix-based service.
+///
+/// # Example
+/// ```rust,no_run
+/// # use klyra_actix_web::KlyraActixWeb;
+/// # use actix_web::web::ServiceConfig;
+///
+/// #[klyra_runtime::main]
+/// async fn example_service() -> KlyraActixWeb<impl FnOnce(&mut ServiceConfig) + Send + Clone + 'static> {
+///     let config = move |_cfg: &mut ServiceConfig| {};
+///     Ok(config.into())
+/// }
+/// ```
 pub type KlyraActixWeb<F> = Result<ActixWebService<F>, klyra_runtime::Error>;

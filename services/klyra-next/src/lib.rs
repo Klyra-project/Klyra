@@ -1,3 +1,5 @@
+//! [klyra_next](https://docs.klyra.rs/examples/klyra-next)
+//! A batteries-included, WASM-based backend web-framework.
 pub use axum::*;
 pub use futures_executor::block_on;
 pub use http::Request;

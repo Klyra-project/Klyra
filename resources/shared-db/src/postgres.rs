@@ -4,6 +4,7 @@ use klyra_service::{
     database, error::CustomError, DbInput, DbOutput, Error, Factory, ResourceBuilder, Type,
 };
 
+/// Handles the state of a Klyra managed Postgres DB and sets up a Postgres driver.
 #[derive(Serialize)]
 pub struct Postgres {
     config: DbInput,

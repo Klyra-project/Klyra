@@ -1,6 +1,7 @@
 # Klyra Shared Databases
 
-This plugin manages databases that are shared with other services on [klyra](https://www.klyra.rs).
+This plugin manages databases that are shared with other services on [Klyra](https://www.klyra.rs).
+Your database will be in a cluster shared with other users, but it will not be accessible by other users.
 
 ## Usage
 
