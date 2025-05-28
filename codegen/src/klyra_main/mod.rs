@@ -241,7 +241,7 @@ impl ToTokens for Loader {
                             .get_secrets()
                             .await?
                             .into_iter()
-                            .map(|(key, value)| (format!("secrets.{}", key), value))
+                            .map(|(key, value)| (format!("secrets.{}", key), value.expose().clone()))
                     );
                 )),
                 Some(parse_quote!(
@@ -507,7 +507,7 @@ mod tests {
             ) -> KlyraComplex {
                 use klyra_runtime::Context;
                 use klyra_runtime::{Factory, ResourceBuilder};
-                let vars = std::collections::HashMap::from_iter(factory.get_secrets().await?.into_iter().map(|(key, value)| (format!("secrets.{}", key), value)));
+                let vars = std::collections::HashMap::from_iter(factory.get_secrets().await?.into_iter().map(|(key, value)| (format!("secrets.{}", key), value.expose().clone())));
                 let pool = klyra_runtime::get_resource (
                     klyra_shared_db::Postgres::new().size(&klyra_runtime::strfmt("10Gb", &vars)?).public(false),
                     &mut factory,
