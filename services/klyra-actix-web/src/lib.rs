@@ -6,7 +6,7 @@
 //! use actix_web::{get, web::ServiceConfig};
 //! use klyra_actix_web::KlyraActixWeb;
 //!
-//! #[get("/hello")]
+//! #[get("/")]
 //! async fn hello_world() -> &'static str {
 //!     "Hello World!"
 //! }

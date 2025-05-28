@@ -12,7 +12,7 @@
 //!
 //! #[klyra_runtime::main]
 //! async fn rocket() -> klyra_rocket::KlyraRocket {
-//!     let rocket = rocket::build().mount("/hello", routes![index]);
+//!     let rocket = rocket::build().mount("/", routes![index]);
 //!
 //!     Ok(rocket.into())
 //! }
@@ -59,5 +59,24 @@ impl From<rocket::Rocket<rocket::Build>> for RocketService {
     }
 }
 
-/// The return type that should be returned from the [klyra_runtime::main] function.
+/// Return type from the `[klyra_runtime::main]` macro for a Rocket-based service.
+///
+/// # Example
+///
+/// ```rust,no_run
+/// use rocket::{routes, get};
+/// use klyra_rocket::KlyraRocket;
+///
+/// #[get("/")]
+/// fn index() -> &'static str {
+///     "Hello, world!"
+/// }
+///
+/// #[klyra_runtime::main]
+/// async fn rocket() -> KlyraRocket {
+///     let rocket = rocket::build().mount("/", routes![index]);
+///
+///     Ok(rocket.into())
+/// }
+/// ```
 pub type KlyraRocket = Result<RocketService, klyra_runtime::Error>;

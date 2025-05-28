@@ -11,7 +11,7 @@
 //!
 //! #[klyra_runtime::main]
 //! async fn poem() -> KlyraPoem<impl poem::Endpoint> {
-//!     let app = Route::new().at("/hello", get(hello_world));
+//!     let app = Route::new().at("/", get(hello_world));
 //!
 //!     Ok(app.into())
 //! }
@@ -45,5 +45,23 @@ where
     }
 }
 
-/// The return type that should be returned from the [klyra_runtime::main] function.
+/// Return type from the `[klyra_runtime::main]` macro for a Poem-based service.
+///
+/// # Example
+///
+/// ```rust,no_run
+/// use poem::{get, handler, Route};
+/// use klyra_poem::KlyraPoem;
+/// #[handler]
+/// fn hello_world() -> &'static str {
+///     "Hello, world!"
+/// }
+///
+/// #[klyra_runtime::main]
+/// async fn poem() -> KlyraPoem<impl poem::Endpoint> {
+///     let app = Route::new().at("/", get(hello_world));
+///
+///     Ok(app.into())
+/// }
+/// ```
 pub type KlyraPoem<T> = Result<PoemService<T>, klyra_runtime::Error>;
