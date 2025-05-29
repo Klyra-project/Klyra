@@ -113,7 +113,7 @@
 //!
 //! ```toml
 //! klyra-shared-db = { version = "0.31.0", features = ["postgres"] }
-//! sqlx = { version = "0.7.1", features = ["runtime-tokio-native-tls", "postgres"] }
+//! sqlx = "0.7.1"
 //! ```
 //!
 //! Now update the `#[klyra_runtime::main]` function to take in a `PgPool`:

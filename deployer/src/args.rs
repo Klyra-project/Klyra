@@ -3,7 +3,7 @@ use std::{net::SocketAddr, path::PathBuf};
 use clap::Parser;
 use fqdn::FQDN;
 use hyper::Uri;
-use klyra_common::project::ProjectName;
+use klyra_common::models::project::ProjectName;
 use tonic::transport::Endpoint;
 
 /// Program to handle the deploys for a single project

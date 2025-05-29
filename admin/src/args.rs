@@ -1,7 +1,7 @@
 use std::{fs, io, path::PathBuf};
 
 use clap::{Error, Parser, Subcommand};
-use klyra_common::project::ProjectName;
+use klyra_common::models::project::ProjectName;
 
 #[derive(Parser, Debug)]
 pub struct Args {

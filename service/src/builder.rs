@@ -4,10 +4,7 @@ use std::process::Stdio;
 
 use anyhow::{anyhow, bail, Context};
 use cargo_metadata::{Package, Target};
-use klyra_common::{
-    constants::{NEXT_NAME, RUNTIME_NAME},
-    project::ProjectName,
-};
+use klyra_common::constants::{NEXT_NAME, RUNTIME_NAME};
 use tokio::io::AsyncBufReadExt;
 use tracing::{debug, error, trace};
 
@@ -31,16 +28,16 @@ impl BuiltService {
 
     /// Try to get the service name of a crate from Klyra.toml in the crate root, if it doesn't
     /// exist get it from the Cargo.toml package name of the crate.
-    pub fn service_name(&self) -> anyhow::Result<ProjectName> {
+    pub fn service_name(&self) -> anyhow::Result<String> {
         let klyra_toml_path = self.crate_directory().join("Klyra.toml");
 
         match extract_klyra_toml_name(klyra_toml_path) {
-            Ok(service_name) => Ok(service_name.parse()?),
+            Ok(service_name) => Ok(service_name),
             Err(error) => {
                 debug!(?error, "failed to get service name from Klyra.toml");
 
                 // Couldn't get name from Klyra.toml, use package name instead.
-                Ok(self.package_name.parse()?)
+                Ok(self.package_name.clone())
             }
         }
     }

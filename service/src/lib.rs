@@ -7,7 +7,6 @@ pub use klyra_common::secrets::Secret;
 pub use klyra_common::{
     database,
     deployment::{DeploymentMetadata, Environment},
-    project::ProjectName,
     resource::Type,
     DatabaseReadyInfo, DbInput, DbOutput, SecretStore,
 };
