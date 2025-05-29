@@ -8,6 +8,8 @@ publish = false
 
 [dependencies]
 cargo-klyra = { path = "../cargo-klyra" }
+klyra-proto = { workspace = true }
+
 hyper = { workspace = true }
 portpicker = { workspace = true }
 reqwest = { workspace = true }
@@ -16,6 +18,3 @@ tokio = { workspace = true }
 tokio-stream = { workspace = true }
 tonic = { workspace = true }
 tower = { workspace = true }
-
-[dependencies.klyra-proto]
-workspace = true

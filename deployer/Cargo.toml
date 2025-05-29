@@ -6,6 +6,10 @@ license.workspace = true
 description = "Service with instances created per project for handling the compilation, loading, and execution of Klyra services"
 
 [dependencies]
+klyra-common = { workspace = true, features = ["backend", "models", "openapi"] }
+klyra-proto = { workspace = true }
+klyra-service = { workspace = true, features = ["builder"] }
+
 anyhow = { workspace = true }
 async-trait = { workspace = true }
 axum = { workspace = true, features = ["headers", "json", "query", "ws"] }
@@ -53,17 +57,6 @@ utoipa = { workspace = true }
 utoipa-swagger-ui = { workspace = true }
 ulid = { workspace = true }
 uuid = { workspace = true, features = ["v4"] }
-
-[dependencies.klyra-common]
-workspace = true
-features = ["backend", "models", "openapi"]
-
-[dependencies.klyra-proto]
-workspace = true
-
-[dependencies.klyra-service]
-workspace = true
-features = ["builder"]
 
 [dev-dependencies]
 ctor = { workspace = true }

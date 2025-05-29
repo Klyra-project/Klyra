@@ -1,4 +1,5 @@
 use crossterm::style::Stylize;
+use klyra_common::constants::klyra_STATUS_URL;
 
 /// Used for suggestions in case project operations fail.
 pub fn project_request_failure(
@@ -19,7 +20,7 @@ pub fn project_request_failure(
 
     println!();
     println!(
-        "If {}, please check Klyra status at https://status.klyra.rs before contacting the team on the Discord server.",
+        "If {}, please check Klyra status at {klyra_STATUS_URL} before contacting the team on the Discord server.",
         final_suggestion
     );
     err

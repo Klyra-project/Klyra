@@ -17,7 +17,10 @@ use std::str::FromStr;
 use klyra_common::models::error::ApiError;
 use klyra_common::{
     claims::{ClaimService, InjectPropagation},
-    constants::{API_URL_DEFAULT, EXECUTABLE_DIRNAME, STORAGE_DIRNAME},
+    constants::{
+        API_URL_DEFAULT, EXECUTABLE_DIRNAME, klyra_CLI_DOCS_URL, klyra_GH_ISSUE_URL,
+        klyra_IDLE_DOCS_URL, klyra_LOGIN_URL, STORAGE_DIRNAME,
+    },
     deployment::{DEPLOYER_END_MESSAGES_BAD, DEPLOYER_END_MESSAGES_GOOD},
     models::{
         deployment::{
@@ -74,10 +77,6 @@ use crate::provisioner_server::LocalProvisioner;
 
 const VERSION: &str = env!("CARGO_PKG_VERSION");
 const MANIFEST_DIR: &str = env!("CARGO_MANIFEST_DIR");
-const klyra_LOGIN_URL: &str = "https://console.klyra.rs/new-project";
-const klyra_GH_ISSUE_URL: &str = "https://github.com/klyra-hq/klyra/issues/new/choose";
-const klyra_CLI_DOCS_URL: &str = "https://docs.klyra.rs/getting-started/klyra-commands";
-const klyra_IDLE_DOCS_URL: &str = "https://docs.klyra.rs/getting-started/idle-projects";
 
 pub struct Klyra {
     ctx: RequestContext,
@@ -1467,7 +1466,7 @@ impl Klyra {
             if let Some(Ok(msg)) = message {
                 if let tokio_tungstenite::tungstenite::Message::Text(line) = msg {
                     let log_item: klyra_common::LogItem =
-                        serde_json::from_str(&line).expect("to parse log line");
+                        serde_json::from_str(&line).context("parsing log line")?;
 
                     println!("{log_item}");
 
