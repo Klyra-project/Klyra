@@ -5,7 +5,7 @@ use klyra_service::builder::{build_workspace, BuiltService};
 #[tokio::test]
 #[should_panic(expected = "Build failed. Is the Klyra runtime missing?")]
 async fn not_klyra() {
-    let (tx, _) = crossbeam_channel::unbounded();
+    let (tx, _) = tokio::sync::mpsc::channel::<String>(256);
     let project_path = format!("{}/tests/resources/not-klyra", env!("CARGO_MANIFEST_DIR"));
     build_workspace(Path::new(&project_path), false, tx, false)
         .await
@@ -15,7 +15,7 @@ async fn not_klyra() {
 #[tokio::test]
 #[should_panic(expected = "Your Klyra project must be a binary.")]
 async fn not_bin() {
-    let (tx, _) = crossbeam_channel::unbounded();
+    let (tx, _) = tokio::sync::mpsc::channel::<String>(256);
     let project_path = format!("{}/tests/resources/not-bin", env!("CARGO_MANIFEST_DIR"));
     match build_workspace(Path::new(&project_path), false, tx, false).await {
         Ok(_) => {}
@@ -25,7 +25,7 @@ async fn not_bin() {
 
 #[tokio::test]
 async fn is_bin() {
-    let (tx, _) = crossbeam_channel::unbounded();
+    let (tx, _) = tokio::sync::mpsc::channel::<String>(256);
     let project_path = format!("{}/tests/resources/is-bin", env!("CARGO_MANIFEST_DIR"));
 
     assert_eq!(
@@ -43,9 +43,9 @@ async fn is_bin() {
 }
 
 #[tokio::test]
-#[should_panic(expected = "failed to read the Klyra project manifest")]
+#[should_panic(expected = "Cargo manifest file not found")]
 async fn not_found() {
-    let (tx, _) = crossbeam_channel::unbounded();
+    let (tx, _) = tokio::sync::mpsc::channel::<String>(256);
     let project_path = format!(
         "{}/tests/resources/non-existing",
         env!("CARGO_MANIFEST_DIR")
@@ -58,7 +58,12 @@ async fn not_found() {
 // Test that alpha and next projects are compiled correctly. Any shared library crates should not be compiled too
 #[tokio::test]
 async fn workspace() {
-    let (tx, _) = crossbeam_channel::unbounded();
+    let (tx, mut rx) = tokio::sync::mpsc::channel::<String>(256);
+    tokio::spawn(async move {
+        while let Some(l) = rx.recv().await {
+            println!("{l}");
+        }
+    });
     let project_path = format!("{}/tests/resources/workspace", env!("CARGO_MANIFEST_DIR"));
 
     assert_eq!(
