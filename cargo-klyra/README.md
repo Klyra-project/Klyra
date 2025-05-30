@@ -68,6 +68,14 @@ cargo install cargo-klyra
 pacman -S cargo-klyra
 ```
 
+#### Alpine Linux
+
+`cargo-klyra` is available for [Alpine Edge](https://pkgs.alpinelinux.org/packages?name=cargo-klyra&branch=edge). It can be installed via [apk](https://wiki.alpinelinux.org/wiki/Alpine_Package_Keeper) after enabling the [testing repository](https://wiki.alpinelinux.org/wiki/Repositories).
+
+```sh
+apk add cargo-klyra
+```
+
 ---
 
 <!-- markdownlint-disable-next-line -->
