@@ -119,12 +119,6 @@ pub enum Command {
     /// Manage resources of a Klyra project
     #[command(subcommand)]
     Resource(ResourceCommand),
-    /// Manage secrets for this Klyra service
-    Secrets {
-        #[arg(long, default_value_t = false)]
-        /// Output table in `raw` format
-        raw: bool,
-    },
     /// Remove cargo build artifacts in the Klyra environment
     Clean,
     /// Login to the Klyra platform
