@@ -168,7 +168,7 @@ Sign up to the [Algora Console](https://console.algora.io/org/klyra/bounties?sta
 ## Community and Support
 
 - [GitHub Issues](https://github.com/klyra-hq/klyra/issues). Best for: bugs and errors you encounter using Klyra.
-- [Twitter](https://twitter.com/klyra_dev). Best for: keeping up with announcements, releases, collaborations and other events.
+- [X (Twitter)](https://twitter.com/klyra_dev). Best for: keeping up with announcements, releases, collaborations and other events.
 - [Discord](https://discord.gg/klyra). Best for: *ALL OF THE ABOVE* + help, support, sharing your applications and hanging out with the community.
 
 ## Project Status
