@@ -26,19 +26,3 @@ curl -L --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/cargo-
 
 # Common cargo build tools
 cargo binstall -y --locked trunk@0.17.5
-
-while getopts "p," o; do
-case $o in
-    "p") # if panamax is used, the '-p' parameter is passed
-        # Make future crates requests to our own mirror
-        # This is done after klyra-next install in order to not sabotage it
-        echo '
-[source.klyra-crates-io-mirror]
-registry = "sparse+http://panamax:8080/index/"
-[source.crates-io]
-replace-with = "klyra-crates-io-mirror"' >> $CARGO_HOME/config.toml
-            ;;
-        *)
-            ;;
-    esac
-done
