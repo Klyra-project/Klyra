@@ -698,9 +698,22 @@ impl Klyra {
 
             while let Some(Ok(msg)) = stream.next().await {
                 if let tokio_tungstenite::tungstenite::Message::Text(line) = msg {
-                    let log_item: klyra_common::LogItem = serde_json::from_str(&line)
-                        .context("Failed parsing logs. Is your cargo-klyra outdated?")?;
-                    println!("{log_item}")
+                    match serde_json::from_str::<klyra_common::LogItem>(&line) {
+                        Ok(log_item) => {
+                            println!("{log_item}")
+                        }
+                        Err(err) => {
+                            debug!(error = %err, "failed to parse message into log item");
+
+                            let message = if let Ok(err) = serde_json::from_str::<ApiError>(&line) {
+                                err.to_string()
+                            } else {
+                                "failed to parse logs, is your cargo-klyra outdated?".to_string()
+                            };
+
+                            bail!(message);
+                        }
+                    }
                 }
             }
         } else {
