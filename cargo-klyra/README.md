@@ -98,7 +98,6 @@ Commands:
   logs        View the logs of a deployment in this klyra service
   project     List or manage projects on klyra
   resource    Manage resources of a klyra project
-  secrets     Manage secrets for this klyra service
   clean       Remove cargo build artifacts in the klyra environment
   login       Login to the klyra platform
   logout      Log out of the klyra platform
@@ -142,10 +141,10 @@ cargo klyra init --template rocket my-rocket-app
 This should generate the following dependency in `Cargo.toml`:
 
 ```toml
-rocket = "0.5.0-rc.2"
-klyra-rocket = { version = "0.33.0" }
-klyra-runtime = { version = "0.33.0" }
-tokio = { version = "1.26.0" }
+rocket = "0.5.0"
+klyra-rocket = "0.34.0"
+klyra-runtime = "0.34.0"
+tokio = "1.26.0"
 ```
 
 The following boilerplate code should be generated into `src/lib.rs`:
