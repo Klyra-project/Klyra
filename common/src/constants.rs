@@ -1,6 +1,5 @@
-//
-// Constants regarding the deployer environment and conventions
-//
+//! Shared constants used across Klyra crates
+
 /// Where executables are moved to in order to persist across deploys, relative to workspace root
 pub const EXECUTABLE_DIRNAME: &str = ".klyra-executables";
 /// Where general files will persist across deploys, relative to workspace root. Used by plugins.
@@ -26,6 +25,14 @@ pub const klyra_EXAMPLES_README: &str =
 // Crate names for checking cargo metadata
 pub const NEXT_NAME: &str = "klyra-next";
 pub const RUNTIME_NAME: &str = "klyra-runtime";
+
+/// Timeframe before a project is considered idle
+pub const DEFAULT_IDLE_MINUTES: u64 = 30;
+
+/// Function to set [DEFAULT_IDLE_MINUTES] as a serde default
+pub const fn default_idle_minutes() -> u64 {
+    DEFAULT_IDLE_MINUTES
+}
 
 pub mod limits {
     pub const MAX_PROJECTS_DEFAULT: u32 = 3;

@@ -7,8 +7,8 @@ description = "Service with instances created per project for handling the compi
 
 [dependencies]
 klyra-common = { workspace = true, features = ["backend", "models", "openapi"] }
-klyra-proto = { workspace = true }
-klyra-service = { workspace = true, features = ["builder"] }
+klyra-proto = { workspace = true, features = ["resource-recorder"] }
+klyra-service = { workspace = true, features = ["builder", "runner"] }
 
 anyhow = { workspace = true }
 async-trait = { workspace = true }

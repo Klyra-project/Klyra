@@ -7,8 +7,8 @@ description = "Service responsible for provisioning and managing resources for s
 publish = false
 
 [dependencies]
-klyra-common = { workspace = true, features = ["backend", "tonic"] }
-klyra-proto = { workspace = true }
+klyra-common = { workspace = true, features = ["backend", "models", "service", "tonic"] }
+klyra-proto = { workspace = true, features = ["provisioner"] }
 
 aws-config = "0.56.1"
 aws-sdk-rds = "0.33.1"

@@ -7,7 +7,7 @@ repository.workspace = true
 
 [dependencies]
 klyra-common = { workspace = true, features = ["backend", "tonic"] }
-klyra-proto = { workspace = true }
+klyra-proto = { workspace = true, features = ["logger"] }
 
 async-trait = { workspace = true }
 chrono = { workspace = true }

@@ -17,8 +17,9 @@ use std::str::FromStr;
 use klyra_common::{
     claims::{ClaimService, InjectPropagation},
     constants::{
-        API_URL_DEFAULT, EXECUTABLE_DIRNAME, klyra_CLI_DOCS_URL, klyra_GH_ISSUE_URL,
-        klyra_IDLE_DOCS_URL, klyra_INSTALL_DOCS_URL, klyra_LOGIN_URL, STORAGE_DIRNAME,
+        API_URL_DEFAULT, DEFAULT_IDLE_MINUTES, EXECUTABLE_DIRNAME, klyra_CLI_DOCS_URL,
+        klyra_GH_ISSUE_URL, klyra_IDLE_DOCS_URL, klyra_INSTALL_DOCS_URL, klyra_LOGIN_URL,
+        STORAGE_DIRNAME,
     },
     deployment::{DEPLOYER_END_MESSAGES_BAD, DEPLOYER_END_MESSAGES_GOOD},
     models::{
@@ -27,14 +28,15 @@ use klyra_common::{
             GIT_STRINGS_MAX_LENGTH,
         },
         error::ApiError,
-        project::{self, DEFAULT_IDLE_MINUTES},
+        project,
         resource::get_resource_tables,
     },
     resource, semvers_are_compatible, ApiKey, LogItem, VersionInfo,
 };
 use klyra_proto::runtime::{
-    self, runtime_client::RuntimeClient, LoadRequest, StartRequest, StopRequest,
+    runtime_client::RuntimeClient, LoadRequest, StartRequest, StopRequest,
 };
+use klyra_service::runner;
 use klyra_service::{
     builder::{build_workspace, BuiltService},
     Environment,
@@ -935,7 +937,7 @@ impl Klyra {
         };
 
         // Child process and gRPC client for sending requests to it
-        let (mut runtime, mut runtime_client) = runtime::start(
+        let (mut runtime, mut runtime_client) = runner::start(
             service.is_wasm,
             Environment::Local,
             &format!("http://localhost:{provisioner_port}"),

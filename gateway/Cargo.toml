@@ -10,8 +10,9 @@ klyra-common = { workspace = true, features = [
     "backend",
     "models",
     "openapi",
+    "persist",
 ] }
-klyra-proto = { workspace = true }
+klyra-proto = { workspace = true, features = ["provisioner"] }
 klyra-orchestrator = { workspace = true }
 
 async-trait = { workspace = true }

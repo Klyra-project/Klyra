@@ -12,7 +12,8 @@ use clap::{
     Parser, ValueEnum,
 };
 use clap_complete::Shell;
-use klyra_common::{models::project::DEFAULT_IDLE_MINUTES, resource};
+use klyra_common::constants::DEFAULT_IDLE_MINUTES;
+use klyra_common::resource;
 use uuid::Uuid;
 
 #[derive(Parser)]

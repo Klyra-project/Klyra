@@ -13,9 +13,9 @@ use klyra_common::{
 };
 use klyra_proto::{
     logger::{logger_client::LoggerClient, Batcher, LogItem, LogLine},
-    runtime::{self, runtime_client::RuntimeClient, StopRequest},
+    runtime::{runtime_client::RuntimeClient, StopRequest},
 };
-use klyra_service::Environment;
+use klyra_service::{runner, Environment};
 use tokio::{io::AsyncBufReadExt, io::BufReader, process, sync::Mutex};
 use tonic::transport::Channel;
 use tracing::{debug, error, info, trace, warn};
@@ -125,7 +125,7 @@ impl RuntimeManager {
                 .join("bin/klyra-next")
         };
 
-        let (mut process, runtime_client) = runtime::start(
+        let (mut process, runtime_client) = runner::start(
             is_next,
             Environment::Deployment,
             &self.provisioner_address,

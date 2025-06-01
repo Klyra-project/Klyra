@@ -12,9 +12,9 @@ use klyra_proto::{
         provisioner_server::{Provisioner, ProvisionerServer},
         DatabaseDeletionResponse, DatabaseRequest, DatabaseResponse, Ping, Pong,
     },
-    runtime::{self, runtime_client::RuntimeClient},
+    runtime::runtime_client::RuntimeClient,
 };
-use klyra_service::{builder::build_workspace, Environment};
+use klyra_service::{builder::build_workspace, runner, Environment};
 use tokio::process::Child;
 use tonic::{
     transport::{Channel, Server},
@@ -49,7 +49,7 @@ pub async fn spawn_runtime(project_path: String, service_name: &str) -> Result<T
     // TODO: update this to work with klyra-next projects, see cargo-klyra local run
     let runtime_executable = service.executable_path.clone();
 
-    let (runtime, runtime_client) = runtime::start(
+    let (runtime, runtime_client) = runner::start(
         service.is_wasm,
         Environment::Local,
         &format!("http://{}", provisioner_address),

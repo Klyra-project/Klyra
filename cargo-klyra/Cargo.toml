@@ -10,8 +10,8 @@ rust-version = "1.70"
 
 [dependencies]
 klyra-common = { workspace = true, features = ["models"] }
-klyra-proto = { workspace = true }
-klyra-service = { workspace = true, features = ["builder"] }
+klyra-proto = { workspace = true, features = ["provisioner", "runtime"] }
+klyra-service = { workspace = true, features = ["builder", "runner"] }
 
 anyhow = { workspace = true }
 async-trait = { workspace = true }
