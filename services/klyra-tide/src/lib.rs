@@ -1,18 +1,4 @@
-//! Klyra service integration for the Tide web framework.
-//!
-//! ## Example
-//!
-//! ```rust,no_run
-//! #[klyra_runtime::main]
-//! async fn tide() -> klyra_tide::KlyraTide<()> {
-//!     let mut app = tide::new();
-//!     app.with(tide::log::LogMiddleware::new());
-//!
-//!     app.at("/").get(|_| async { Ok("Hello, world!") });
-//!
-//!     Ok(app.into())
-//! }
-//! ```
+#![doc = include_str!("../README.md")]
 use klyra_runtime::{CustomError, Error};
 use std::net::SocketAddr;
 
@@ -39,20 +25,5 @@ impl<T> From<tide::Server<T>> for TideService<T> {
     }
 }
 
-/// Return type from the `[klyra_runtime::main]` macro for a Tide-based service.
-///
-/// ## Example
-///
-/// ```rust,no_run
-/// # use klyra_tide::KlyraTide;
-///
-/// #[klyra_runtime::main]
-/// async fn tide() -> KlyraTide<()> {
-///     let mut app = tide::new();
-///     app.with(tide::log::LogMiddleware::new());
-///     app.at("/").get(|_| async { Ok("Hello, world!") });
-///
-///     Ok(app.into())
-/// }
-/// ```
+#[doc = include_str!("../README.md")]
 pub type KlyraTide<T> = Result<TideService<T>, Error>;

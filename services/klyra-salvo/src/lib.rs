@@ -1,21 +1,4 @@
-//! Klyra service integration for the Salvo web framework.
-//! ## Example
-//! ```rust,no_run
-//! use salvo::prelude::*;
-//!
-//! #[handler]
-//! async fn hello_world(res: &mut Response) {
-//!     res.render(Text::Plain("Hello, world!"));
-//! }
-//!
-//! #[klyra_runtime::main]
-//! async fn salvo() -> klyra_salvo::KlyraSalvo {
-//!     let router = Router::new().get(hello_world);
-//!
-//!     Ok(router.into())
-//! }
-//!
-//! ```
+#![doc = include_str!("../README.md")]
 use salvo::Listener;
 use klyra_runtime::Error;
 use std::net::SocketAddr;
@@ -42,24 +25,5 @@ impl From<salvo::Router> for SalvoService {
     }
 }
 
-/// Return type from the `[klyra_runtime::main]` macro for a Salvo-based service.
-///
-/// # Example
-///
-/// ```rust,no_run
-/// use salvo::prelude::*;
-/// use klyra_salvo::KlyraSalvo;
-///
-/// #[handler]
-/// async fn hello_world(res: &mut Response) {
-///     res.render(Text::Plain("Hello, world!"));
-/// }
-///
-/// #[klyra_runtime::main]
-/// async fn salvo() -> KlyraSalvo {
-///     let router = Router::with_path("hello").get(hello_world);
-///
-///     Ok(router.into())
-/// }
-/// ```
+#[doc = include_str!("../README.md")]
 pub type KlyraSalvo = Result<SalvoService, Error>;

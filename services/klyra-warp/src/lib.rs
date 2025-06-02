@@ -1,17 +1,4 @@
-//! Klyra service integration for the Warp web framework.
-//!
-//! ## Example
-//!
-//! ```rust,no_run
-//! use warp::Filter;
-//! use warp::Reply;
-//!
-//! #[klyra_runtime::main]
-//! async fn warp() -> klyra_warp::KlyraWarp<(impl Reply,)> {
-//!     let route = warp::any().map(|| "Hello, World!");
-//!     Ok(route.boxed().into())
-//! }
-//! ```
+#![doc = include_str!("../README.md")]
 use klyra_runtime::Error;
 use std::net::SocketAddr;
 use std::ops::Deref;
@@ -51,19 +38,5 @@ impl<T> Deref for WarpService<T> {
     }
 }
 
-/// The return type of the [klyra_runtime::main] function for the Warp service.
-///
-/// ## Example
-///
-/// ```rust,no_run
-/// use klyra_warp::KlyraWarp;
-/// use warp::Filter;
-/// use warp::Reply;
-///
-/// #[klyra_runtime::main]
-/// async fn warp() -> KlyraWarp<(impl Reply,)> {
-///     let route = warp::any().map(|| "Hello, World");
-///     Ok(route.boxed().into())
-/// }
-/// ```
+#[doc = include_str!("../README.md")]
 pub type KlyraWarp<T> = Result<WarpService<warp::filters::BoxedFilter<T>>, Error>;

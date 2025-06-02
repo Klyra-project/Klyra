@@ -1,23 +1,4 @@
-//! Klyra service integration for the Poem web framework.
-//! ## Example
-//! ```rust,no_run
-//! use poem::{get, handler, Route};
-//! use klyra_poem::KlyraPoem;
-//!
-//! #[handler]
-//! fn hello_world() -> &'static str {
-//!     "Hello, world!"
-//! }
-//!
-//! #[klyra_runtime::main]
-//! async fn poem() -> KlyraPoem<impl poem::Endpoint> {
-//!     let app = Route::new().at("/", get(hello_world));
-//!
-//!     Ok(app.into())
-//! }
-//!
-//! ```
-
+#![doc = include_str!("../README.md")]
 /// A wrapper type for [poem::Endpoint] so we can implement [klyra_runtime::Service] for it.
 pub struct PoemService<T>(pub T);
 
@@ -45,23 +26,5 @@ where
     }
 }
 
-/// Return type from the `[klyra_runtime::main]` macro for a Poem-based service.
-///
-/// # Example
-///
-/// ```rust,no_run
-/// use poem::{get, handler, Route};
-/// use klyra_poem::KlyraPoem;
-/// #[handler]
-/// fn hello_world() -> &'static str {
-///     "Hello, world!"
-/// }
-///
-/// #[klyra_runtime::main]
-/// async fn poem() -> KlyraPoem<impl poem::Endpoint> {
-///     let app = Route::new().at("/", get(hello_world));
-///
-///     Ok(app.into())
-/// }
-/// ```
+#[doc = include_str!("../README.md")]
 pub type KlyraPoem<T> = Result<PoemService<T>, klyra_runtime::Error>;

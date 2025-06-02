@@ -1,23 +1,4 @@
-//! Klyra service integration for the Rocket web framework.
-//! ## Example
-//! ```rust,no_run
-//! #[macro_use]
-//! extern crate rocket;
-//!
-//! # fn main() {
-//! #[get("/")]
-//! fn index() -> &'static str {
-//!     "Hello, world!"
-//! }
-//!
-//! #[klyra_runtime::main]
-//! async fn rocket() -> klyra_rocket::KlyraRocket {
-//!     let rocket = rocket::build().mount("/", routes![index]);
-//!
-//!     Ok(rocket.into())
-//! }
-//! # }
-//! ```
+#![doc = include_str!("../README.md")]
 use std::net::SocketAddr;
 
 /// A wrapper type for [rocket::Rocket<rocket::Build>] so we can implement [klyra_runtime::Service] for it.
@@ -59,24 +40,5 @@ impl From<rocket::Rocket<rocket::Build>> for RocketService {
     }
 }
 
-/// Return type from the `[klyra_runtime::main]` macro for a Rocket-based service.
-///
-/// # Example
-///
-/// ```rust,no_run
-/// use rocket::{routes, get};
-/// use klyra_rocket::KlyraRocket;
-///
-/// #[get("/")]
-/// fn index() -> &'static str {
-///     "Hello, world!"
-/// }
-///
-/// #[klyra_runtime::main]
-/// async fn rocket() -> KlyraRocket {
-///     let rocket = rocket::build().mount("/", routes![index]);
-///
-///     Ok(rocket.into())
-/// }
-/// ```
+#[doc = include_str!("../README.md")]
 pub type KlyraRocket = Result<RocketService, klyra_runtime::Error>;
