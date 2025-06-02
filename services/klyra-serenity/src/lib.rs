@@ -54,8 +54,13 @@
 use klyra_runtime::{CustomError, Error};
 use std::net::SocketAddr;
 
+#[cfg(feature = "serenity")]
+use serenity::Client;
+#[cfg(feature = "serenity-0-12")]
+use serenity_0_12::Client;
+
 /// A wrapper type for [serenity::Client] so we can implement [klyra_runtime::Service] for it.
-pub struct SerenityService(pub serenity::Client);
+pub struct SerenityService(pub Client);
 
 #[klyra_runtime::async_trait]
 impl klyra_runtime::Service for SerenityService {
@@ -68,8 +73,8 @@ impl klyra_runtime::Service for SerenityService {
     }
 }
 
-impl From<serenity::Client> for SerenityService {
-    fn from(router: serenity::Client) -> Self {
+impl From<Client> for SerenityService {
+    fn from(router: Client) -> Self {
         Self(router)
     }
 }
