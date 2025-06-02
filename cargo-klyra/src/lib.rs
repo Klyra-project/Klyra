@@ -1896,7 +1896,7 @@ impl Klyra {
                 WARNING:
                     Are you sure you want to delete "{}"?
                     This will...
-                    - Delete any klyra-persist data in this project.
+                    - Delete any databases, secrets, and klyra-persist data in this project.
                     - Delete any custom domains linked to this project.
                     - Release the project name from your account.
                     This action is permanent."#,
