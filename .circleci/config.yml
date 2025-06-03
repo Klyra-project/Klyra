@@ -696,13 +696,11 @@ workflows:
                 - resources/secrets
                 - resources/turso
                 - services/klyra-actix-web
-                - services/klyra-axum
                 - services/klyra-next
                 - services/klyra-poem
                 - services/klyra-poise
                 - services/klyra-rocket
                 - services/klyra-salvo
-                - services/klyra-serenity
                 - services/klyra-thruster
                 - services/klyra-tide
                 - services/klyra-tower
@@ -719,6 +717,28 @@ workflows:
                 - "-F mongodb"
                 - "-F postgres"
                 - "-F postgres-rustls"
+      - test-standalone:
+          # Has mutually exclusive features, so we run checks for each feature separately
+          name: "services/klyra-axum: << matrix.features >>"
+          matrix:
+            alias: test-standalone-services-klyra-axum
+            parameters:
+              path:
+                - services/klyra-axum
+              features:
+                - "-F axum"
+                - "-F axum-0-7 --no-default-features"
+      - test-standalone:
+          # Has mutually exclusive features, so we run checks for each feature separately
+          name: "services/klyra-serenity: << matrix.features >>"
+          matrix:
+            alias: test-standalone-services-klyra-serenity
+            parameters:
+              path:
+                - services/klyra-serenity
+              features:
+                - "-F serenity"
+                - "-F serenity-0-12-rustls_backend --no-default-features"
       - test-workspace-member:
           name: << matrix.crate >>
           matrix:
