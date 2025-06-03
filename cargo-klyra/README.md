@@ -101,7 +101,7 @@ Commands:
   clean       Remove cargo build artifacts in the klyra environment
   login       Login to the klyra platform
   logout      Log out of the klyra platform
-  generate    Generate shell completions
+  generate    Generate shell completions and man page
   feedback    Open an issue on GitHub and provide feedback
   help        Print this message or the help of the given subcommand(s)
 
