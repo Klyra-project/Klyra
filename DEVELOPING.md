@@ -158,7 +158,7 @@ The following command inserts a user into the `auth` state with admin privileges
 
 ```bash
 # the --key needs to be 16 alphanumeric characters
-docker compose -f docker-compose.rendered.yml -p klyra-dev exec auth /usr/local/bin/klyra-auth --state=/var/lib/klyra-auth init-admin --name admin --key dh9z58jttoes3qvt
+docker compose -f docker-compose.rendered.yml -p klyra-dev exec auth /usr/local/bin/klyra-auth --db-connection-uri=postgres://postgres:postgres@control-db init-admin --name admin --key dh9z58jttoes3qvt
 ```
 
 > Note: if you have done this already for this container you will get a "UNIQUE constraint failed"
@@ -178,7 +178,7 @@ Finally, before gateway will be able to work with some projects, we need to crea
 The following command inserts a gateway user into the `auth` state with deployer privileges:
 
 ```bash
-docker compose -f docker-compose.rendered.yml -p klyra-dev exec auth /usr/local/bin/klyra-auth --state=/var/lib/klyra-auth init-deployer --name gateway --key gateway4deployes
+docker compose -f docker-compose.rendered.yml -p klyra-dev exec auth /usr/local/bin/klyra-auth --db-connection-uri=postgres://postgres:postgres@control-db init-deployer --name gateway --key gateway4deployes
 ```
 
 ### Deploying locally

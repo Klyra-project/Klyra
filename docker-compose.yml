@@ -50,7 +50,7 @@ services:
       - RUST_LOG=${RUST_LOG}
       - klyra_ENV=${klyra_ENV}
     command:
-      - "--state=/var/lib/klyra-auth"
+      - "--db-connection-uri=${CONTROL_DB_POSTGRES_URI}"
       - "start"
       - "--address=0.0.0.0:8000"
       - "--stripe-secret-key=${STRIPE_SECRET_KEY}"
