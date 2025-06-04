@@ -28,8 +28,8 @@
 //!
 //! ```toml
 //! axum = "0.6.20"
-//! klyra-axum = "0.34.1"
-//! klyra-runtime = "0.34.1"
+//! klyra-axum = "0.35.0"
+//! klyra-runtime = "0.35.0"
 //! tokio = "1.28.2"
 //! ```
 //!
@@ -112,7 +112,7 @@
 //! `runtime-tokio-native-tls` and `postgres` features inside `Cargo.toml`:
 //!
 //! ```toml
-//! klyra-shared-db = { version = "0.34.1", features = ["postgres"] }
+//! klyra-shared-db = { version = "0.35.0", features = ["postgres"] }
 //! sqlx = "0.7.1"
 //! ```
 //!

@@ -3,7 +3,7 @@
 Serenity 0.12 is now supported by using these feature flags (native TLS also available):
 ```toml,ignore
 serenity = { version = "0.12.0", features = ["..."] }
-klyra-serenity = { version = "0.34.1", default-features = false, features = ["serenity-0-12-rustls_backend"] }
+klyra-serenity = { version = "0.35.0", default-features = false, features = ["serenity-0-12-rustls_backend"] }
 ```
 
 ### Example
