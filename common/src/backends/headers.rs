@@ -3,7 +3,7 @@ use http::HeaderValue;
 
 pub static X_klyra_ADMIN_SECRET: HeaderName = HeaderName::from_static("x-klyra-admin-secret");
 
-/// Typed header for sending admin secrets to deployers
+/// Typed header for sending admin secrets to Klyra components
 pub struct XKlyraAdminSecret(pub String);
 
 impl Header for XKlyraAdminSecret {
