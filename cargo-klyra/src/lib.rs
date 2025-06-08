@@ -849,7 +849,12 @@ impl Klyra {
         let table = get_deployments_table(&deployments, proj_name, page, raw, page_hint);
 
         println!("{table}");
-        println!("Run `cargo klyra logs <id>` to get logs for a given deployment.");
+
+        if deployments.is_empty() {
+            println!("Run `cargo klyra deploy` to deploy your project.");
+        } else {
+            println!("Run `cargo klyra logs <id>` to get logs for a given deployment.");
+        }
 
         Ok(CommandOutcome::Ok)
     }
