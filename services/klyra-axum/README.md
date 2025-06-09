@@ -1,9 +1,12 @@
-## Klyra service integration for the Axum web framework.
+## Klyra service integration for the Axum web framework
 
-Axum 0.7 is now supported by using these feature flags:
+Axum 0.7 is used by default.
+
+Axum 0.6 is supported by using these feature flags:
+
 ```toml,ignore
-axum = "0.7.0"
-klyra-axum = { version = "0.35.1", default-features = false, features = ["axum-0-7"] }
+axum = "0.6.0"
+klyra-axum = { version = "0.35.1", default-features = false, features = ["axum-0-6"] }
 ```
 
 ### Example

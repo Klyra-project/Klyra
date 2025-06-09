@@ -27,7 +27,7 @@
 //! be a binary crate with a few dependencies including `klyra-runtime` and `klyra-axum`.
 //!
 //! ```toml
-//! axum = "0.6.20"
+//! axum = "0.7.3"
 //! klyra-axum = "0.35.1"
 //! klyra-runtime = "0.35.1"
 //! tokio = "1.28.2"
