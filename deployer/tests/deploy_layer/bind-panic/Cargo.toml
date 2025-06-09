@@ -7,5 +7,5 @@ edition = "2021"
 [workspace]
 
 [dependencies]
-klyra-runtime = "0.35.1"
+klyra-runtime = "0.36.0"
 tokio = "1.22"
