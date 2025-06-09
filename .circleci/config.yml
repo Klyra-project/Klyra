@@ -469,16 +469,16 @@ jobs:
             GATEWAY_ADMIN_KEY=${<< parameters.gateway-admin-key >>} \
             make deploy
       - when:
-          condition: 
-            equal: [ production, << parameters.klyra-env >>]
+          condition:
+            equal: [production, << parameters.klyra-env >>]
           steps:
             - run:
                 name: Pull new deployer image on prod
                 command: |
                   ssh ec2-user@controller.<< parameters.ssh-host >> "docker pull public.ecr.aws/klyra/deployer:$TAG"
       - when:
-          condition: 
-            equal: [ staging, << parameters.klyra-env >>] 
+          condition:
+            equal: [staging, << parameters.klyra-env >>]
           steps:
             - run:
                 name: Pull new deployer image on dev
