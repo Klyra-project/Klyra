@@ -134,11 +134,8 @@ pub async fn build_workspace(
             let mut klyra_deps = member
                 .dependencies
                 .iter()
-                .filter_map(|d| {
-                    d.name
-                        .starts_with("klyra-")
-                        .then(|| format!("{} '{}'", d.name, d.req))
-                })
+                .filter(|&d| d.name.starts_with("klyra-"))
+                .map(|d| format!("{} '{}'", d.name, d.req))
                 .collect::<Vec<_>>();
             klyra_deps.sort();
             info!(name = member.name, deps = ?klyra_deps, "Compiled workspace member with klyra dependencies");

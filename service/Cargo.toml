@@ -17,7 +17,9 @@ klyra-common = { workspace = true, features = [
     "tracing",
     "display",
 ] }
-klyra-proto = { workspace = true, optional = true, features = ["runtime"] }
+klyra-proto = { workspace = true, features = [
+    "provisioner",
+] }
 
 anyhow = { workspace = true }
 async-trait = { workspace = true }
@@ -46,4 +48,4 @@ builder = [
     "toml",
     "tracing",
 ]
-runner = ["klyra-proto", "tokio/process", "dunce", "tower"]
+runner = ["klyra-proto/runtime", "tokio/process", "dunce", "tower"]
