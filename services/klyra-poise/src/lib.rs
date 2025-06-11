@@ -3,6 +3,7 @@ use std::net::SocketAddr;
 use std::sync::Arc;
 
 /// A wrapper type for [poise::Framework] so we can implement [klyra_runtime::Service] for it.
+#[deprecated = "klyra-poise for poise 0.5 is deprecated. To use poise 0.6 and Klyra, check https://docs.rs/klyra-serenity/latest/klyra_serenity/"]
 pub struct PoiseService<T, E>(pub Arc<poise::Framework<T, E>>);
 
 #[klyra_runtime::async_trait]
