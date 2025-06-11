@@ -718,7 +718,6 @@ workflows:
                 - services/klyra-actix-web
                 - services/klyra-next
                 - services/klyra-poem
-                - services/klyra-poise
                 - services/klyra-rocket
                 - services/klyra-salvo
                 - services/klyra-thruster
