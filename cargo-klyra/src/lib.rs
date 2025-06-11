@@ -1027,8 +1027,10 @@ impl Klyra {
                     } else {
                         printdoc! {"
                             Hint: A newer version of klyra-runtime is available.
-                                  Change its version to {} in Cargo.toml to update it.",
-                            mismatch.cargo_klyra
+                            Change its version to {} in Cargo.toml to update it, or
+                            run this command: cargo add klyra-runtime@{}",
+                            mismatch.cargo_klyra,
+                            mismatch.cargo_klyra,
                         };
                     }
                 } else {
