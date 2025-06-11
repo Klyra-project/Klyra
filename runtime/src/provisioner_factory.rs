@@ -6,7 +6,7 @@ use klyra_common::{
     constants::STORAGE_DIRNAME,
     database,
     secrets::Secret,
-    DatabaseReadyInfo,
+    DatabaseInfo,
 };
 use klyra_proto::provisioner::{provisioner_client::ProvisionerClient, DatabaseRequest};
 use klyra_service::{DeploymentMetadata, Environment, Factory};
@@ -44,7 +44,7 @@ impl Factory for ProvisionerFactory {
     async fn get_db_connection(
         &mut self,
         db_type: database::Type,
-    ) -> Result<DatabaseReadyInfo, klyra_service::Error> {
+    ) -> Result<DatabaseInfo, klyra_service::Error> {
         let mut request = Request::new(DatabaseRequest {
             project_name: self.service_name.to_string(),
             db_type: Some(db_type.into()),
@@ -61,7 +61,7 @@ impl Factory for ProvisionerFactory {
             .map_err(klyra_service::error::CustomError::new)?
             .into_inner();
 
-        let info: DatabaseReadyInfo = response.into();
+        let info: DatabaseInfo = response.into();
 
         Ok(info)
     }

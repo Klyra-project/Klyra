@@ -205,7 +205,7 @@
 
 // Public API
 pub use klyra_codegen::main;
-pub use klyra_service::{CustomError, Error, Factory, ResourceBuilder, Service};
+pub use klyra_service::{CustomError, Error, Factory, IntoResource, ResourceBuilder, Service};
 
 // Useful re-exports
 pub use async_trait::async_trait;
