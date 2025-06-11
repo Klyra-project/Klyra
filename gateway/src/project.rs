@@ -1395,6 +1395,7 @@ where
         debug!(
             klyra.container.id = container.id,
             klyra.service.name = %service.name,
+            klyra.project.name = %service.name,
             "{} has {} CPU usage per minute",
             service.name,
             cpu_per_minute
