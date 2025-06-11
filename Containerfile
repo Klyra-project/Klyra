@@ -63,6 +63,8 @@ RUN apt update && apt install -y curl ca-certificates; rm -rf /var/lib/apt/lists
 
 #### AUTH
 FROM bookworm-20230904-slim-plus AS klyra-auth
+ARG klyra_SERVICE_VERSION
+ENV klyra_SERVICE_VERSION=${klyra_SERVICE_VERSION}
 ARG CARGO_PROFILE
 COPY --from=chef-builder /build/target/${CARGO_PROFILE}/klyra-auth /usr/local/bin
 ENTRYPOINT ["/usr/local/bin/klyra-auth"]
@@ -72,6 +74,8 @@ FROM klyra-auth AS klyra-auth-dev
 #### BUILDER
 ARG RUSTUP_TOOLCHAIN
 FROM docker.io/library/rust:${RUSTUP_TOOLCHAIN}-bookworm AS klyra-builder
+ARG klyra_SERVICE_VERSION
+ENV klyra_SERVICE_VERSION=${klyra_SERVICE_VERSION}
 ARG CARGO_PROFILE
 ARG prepare_args
 COPY builder/prepare.sh /prepare.sh
@@ -84,6 +88,8 @@ FROM klyra-builder AS klyra-builder-dev
 #### DEPLOYER
 ARG RUSTUP_TOOLCHAIN
 FROM docker.io/library/rust:${RUSTUP_TOOLCHAIN}-bookworm AS klyra-deployer
+ARG klyra_SERVICE_VERSION
+ENV klyra_SERVICE_VERSION=${klyra_SERVICE_VERSION}
 ARG CARGO_PROFILE
 ARG prepare_args
 # Fixes some dependencies compiled with incompatible versions of rustc
@@ -115,6 +121,8 @@ COPY --from=chef-planner /build /usr/src/klyra/
 
 #### GATEWAY
 FROM bookworm-20230904-slim-plus AS klyra-gateway
+ARG klyra_SERVICE_VERSION
+ENV klyra_SERVICE_VERSION=${klyra_SERVICE_VERSION}
 ARG CARGO_PROFILE
 COPY gateway/ulid0.so /usr/lib/
 COPY gateway/ulid0_aarch64.so /usr/lib/
@@ -132,6 +140,8 @@ COPY --from=chef-planner /build/*.pem /usr/src/klyra/
 
 #### LOGGER
 FROM docker.io/library/debian:bookworm-20230904-slim AS klyra-logger
+ARG klyra_SERVICE_VERSION
+ENV klyra_SERVICE_VERSION=${klyra_SERVICE_VERSION}
 ARG CARGO_PROFILE
 COPY --from=chef-builder /build/target/${CARGO_PROFILE}/klyra-logger /usr/local/bin
 ENTRYPOINT ["/usr/local/bin/klyra-logger"]
@@ -141,6 +151,8 @@ FROM klyra-logger AS klyra-logger-dev
 #### PROVISIONER
 ARG RUSTUP_TOOLCHAIN
 FROM bookworm-20230904-slim-plus AS klyra-provisioner
+ARG klyra_SERVICE_VERSION
+ENV klyra_SERVICE_VERSION=${klyra_SERVICE_VERSION}
 ARG CARGO_PROFILE
 COPY --from=chef-builder /build/target/${CARGO_PROFILE}/klyra-provisioner /usr/local/bin
 ENTRYPOINT ["/usr/local/bin/klyra-provisioner"]
@@ -149,6 +161,8 @@ FROM klyra-provisioner AS klyra-provisioner-dev
 
 #### RESOURCE RECORDER
 FROM docker.io/library/debian:bookworm-20230904-slim AS klyra-resource-recorder
+ARG klyra_SERVICE_VERSION
+ENV klyra_SERVICE_VERSION=${klyra_SERVICE_VERSION}
 ARG CARGO_PROFILE
 COPY --from=chef-builder /build/target/${CARGO_PROFILE}/klyra-resource-recorder /usr/local/bin
 ENTRYPOINT ["/usr/local/bin/klyra-resource-recorder"]
