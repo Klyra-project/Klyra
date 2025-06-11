@@ -1,6 +1,5 @@
 pub mod builder;
 pub mod cargo_klyra;
-pub mod gateway;
 pub mod logger;
 pub mod postgres;
 pub mod resource_recorder;
