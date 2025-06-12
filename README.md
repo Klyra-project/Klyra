@@ -49,11 +49,10 @@
 
 Klyra is built for productivity, reliability and performance:
 
-- Zero-Configuration support for Rust using annotations
-- Automatic resource provisioning (databases, caches, subdomains, etc.) via [Infrastructure-From-Code](https://www.klyra.rs/blog/2022/05/09/ifc)
-- First-class support for popular Rust frameworks ([Actix Web](https://docs.klyra.rs/examples/actix), [Rocket](https://docs.klyra.rs/examples/rocket), [Axum](https://docs.klyra.rs/examples/axum), and [more](https://docs.klyra.rs/examples/other))
+- Zero-Configuration support for Rust using macro annotations
+- Automatic resource provisioning (databases, etc.) via [Infrastructure-From-Code](https://www.klyra.rs/blog/2022/05/09/ifc)
+- First-class support for popular Rust frameworks ([Axum](https://docs.klyra.rs/examples/axum), [Actix Web](https://docs.klyra.rs/examples/actix), [Rocket](https://docs.klyra.rs/examples/rocket), and [more](https://docs.klyra.rs/examples/other))
 - Support for deploying Discord bots using [Serenity](https://docs.klyra.rs/examples/serenity)
-- Scalable hosting (with optional self-hosting in the future)
 
 📖 Check out our documentation to get started quickly: [docs.klyra.rs](https://docs.klyra.rs)
 
@@ -63,10 +62,9 @@ Klyra is built for productivity, reliability and performance:
 
 ![star](https://i.imgur.com/kLWmThm.gif)
 
-## (NEW) Klyra Console
+## Klyra Console
 
-Your projects can now be viewed on the brand new [Klyra Console](https://console.klyra.rs/)!
-The CLI is still used for most tasks.
+In addition to the CLI, you can also view your projects on the [Klyra Console](https://console.klyra.rs/)!
 
 ![console-preview](https://i.imgur.com/1qdWipP.gif)
 *The GIF above visualizes the ease of adding resources to your project(s), along with how they are displayed in the console.*
@@ -105,7 +103,7 @@ Although a bit slower, you can also install directly with cargo:
 cargo install cargo-klyra
 ```
 
-> If installing binstall or cargo-klyra fails, try adding `--locked` to the install command
+> If installing cargo-binstall or cargo-klyra fails, try adding `--locked` to the install command
 
 After installing, log in with:
 
@@ -117,7 +115,6 @@ To initialize your project, simply write:
 
 ```bash
 cargo klyra init --template axum hello-world
-# Choose a unique project name!
 ```
 
 And to deploy it, write:
@@ -144,24 +141,23 @@ For the full documentation, visit [our docs](https://docs.klyra.rs).
 
 ## Repositories
 
-| Name | Description |  |  |
-|-|-|-|-|
-| [klyra](https://github.com/klyra-hq/klyra) 🚀 (This repo) | The core Klyra product. Contains all crates that users interact with. | [Issues](https://github.com/klyra-hq/klyra/issues) | [PRs](https://github.com/klyra-hq/klyra/pulls)
-| [klyra-examples](https://github.com/klyra-hq/klyra-examples) 👨‍🏫 | Officially maintained examples of projects that can be deployed on Klyra. Also has a list of [community examples](https://github.com/klyra-hq/klyra-examples#community-examples). | [Issues](https://github.com/klyra-hq/klyra-examples/issues) | [PRs](https://github.com/klyra-hq/klyra-examples/pulls)
-| [klyra-docs](https://github.com/klyra-hq/klyra-docs) 📃 | Documentation hosted on [docs.klyra.rs](https://docs.klyra.rs/). | [Issues](https://github.com/klyra-hq/klyra-docs/issues) | [PRs](https://github.com/klyra-hq/klyra-docs/pulls)
-| [www](https://github.com/klyra-hq/www) 🌍 | Our website [klyra.rs](https://www.klyra.rs/), including the [blog](https://www.klyra.rs/blog/tags/all) and [Launchpad newsletter](https://www.klyra.rs/launchpad). | [Issues](https://github.com/klyra-hq/www/issues) | [PRs](https://github.com/klyra-hq/www/pulls)
-| [deploy-action](https://github.com/klyra-hq/deploy-action) ⚙ | GitHub Action for continuous deployments. | [Issues](https://github.com/klyra-hq/deploy-action/issues) | [PRs](https://github.com/klyra-hq/deploy-action/pulls)
-| [awesome-klyra](https://github.com/klyra-hq/awesome-klyra) 🌟 | An awesome list of Klyra-hosted projects and resources that users can add to. | [Issues](https://github.com/klyra-hq/awesome-klyra/issues) | [PRs](https://github.com/klyra-hq/awesome-klyra/pulls)
+| Name | Description |
+|-|-|
+| [klyra](https://github.com/klyra-hq/klyra) 🚀 (This repo) | The core Klyra product. Contains all crates that users interact with. |
+| [klyra-examples](https://github.com/klyra-hq/klyra-examples) 👨‍🏫 | Officially maintained examples of projects that can be deployed on Klyra. Also has a list of [community examples](https://github.com/klyra-hq/klyra-examples#community-examples). |
+| [klyra-docs](https://github.com/klyra-hq/klyra-docs) 📃 | Documentation hosted on [docs.klyra.rs](https://docs.klyra.rs/). |
+| [www](https://github.com/klyra-hq/www) 🌍 | Our website [klyra.rs](https://www.klyra.rs/), including the [blog](https://www.klyra.rs/blog/tags/all) and [Launchpad newsletter](https://www.klyra.rs/launchpad). |
+| [deploy-action](https://github.com/klyra-hq/deploy-action) ⚙ | GitHub Action for continuous deployments. |
+| [awesome-klyra](https://github.com/klyra-hq/awesome-klyra) 🌟 | An awesome list of Klyra-hosted projects and resources that users can add to. |
+| [shuttlings](https://github.com/klyra-hq/shuttlings) ⚔️ | A collection of Rust code challenges. A great way to get started with using Rust and Klyra. |
 
 ## Contributing to Klyra
 
 Contributing to Klyra is highly encouraged!
+Even if you are not planning to submit any code, joining our [Discord server](https://discord.gg/klyra) and providing feedback helps us a lot!
 
 Check out our [contributing docs](./CONTRIBUTING.md) and find the appropriate repo above to contribute to.
-
 For development of this repo, check the [development docs](./DEVELOPING.md).
-
-Even if you are not planning to submit any code, joining our [Discord server](https://discord.gg/klyra) and providing feedback helps us a lot!
 
 ### Algora Bounties 💰
 
