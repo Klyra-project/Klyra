@@ -1981,6 +1981,8 @@ impl Klyra {
                 )
             })?;
 
+        println!("Deleted project");
+
         Ok(CommandOutcome::Ok)
     }
 
