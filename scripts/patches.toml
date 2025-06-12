@@ -17,7 +17,6 @@ klyra-axum = { path = "BASE/services/klyra-axum" }
 klyra-actix-web = { path = "BASE/services/klyra-actix-web" }
 klyra-next = { path = "BASE/services/klyra-next" }
 klyra-poem = { path = "BASE/services/klyra-poem" }
-klyra-poise = { path = "BASE/services/klyra-poise" }
 klyra-rocket = { path = "BASE/services/klyra-rocket" }
 klyra-salvo = { path = "BASE/services/klyra-salvo" }
 klyra-serenity = { path = "BASE/services/klyra-serenity" }
