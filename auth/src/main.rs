@@ -1,7 +1,7 @@
 use std::io;
 
 use clap::Parser;
-use klyra_common::{backends::tracing::setup_tracing, claims::AccountTier, log::Backend};
+use klyra_common::{backends::trace::setup_tracing, claims::AccountTier, log::Backend};
 use sqlx::migrate::Migrator;
 use tracing::trace;
 

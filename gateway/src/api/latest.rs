@@ -20,8 +20,8 @@ use serde::{Deserialize, Serialize};
 use klyra_common::backends::auth::{AuthPublicKey, JwtAuthenticationLayer, ScopedLayer};
 use klyra_common::backends::cache::CacheManager;
 use klyra_common::backends::metrics::{Metrics, TraceLayer};
+use klyra_common::backends::ClaimExt;
 use klyra_common::claims::{Scope, EXP_MINUTES};
-use klyra_common::limits::ClaimExt;
 use klyra_common::models::error::axum::CustomErrorPath;
 use klyra_common::models::error::ErrorKind;
 use klyra_common::models::{

@@ -3,7 +3,7 @@ use std::{
     time::Duration,
 };
 
-use klyra_common::backends::tracing::ExtractPropagationLayer;
+use klyra_common::backends::trace::ExtractPropagationLayer;
 use klyra_proto::runtime::runtime_server::RuntimeServer;
 use klyra_runtime::__internals::{print_version, AxumWasm, NextArgs};
 use tonic::transport::Server;

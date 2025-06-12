@@ -5,7 +5,7 @@ use klyra_builder::{args::Args, Service};
 use klyra_common::{
     backends::{
         auth::{AuthPublicKey, JwtAuthenticationLayer},
-        tracing::{setup_tracing, ExtractPropagationLayer},
+        trace::{setup_tracing, ExtractPropagationLayer},
     },
     log::Backend,
 };
