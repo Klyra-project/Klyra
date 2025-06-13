@@ -142,8 +142,8 @@ This should generate the following dependency in `Cargo.toml`:
 
 ```toml
 rocket = "0.5.0"
-klyra-rocket = "0.37.0"
-klyra-runtime = "0.37.0"
+klyra-rocket = "0.38.0"
+klyra-runtime = "0.38.0"
 tokio = "1.26.0"
 ```
 
