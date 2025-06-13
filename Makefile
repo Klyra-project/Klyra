@@ -147,7 +147,7 @@ cargo-clean:
 
 images: the-klyra-images postgres otel
 
-the-klyra-images: klyra-auth klyra-builder klyra-deployer klyra-gateway klyra-logger klyra-provisioner klyra-resource-recorder
+the-klyra-images: klyra-auth klyra-deployer klyra-gateway klyra-logger klyra-provisioner klyra-resource-recorder # klyra-builder
 
 klyra-%:
 	$(DOCKER_BUILD) \
