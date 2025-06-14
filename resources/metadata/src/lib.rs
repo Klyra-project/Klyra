@@ -7,7 +7,7 @@ pub struct KlyraMetadata;
 
 #[async_trait]
 impl ResourceBuilder for KlyraMetadata {
-    const TYPE: Type = Type::Metadata;
+    const TYPE: Type = Type::Custom;
     type Config = ();
     type Output = Metadata;
 
