@@ -14,8 +14,7 @@ use klyra_common::{
     log::LogRecorder,
     LogItem,
 };
-use klyra_proto::builder::builder_client::BuilderClient;
-use klyra_proto::builder::BuildRequest;
+use klyra_proto::builder::{self, BuildRequest};
 use klyra_service::builder::{build_workspace, BuiltService};
 use tar::Archive;
 use tokio::{
@@ -42,13 +41,7 @@ pub async fn task(
     deployment_updater: impl DeploymentUpdater,
     log_recorder: impl LogRecorder,
     queue_client: impl BuildQueueClient,
-    builder_client: Option<
-        BuilderClient<
-            klyra_common::claims::ClaimService<
-                klyra_common::claims::InjectPropagation<tonic::transport::Channel>,
-            >,
-        >,
-    >,
+    builder_client: Option<builder::Client>,
     builds_path: PathBuf,
 ) {
     info!("Queue task started");

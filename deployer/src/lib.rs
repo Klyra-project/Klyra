@@ -9,7 +9,7 @@ pub use persistence::Persistence;
 use proxy::AddressGetter;
 pub use runtime_manager::RuntimeManager;
 use klyra_common::log::LogRecorder;
-use klyra_proto::{builder::builder_client::BuilderClient, logger::logger_client::LoggerClient};
+use klyra_proto::{builder, logger};
 use tokio::sync::Mutex;
 use tracing::{error, info};
 use ulid::Ulid;
@@ -33,18 +33,8 @@ pub async fn start(
     persistence: Persistence,
     runtime_manager: Arc<Mutex<RuntimeManager>>,
     log_recorder: impl LogRecorder,
-    log_fetcher: LoggerClient<
-        klyra_common::claims::ClaimService<
-            klyra_common::claims::InjectPropagation<tonic::transport::Channel>,
-        >,
-    >,
-    builder_client: Option<
-        BuilderClient<
-            klyra_common::claims::ClaimService<
-                klyra_common::claims::InjectPropagation<tonic::transport::Channel>,
-            >,
-        >,
-    >,
+    log_fetcher: logger::Client,
+    builder_client: Option<builder::Client>,
     args: Args,
 ) {
     // when _set is dropped once axum exits, the deployment tasks will be aborted.
