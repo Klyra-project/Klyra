@@ -45,7 +45,6 @@ COPY --from=chef-planner /build .
 RUN cargo build \
     $(if [ "$CARGO_PROFILE" = "release" ]; then echo --release; fi) \
     --bin klyra-auth \
-    # --bin klyra-builder \
     --bin klyra-deployer \
     --bin klyra-gateway \
     --bin klyra-logger \
@@ -69,20 +68,6 @@ ARG CARGO_PROFILE
 COPY --from=chef-builder /build/target/${CARGO_PROFILE}/klyra-auth /usr/local/bin
 ENTRYPOINT ["/usr/local/bin/klyra-auth"]
 FROM klyra-auth AS klyra-auth-dev
-
-
-#### BUILDER
-# ARG RUSTUP_TOOLCHAIN
-# FROM docker.io/library/rust:${RUSTUP_TOOLCHAIN}-bookworm AS klyra-builder
-# ARG klyra_SERVICE_VERSION
-# ENV klyra_SERVICE_VERSION=${klyra_SERVICE_VERSION}
-# ARG CARGO_PROFILE
-# ARG prepare_args
-# COPY builder/prepare.sh /prepare.sh
-# RUN /prepare.sh "${prepare_args}"
-# COPY --from=chef-builder /build/target/${CARGO_PROFILE}/klyra-builder /usr/local/bin
-# ENTRYPOINT ["/usr/local/bin/klyra-builder"]
-# FROM klyra-builder AS klyra-builder-dev
 
 
 #### DEPLOYER

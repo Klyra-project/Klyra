@@ -8,7 +8,7 @@ publish = false
 
 [dependencies]
 cargo-klyra = { path = "../cargo-klyra" }
-klyra-proto = { workspace = true, features = ["builder", "logger", "resource-recorder"] }
+klyra-proto = { workspace = true, features = ["logger", "resource-recorder"] }
 
 hyper = { workspace = true }
 portpicker = { workspace = true }

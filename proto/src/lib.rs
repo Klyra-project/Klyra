@@ -376,36 +376,6 @@ pub mod resource_recorder {
     }
 }
 
-#[cfg(feature = "builder")]
-pub mod builder {
-    use http::Uri;
-
-    use self::builder_client::BuilderClient;
-
-    pub use super::generated::builder::*;
-
-    pub type Client = BuilderClient<
-        klyra_common::claims::ClaimService<
-            klyra_common::claims::InjectPropagation<tonic::transport::Channel>,
-        >,
-    >;
-
-    /// Get a builder client that is correctly configured for all services
-    pub async fn get_client(builder_uri: Uri) -> Client {
-        let channel = tonic::transport::Endpoint::from(builder_uri)
-            .connect()
-            .await
-            .expect("failed to connect to builder");
-
-        let builder_service = tower::ServiceBuilder::new()
-            .layer(klyra_common::claims::ClaimLayer)
-            .layer(klyra_common::claims::InjectPropagationLayer)
-            .service(channel);
-
-        BuilderClient::new(builder_service)
-    }
-}
-
 #[cfg(feature = "logger")]
 pub mod logger {
     use std::str::FromStr;

@@ -23,7 +23,6 @@ RUSTUP_TOOLCHAIN=1.76.0
 
 TAG?=$(shell git describe --tags --abbrev=0)
 AUTH_TAG?=$(TAG)
-BUILDER_TAG?=$(TAG)
 DEPLOYER_TAG?=$(TAG)
 GATEWAY_TAG?=$(TAG)
 LOGGER_TAG?=$(TAG)
@@ -58,7 +57,7 @@ CONTAINER_REGISTRY=public.ecr.aws/klyra
 # make sure we only ever go to production with `--tls=enable`
 USE_TLS=enable
 CARGO_PROFILE=release
-RUST_LOG?=nbuild_core=warn,klyra=debug,info
+RUST_LOG?=klyra=debug,info
 else
 DOCKER_COMPOSE_FILES=docker-compose.yml docker-compose.dev.yml
 STACK?=klyra-dev
@@ -68,7 +67,7 @@ CONTAINER_REGISTRY=public.ecr.aws/klyra-dev
 USE_TLS?=disable
 # default for local run
 CARGO_PROFILE?=debug
-RUST_LOG?=nbuild_core=warn,klyra=debug,info
+RUST_LOG?=klyra=debug,info
 DEV_SUFFIX=-dev
 DEPLOYS_API_KEY?=gateway4deployes
 GATEWAY_ADMIN_KEY?=dh9z58jttoes3qvt
@@ -104,7 +103,6 @@ endif
 DOCKER_COMPOSE_ENV=\
 	STACK=$(STACK)\
 	AUTH_TAG=$(AUTH_TAG)\
-	BUILDER_TAG=$(BUILDER_TAG)\
 	DEPLOYER_TAG=$(DEPLOYER_TAG)\
 	GATEWAY_TAG=$(GATEWAY_TAG)\
 	LOGGER_TAG=$(LOGGER_TAG)\
@@ -147,7 +145,7 @@ cargo-clean:
 
 images: the-klyra-images postgres otel
 
-the-klyra-images: klyra-auth klyra-deployer klyra-gateway klyra-logger klyra-provisioner klyra-resource-recorder # klyra-builder
+the-klyra-images: klyra-auth klyra-deployer klyra-gateway klyra-logger klyra-provisioner klyra-resource-recorder
 
 klyra-%:
 	$(DOCKER_BUILD) \
