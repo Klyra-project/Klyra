@@ -4,8 +4,9 @@ use clap::Parser;
 use klyra_common::{
     backends::{
         auth::{AuthPublicKey, JwtAuthenticationLayer},
-        trace::{setup_tracing, ExtractPropagationLayer},
+        trace::setup_tracing,
     },
+    extract_propagation::ExtractPropagationLayer,
     log::Backend,
 };
 use klyra_proto::resource_recorder::resource_recorder_server::ResourceRecorderServer;

@@ -6,7 +6,7 @@ license.workspace = true
 repository.workspace = true
 
 [dependencies]
-klyra-common = { workspace = true, features = ["backend", "tonic"] }
+klyra-common = { workspace = true, features = ["backend", "extract_propagation", "tonic"] }
 klyra-proto = { workspace = true, features = ["logger"] }
 
 async-trait = { workspace = true }

@@ -9,7 +9,7 @@ homepage = "https://www.klyra.rs"
 
 [dependencies]
 klyra-common = { workspace = true, features = ["models"] }
-klyra-proto = { workspace = true, features = ["provisioner", "runtime"] }
+klyra-proto = { workspace = true, features = ["provisioner", "runtime-client"] }
 klyra-service = { workspace = true, features = ["builder", "runner"] }
 
 anyhow = { workspace = true }

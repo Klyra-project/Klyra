@@ -12,14 +12,10 @@ doctest = false
 
 [dependencies]
 klyra-common = { workspace = true, features = [
-    "claims",
     "service",
     "tracing",
-    "display",
 ] }
-klyra-proto = { workspace = true, features = [
-    "provisioner",
-] }
+klyra-proto = { workspace = true, optional = true }
 
 anyhow = { workspace = true }
 async-trait = { workspace = true }
@@ -47,4 +43,4 @@ builder = [
     "toml",
     "tracing",
 ]
-runner = ["klyra-proto/runtime", "tokio/process", "dunce"]
+runner = ["klyra-proto/runtime-client", "tokio/process", "dunce"]

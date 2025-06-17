@@ -11,7 +11,7 @@ klyra-common = { workspace = true, features = [
     "models",
     "persist",
 ] }
-klyra-proto = { workspace = true, features = ["provisioner"] }
+klyra-proto = { workspace = true, features = ["provisioner-client"] }
 klyra-orchestrator = { workspace = true }
 
 async-trait = { workspace = true }
