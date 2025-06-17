@@ -14,7 +14,7 @@ use rand::Rng;
 use klyra_common::backends::auth::VerifyClaim;
 use klyra_common::backends::client::gateway;
 use klyra_common::backends::ClaimExt;
-use klyra_common::claims::Scope;
+use klyra_common::claims::{Claim, Scope};
 use klyra_common::models::project::ProjectName;
 pub use klyra_proto::provisioner::provisioner_server::ProvisionerServer;
 use klyra_proto::provisioner::{
@@ -460,6 +460,21 @@ impl KlyraProvisioner {
 
         Ok(DatabaseDeletionResponse {})
     }
+
+    async fn verify_ownership(&self, claim: &Claim, project_name: &str) -> Result<(), Status> {
+        if !claim.is_admin()
+            && !claim.is_deployer()
+            && !claim
+                .owns_project(&self.gateway_client, project_name)
+                .await
+                .map_err(|_| Status::internal("could not verify project ownership"))?
+        {
+            let status = Status::permission_denied("the request lacks the authorizations");
+            error!(error = &status as &dyn std::error::Error);
+            return Err(status);
+        }
+        Ok(())
+    }
 }
 
 #[tonic::async_trait]
@@ -470,24 +485,12 @@ impl Provisioner for KlyraProvisioner {
         request: Request<DatabaseRequest>,
     ) -> Result<Response<DatabaseResponse>, Status> {
         request.verify(Scope::ResourcesWrite)?;
-
         let claim = request.get_claim()?;
-
         let request = request.into_inner();
         if !ProjectName::is_valid(&request.project_name) {
             return Err(Status::invalid_argument("invalid project name"));
         }
-
-        // Check project ownership.
-        if !claim
-            .owns_project(&self.gateway_client, &request.project_name)
-            .await
-            .map_err(|_| Status::internal("can not verify project ownership"))?
-        {
-            let status = Status::permission_denied("the request lacks the authorizations");
-            error!(error = &status as &dyn std::error::Error);
-            return Err(status);
-        }
+        self.verify_ownership(&claim, &request.project_name).await?;
 
         let db_type = request.db_type.unwrap();
 
@@ -539,22 +542,11 @@ impl Provisioner for KlyraProvisioner {
     ) -> Result<Response<DatabaseDeletionResponse>, Status> {
         request.verify(Scope::ResourcesWrite)?;
         let claim = request.get_claim()?;
-
         let request = request.into_inner();
         if !ProjectName::is_valid(&request.project_name) {
             return Err(Status::invalid_argument("invalid project name"));
         }
-
-        // Check project ownership.
-        if !claim
-            .owns_project(&self.gateway_client, &request.project_name)
-            .await
-            .map_err(|_| Status::internal("can not verify project ownership"))?
-        {
-            let status = Status::permission_denied("the request lacks the authorizations");
-            error!(error = &status as &dyn std::error::Error);
-            return Err(status);
-        }
+        self.verify_ownership(&claim, &request.project_name).await?;
 
         let db_type = request.db_type.unwrap();
 
