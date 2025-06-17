@@ -14,8 +14,8 @@ doctest = false
 
 [dependencies]
 klyra-codegen = { workspace = true, features = ["frameworks"] }
-klyra-common = { workspace = true, features = ["backend", "claims"] }
-klyra-proto = { workspace = true, features = ["provisioner", "runtime"] }
+klyra-common = { workspace = true, features = ["backend"] }
+klyra-proto = { workspace = true, features = ["runtime"] }
 klyra-service = { workspace = true }
 
 anyhow = { workspace = true }

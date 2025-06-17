@@ -8,4 +8,4 @@ edition = "2021"
 
 [dependencies]
 klyra-runtime = { path = "../../../" }
-tokio = { version = "1.22.0" }
+klyra-service = { path = "../../../../service" }

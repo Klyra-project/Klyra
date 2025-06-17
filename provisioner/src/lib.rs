@@ -18,10 +18,9 @@ use klyra_common::claims::Scope;
 use klyra_common::models::project::ProjectName;
 pub use klyra_proto::provisioner::provisioner_server::ProvisionerServer;
 use klyra_proto::provisioner::{
-    aws_rds, database_request::DbType, shared, AwsRds, DatabaseRequest, DatabaseResponse, Shared,
+    aws_rds, database_request::DbType, provisioner_server::Provisioner, shared, AwsRds,
+    DatabaseDeletionResponse, DatabaseRequest, DatabaseResponse, Ping, Pong, Shared,
 };
-use klyra_proto::provisioner::{provisioner_server::Provisioner, DatabaseDeletionResponse};
-use klyra_proto::provisioner::{ContainerRequest, ContainerResponse, Ping, Pong};
 use klyra_proto::resource_recorder;
 use sqlx::{postgres::PgPoolOptions, ConnectOptions, Executor, PgPool};
 use tokio::sync::Mutex;
@@ -571,17 +570,6 @@ impl Provisioner for KlyraProvisioner {
         };
 
         Ok(Response::new(reply))
-    }
-
-    #[tracing::instrument(skip(self))]
-    async fn provision_arbitrary_container(
-        &self,
-        _request: Request<ContainerRequest>,
-    ) -> Result<Response<ContainerResponse>, Status> {
-        // Intended for use in local runs
-        Err(Status::unimplemented(
-            "Provisioning arbitrary containers on Klyra is not supported",
-        ))
     }
 
     #[tracing::instrument(skip(self))]

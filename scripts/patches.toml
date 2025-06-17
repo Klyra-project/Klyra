@@ -7,6 +7,7 @@ klyra-service = { path = "BASE/service" }
 
 klyra-aws-rds = { path = "BASE/resources/aws-rds" }
 klyra-metadata = { path = "BASE/resources/metadata" }
+klyra-opendal = { path = "BASE/resources/opendal" }
 klyra-persist = { path = "BASE/resources/persist" }
 klyra-qdrant = { path = "BASE/resources/qdrant" }
 klyra-shared-db = { path = "BASE/resources/shared-db" }

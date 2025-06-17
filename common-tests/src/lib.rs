@@ -1,6 +1,7 @@
 pub mod cargo_klyra;
 pub mod logger;
 pub mod postgres;
+pub mod provisioner;
 
 use klyra_common::claims::{AccountTier, Claim, Scope};
 

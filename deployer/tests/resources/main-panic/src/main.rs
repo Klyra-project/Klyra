@@ -9,5 +9,5 @@ impl klyra_runtime::Service for MyService {
 
 #[klyra_runtime::main]
 async fn main_panic() -> Result<MyService, klyra_runtime::Error> {
-    panic!("main panic")
+    panic!("panic in main")
 }

@@ -3,11 +3,11 @@ struct MyService;
 #[klyra_runtime::async_trait]
 impl klyra_runtime::Service for MyService {
     async fn bind(mut self, _: std::net::SocketAddr) -> Result<(), klyra_runtime::Error> {
-        panic!("panic in {}", "bind");
+        Ok(())
     }
 }
 
 #[klyra_runtime::main]
-async fn bind_panic_owned() -> Result<MyService, klyra_runtime::Error> {
-    Ok(MyService)
+async fn panic_message() -> Result<MyService, klyra_runtime::Error> {
+    panic!("panic in main");
 }

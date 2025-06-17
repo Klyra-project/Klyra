@@ -19,7 +19,7 @@ impl klyra_service::ResourceInputBuilder for Thing {
         self,
         _factory: &klyra_service::ResourceFactory,
     ) -> Result<Self::Input, klyra_service::Error> {
-        panic!("panic in load");
+        panic!("load panic");
     }
 }
 
