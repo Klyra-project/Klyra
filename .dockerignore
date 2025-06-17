@@ -1,6 +1,8 @@
 **/target/
+**/.klyra-executables
 **/*Containerfile*
 /examples
+.git
 **/.cargo/
 **/docker/
 **/*.md
