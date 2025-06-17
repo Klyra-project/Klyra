@@ -134,14 +134,14 @@ DOCKER_COMPOSE_ENV=\
 	klyra_ENV=$(klyra_ENV)\
 	klyra_SERVICE_VERSION=$(klyra_SERVICE_VERSION)
 
-.PHONY: clean cargo-clean images the-klyra-images klyra-% postgres otel deploy test docker-compose.rendered.yml up down
+.PHONY: clean deep-clean images the-klyra-images klyra-% postgres otel deploy test docker-compose.rendered.yml up down
 
 clean:
 	rm .klyra-*
 	rm docker-compose.rendered.yml
 
-cargo-clean:
-	find . -type d \( -name target -or -name .klyra-executables \) | xargs rm -rf
+deep-clean:
+	find . -type d \( -name target -or -name .klyra-executables -or -name node_modules \) | xargs rm -rf
 
 images: the-klyra-images postgres otel
 
