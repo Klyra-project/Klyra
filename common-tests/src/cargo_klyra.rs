@@ -30,6 +30,7 @@ pub async fn cargo_klyra_run(working_directory: &str, external: bool) -> String 
         port,
         external,
         release: false,
+        secret_args: Default::default(),
     };
 
     let runner = Klyra::new().unwrap().run(
