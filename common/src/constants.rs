@@ -22,8 +22,7 @@ pub const klyra_IDLE_DOCS_URL: &str = "https://docs.klyra.rs/getting-started/idl
 pub const klyra_EXAMPLES_README: &str =
     "https://github.com/klyra-hq/klyra-examples#how-to-clone-run-and-deploy-an-example";
 
-// Crate names for checking cargo metadata
-pub const NEXT_NAME: &str = "klyra-next";
+// Crate name for checking cargo metadata
 pub const RUNTIME_NAME: &str = "klyra-runtime";
 
 /// Current version field in requests to provisioner

@@ -37,7 +37,6 @@ ARG CARGO_PROFILE
 COPY --from=chef-planner /recipe.json /
 # https://i.imgflip.com/2/74bvex.jpg
 RUN cargo chef cook \
-    --all-features \
     $(if [ "$CARGO_PROFILE" = "release" ]; then echo --release; fi) \
     --recipe-path /recipe.json \
     --bin klyra-auth \
@@ -45,8 +44,7 @@ RUN cargo chef cook \
     --bin klyra-gateway \
     --bin klyra-logger \
     --bin klyra-provisioner \
-    --bin klyra-resource-recorder \
-    --bin klyra-next
+    --bin klyra-resource-recorder
 COPY --from=chef-planner /build .
 # Building all at once to share build artifacts in the "cook" layer
 RUN cargo build \
@@ -56,8 +54,7 @@ RUN cargo build \
     --bin klyra-gateway \
     --bin klyra-logger \
     --bin klyra-provisioner \
-    --bin klyra-resource-recorder \
-    --bin klyra-next -F next
+    --bin klyra-resource-recorder
 
 
 ####### Helper step
@@ -104,7 +101,6 @@ COPY scripts/apply-patches.sh /scripts/apply-patches.sh
 COPY scripts/patches.toml /scripts/patches.toml
 RUN /prepare.sh "${prepare_args}"
 COPY --from=chef-builder /build/target/${CARGO_PROFILE}/klyra-deployer /usr/local/bin
-COPY --from=chef-builder /build/target/${CARGO_PROFILE}/klyra-next /usr/local/cargo/bin
 ENTRYPOINT ["/usr/local/bin/klyra-deployer"]
 FROM klyra-deployer AS klyra-deployer-dev
 # Source code needed for compiling local deploys with [patch.crates-io]

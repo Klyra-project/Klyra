@@ -43,7 +43,6 @@ pub async fn spawn_runtime(project_path: &str) -> Result<TestRuntime> {
         ),
     );
 
-    // TODO: update this to work with klyra-next projects, see cargo-klyra local run
     let runtime_executable = service.executable_path.clone();
 
     let (runtime, runtime_client) =
