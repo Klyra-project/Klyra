@@ -1489,7 +1489,6 @@ impl Klyra {
     #[cfg(target_family = "windows")]
     async fn local_run(&self, mut run_args: RunArgs) -> Result<CommandOutcome> {
         let services = self.pre_local_run(&run_args).await?;
-        let (provisioner_server, provisioner_port) = Klyra::setup_local_provisioner().await?;
 
         // Start all the services.
         let mut runtimes: Vec<(Child, runtime::Client)> = Vec::new();
@@ -1499,8 +1498,8 @@ impl Klyra {
         let mut signal_received = false;
         for (i, service) in services.iter().enumerate() {
             signal_received = tokio::select! {
-                res = Klyra::spin_local_runtime(&run_args, service, &provisioner_server, i as u16, provisioner_port) => {
-                    Klyra::add_runtime_info(res.unwrap(), &mut runtimes, &[&provisioner_server]).await?;
+                res = Klyra::spin_local_runtime(&run_args, service, i as u16) => {
+                    Klyra::add_runtime_info(res.unwrap(), &mut runtimes).await?;
                     false
                 },
                 _ = Klyra::handle_signals() => {
@@ -1519,7 +1518,6 @@ impl Klyra {
         // If prior signal received is set to true we must stop all the existing runtimes and
         // exit the `local_run`.
         if signal_received {
-            provisioner_server.abort();
             for (mut rt, mut rt_client) in runtimes {
                 Klyra::stop_runtime(&mut rt, &mut rt_client)
                     .await
@@ -1557,7 +1555,6 @@ impl Klyra {
                     println!(
                         "Killing all the runtimes..."
                     );
-                    provisioner_server.abort();
                     Klyra::stop_runtime(&mut rt, &mut rt_client).await.unwrap_or_else(|err| {
                         trace!(status = ?err, "stopping the runtime errored out");
                     });
