@@ -573,7 +573,7 @@ impl Provisioner for KlyraProvisioner {
 fn generate_password() -> String {
     rand::thread_rng()
         .sample_iter(&rand::distributions::Alphanumeric)
-        .take(12)
+        .take(32)
         .map(char::from)
         .collect()
 }
