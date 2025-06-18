@@ -10,7 +10,7 @@ use args::StartArgs;
 use klyra_common::{claims::AccountTier, ApiKey};
 use sqlx::{migrate::Migrator, query, PgPool};
 use tracing::info;
-use user::User;
+pub use user::User;
 
 use crate::api::serve;
 pub use api::ApiBuilder;
