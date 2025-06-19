@@ -17,16 +17,21 @@ pub const klyra_STATUS_URL: &str = "https://status.klyra.rs";
 pub const klyra_LOGIN_URL: &str = "https://console.klyra.rs/new-project";
 pub const klyra_GH_ISSUE_URL: &str = "https://github.com/klyra-hq/klyra/issues/new/choose";
 pub const klyra_INSTALL_DOCS_URL: &str = "https://docs.klyra.rs/getting-started/installation";
-pub const klyra_CLI_DOCS_URL: &str = "https://docs.klyra.rs/getting-started/klyra-commands";
 pub const klyra_IDLE_DOCS_URL: &str = "https://docs.klyra.rs/getting-started/idle-projects";
-pub const klyra_EXAMPLES_README: &str =
+pub const EXAMPLES_REPO: &str = "https://github.com/klyra-hq/klyra-examples";
+pub const EXAMPLES_README: &str =
     "https://github.com/klyra-hq/klyra-examples#how-to-clone-run-and-deploy-an-example";
+pub const EXAMPLES_TEMPLATES_TOML: &str =
+    "https://raw.githubusercontent.com/klyra-hq/klyra-examples/main/templates.toml";
 
 // Crate name for checking cargo metadata
 pub const RUNTIME_NAME: &str = "klyra-runtime";
 
 /// Current version field in requests to provisioner
 pub const RESOURCE_SCHEMA_VERSION: u32 = 1;
+
+/// Current version field in `examples/templates.toml`
+pub const TEMPLATES_SCHEMA_VERSION: u32 = 1;
 
 /// Timeframe before a project is considered idle
 pub const DEFAULT_IDLE_MINUTES: u64 = 30;

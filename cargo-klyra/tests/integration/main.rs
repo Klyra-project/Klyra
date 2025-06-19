@@ -20,6 +20,7 @@ async fn cargo_klyra_command(
                     working_directory,
                     name: None,
                 },
+                offline: false,
                 cmd,
             },
             false,
