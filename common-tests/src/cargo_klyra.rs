@@ -30,6 +30,7 @@ pub async fn cargo_klyra_run(working_directory: &str, external: bool) -> String 
         port,
         external,
         release: false,
+        raw: false,
         secret_args: Default::default(),
     };
 
