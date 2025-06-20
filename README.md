@@ -121,6 +121,8 @@ URI:           https://hello-world.klyraapp.rs
 Feel free to build on top of the generated `hello-world` boilerplate or take a stab at one of our [examples](https://github.com/klyra-hq/klyra-examples).
 
 For the full documentation, visit [our docs](https://docs.klyra.rs).
+<br>
+<br>
 
 # Quick Look
 
@@ -186,6 +188,8 @@ async fn main(
 ```
 
 Now, if we run `cargo klyra deploy`, we'll have an up and running project with a database inside & ready to use.
+<br>
+<br>
 
 # Repositories
 
@@ -198,6 +202,8 @@ Now, if we run `cargo klyra deploy`, we'll have an up and running project with a
 | [deploy-action](https://github.com/klyra-hq/deploy-action) ⚙ | GitHub Action for continuous deployments. |
 | [awesome-klyra](https://github.com/klyra-hq/awesome-klyra) 🌟 | An awesome list of Klyra-hosted projects and resources that users can add to. |
 | [shuttlings](https://github.com/klyra-hq/shuttlings) ⚔️ | A collection of Rust code challenges. A great way to get started with using Rust and Klyra. |
+<br>
+<br>
 
 # Contributing to Klyra
 
@@ -225,8 +231,10 @@ Also, check out the [Beta announcement](https://www.klyra.rs/beta#06) for featur
   there are a few kinks
 - [x] Public Beta: Stable enough for most non-enterprise use-cases
 - [ ] Public: Production-ready!
+<br>
+<br>
 
-## Contributors ✨
+# Contributors ✨
 
 Thanks goes to these wonderful people:
 
