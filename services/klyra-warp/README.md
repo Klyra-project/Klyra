@@ -1,4 +1,4 @@
-## Klyra service integration for the Warp web framework.
+## Klyra service integration for the Warp web framework
 
 ### Example
 

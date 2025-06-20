@@ -1,12 +1,10 @@
-## Klyra service integration for the Rocket web framework.
+## Klyra service integration for the Rocket web framework
 
 ### Example
 
 ```rust,no_run
-#[macro_use]
-extern crate rocket;
+use rocket::{get, routes};
 
-# fn main() {
 #[get("/")]
 fn index() -> &'static str {
     "Hello, world!"
@@ -18,5 +16,4 @@ async fn rocket() -> klyra_rocket::KlyraRocket {
 
     Ok(rocket.into())
 }
-# }
 ```

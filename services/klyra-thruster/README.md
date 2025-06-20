@@ -1,4 +1,4 @@
-## Klyra service integration for the Thruster web framework.
+## Klyra service integration for the Thruster web framework
 
 ### Example
 

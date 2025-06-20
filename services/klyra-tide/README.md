@@ -1,4 +1,4 @@
-## Klyra service integration for the Tide web framework.
+## Klyra service integration for the Tide web framework
 
 ### Example
 

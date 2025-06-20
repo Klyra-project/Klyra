@@ -1,4 +1,4 @@
-## Klyra service integration for the Poem web framework.
+## Klyra service integration for the Poem web framework
 
 ### Example
 

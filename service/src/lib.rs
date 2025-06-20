@@ -114,7 +114,7 @@ impl<R: Serialize + DeserializeOwned + Send> IntoResource<R> for KlyraResourceOu
 
 /// The core trait of the Klyra platform. Every service deployed to Klyra needs to implement this trait.
 ///
-/// An `Into<Service>` implementor is what is returned in the [`klyra_runtime::main`] macro
+/// An `Into<Service>` implementor is what is returned in the `klyra_runtime::main` macro
 /// in order to run it on the Klyra servers.
 #[async_trait]
 pub trait Service: Send {

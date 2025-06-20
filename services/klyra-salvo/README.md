@@ -1,4 +1,4 @@
-## Klyra service integration for the Salvo web framework.
+## Klyra service integration for the Salvo web framework
 
 ### Example
 
@@ -16,5 +16,4 @@ async fn salvo() -> klyra_salvo::KlyraSalvo {
 
     Ok(router.into())
 }
-
 ```

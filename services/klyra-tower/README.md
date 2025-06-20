@@ -1,4 +1,4 @@
-## Klyra service integration for the Tower framework.
+## Klyra service integration for the Tower framework
 
 ### Example
 

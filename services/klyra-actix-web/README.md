@@ -1,4 +1,4 @@
-## Klyra service integration for the Actix Web framework.
+## Klyra service integration for the Actix Web framework
 
 ### Example
 
@@ -19,5 +19,4 @@ async fn actix_web() -> KlyraActixWeb<impl FnOnce(&mut ServiceConfig) + Send + C
 
     Ok(config.into())
 }
-
 ```
