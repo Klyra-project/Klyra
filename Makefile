@@ -41,6 +41,7 @@ MONGO_INITDB_ROOT_USERNAME?=mongodb
 MONGO_INITDB_ROOT_PASSWORD?=password
 STRIPE_SECRET_KEY?=""
 AUTH_JWTSIGNING_PRIVATE_KEY?=""
+PERMIT_API_KEY?=""
 
 DD_ENV=$(klyra_ENV)
 ifeq ($(klyra_ENV),production)
@@ -127,7 +128,8 @@ DOCKER_COMPOSE_ENV=\
 	COMPOSE_PROFILES=$(COMPOSE_PROFILES)\
 	DOCKER_SOCK=$(DOCKER_SOCK)\
 	klyra_ENV=$(klyra_ENV)\
-	klyra_SERVICE_VERSION=$(klyra_SERVICE_VERSION)
+	klyra_SERVICE_VERSION=$(klyra_SERVICE_VERSION)\
+	PERMIT_API_KEY=$(PERMIT_API_KEY)
 
 .PHONY: clean deep-clean images the-klyra-images klyra-% postgres otel deploy test docker-compose.rendered.yml up down
 
