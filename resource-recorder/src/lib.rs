@@ -1,10 +1,8 @@
 use async_trait::async_trait;
 use dal::{Dal, DalError, Resource};
 use prost_types::TimestampError;
-use klyra_common::{
-    backends::{auth::VerifyClaim, client::ServicesApiClient, ClaimExt},
-    claims::{Claim, Scope},
-};
+use klyra_backends::{auth::VerifyClaim, client::ServicesApiClient, ClaimExt};
+use klyra_common::claims::{Claim, Scope};
 use klyra_proto::resource_recorder::{
     self, resource_recorder_server::ResourceRecorder, ProjectResourcesRequest, RecordRequest,
     ResourceIds, ResourceResponse, ResourcesResponse, ResultResponse, ServiceResourcesRequest,

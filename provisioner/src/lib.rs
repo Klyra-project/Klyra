@@ -11,11 +11,11 @@ use aws_sdk_rds::{
 pub use error::Error;
 use mongodb::{bson::doc, options::ClientOptions};
 use rand::Rng;
-use klyra_common::backends::auth::VerifyClaim;
-use klyra_common::backends::client::ServicesApiClient;
-use klyra_common::backends::ClaimExt;
+use klyra_backends::auth::VerifyClaim;
+use klyra_backends::client::ServicesApiClient;
+use klyra_backends::project_name::ProjectName;
+use klyra_backends::ClaimExt;
 use klyra_common::claims::{Claim, Scope};
-use klyra_common::models::project::ProjectName;
 pub use klyra_proto::provisioner::provisioner_server::ProvisionerServer;
 use klyra_proto::provisioner::{
     aws_rds, database_request::DbType, provisioner_server::Provisioner, shared, AwsRds,

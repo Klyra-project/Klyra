@@ -6,11 +6,8 @@ license.workspace = true
 publish = false
 
 [dependencies]
-klyra-common = { workspace = true, features = [
-    "backend",
-    "models",
-    "persist",
-] }
+klyra-backends = { workspace = true, features = ["sqlx"] }
+klyra-common = { workspace = true, features = ["models", "persist"] }
 klyra-proto = { workspace = true, features = ["provisioner-client"] }
 
 async-posthog = { git = "https://github.com/klyra-hq/posthog-rs", branch = "main" }
@@ -66,7 +63,7 @@ portpicker = { workspace = true }
 ring = { workspace = true }
 rmp-serde = { workspace = true }
 klyra-common-tests = { workspace = true }
-klyra-proto = { workspace = true, features = ["test-utils"] }
+klyra-backends = { workspace = true, features = ["test-utils"] }
 snailquote = "0.3.1"
 tar = { workspace = true }
 tempfile = { workspace = true }

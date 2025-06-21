@@ -3,9 +3,9 @@ use std::net::{Ipv4Addr, SocketAddr};
 use portpicker::pick_unused_port;
 use pretty_assertions::{assert_eq, assert_ne};
 use serde_json::json;
-use klyra_common::{
-    backends::client::ServicesApiClient, claims::Scope, test_utils::get_mocked_gateway_server,
-};
+use klyra_backends::client::ServicesApiClient;
+use klyra_backends::test_utils::gateway::get_mocked_gateway_server;
+use klyra_common::claims::Scope;
 use klyra_common_tests::JwtScopesLayer;
 use klyra_proto::resource_recorder::{
     record_request, resource_recorder_client::ResourceRecorderClient,

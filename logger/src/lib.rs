@@ -1,7 +1,8 @@
 use async_trait::async_trait;
 use dal::Log;
 use dal::{Dal, DalError};
-use klyra_common::{backends::auth::VerifyClaim, claims::Scope};
+use klyra_backends::auth::VerifyClaim;
+use klyra_common::claims::Scope;
 use klyra_proto::logger::LogLine;
 use klyra_proto::logger::{
     logger_server::Logger, LogsRequest, LogsResponse, StoreLogsRequest, StoreLogsResponse,

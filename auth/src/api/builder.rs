@@ -6,11 +6,9 @@ use axum::{
     routing::{delete, get, post, put},
     Router, Server,
 };
-use klyra_common::{
-    backends::{
-        client::PermissionsDal,
-        metrics::{Metrics, TraceLayer},
-    },
+use klyra_backends::{
+    client::PermissionsDal,
+    metrics::{Metrics, TraceLayer},
     request_span,
 };
 use sqlx::PgPool;

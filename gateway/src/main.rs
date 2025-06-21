@@ -2,7 +2,7 @@ use async_posthog::ClientOptions;
 use clap::Parser;
 use futures::prelude::*;
 
-use klyra_common::backends::trace::setup_tracing;
+use klyra_backends::trace::setup_tracing;
 use klyra_common::log::Backend;
 use klyra_gateway::acme::{AcmeClient, CustomDomain};
 use klyra_gateway::api::latest::{ApiBuilder, SVC_DEGRADED_THRESHOLD};

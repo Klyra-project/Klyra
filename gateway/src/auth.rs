@@ -3,9 +3,9 @@ use std::fmt::Debug;
 use axum::extract::{FromRef, FromRequestParts, Path};
 use axum::http::request::Parts;
 use serde::{Deserialize, Serialize};
+use klyra_backends::project_name::ProjectName;
 use klyra_common::claims::{Claim, Scope};
 use klyra_common::models::error::InvalidProjectName;
-use klyra_common::models::project::ProjectName;
 use klyra_common::models::user::UserId;
 use tracing::{trace, Span};
 

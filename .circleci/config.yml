@@ -634,9 +634,10 @@ workflows:
             parameters:
               crate:
                 # - klyra-admin # no tests
+                - klyra-backends
                 - klyra-codegen
                 - klyra-common
-                # - klyra-common-tests # no tests
+                # - klyra-gateway # TODO: move docker-dependant tests to integration tests and activate this
       - test-workspace-member-with-integration:
           name: << matrix.crate >>
           matrix:

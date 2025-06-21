@@ -7,7 +7,8 @@ mod user;
 use std::io;
 
 use args::StartArgs;
-use klyra_common::{backends::client::permit, claims::AccountTier, ApiKey};
+use klyra_backends::client::permit;
+use klyra_common::{claims::AccountTier, ApiKey};
 use sqlx::{migrate::Migrator, query, PgPool};
 use tracing::info;
 pub use user::User;

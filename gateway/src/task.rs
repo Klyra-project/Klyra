@@ -7,7 +7,7 @@ use std::time::{Duration, Instant};
 
 use futures::Future;
 use opentelemetry::global;
-use klyra_common::models::project::ProjectName;
+use klyra_backends::project_name::ProjectName;
 use tokio::sync::mpsc::Sender;
 use tokio::sync::oneshot;
 use tokio::time::{sleep, timeout};

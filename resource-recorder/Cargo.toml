@@ -4,9 +4,11 @@ version = "0.42.0"
 edition.workspace = true
 license.workspace = true
 repository.workspace = true
+publish = false
 
 [dependencies]
-klyra-common = { workspace = true, features = ["backend", "extract_propagation", "tonic", "sqlx"] }
+klyra-backends = { workspace = true }
+klyra-common = { workspace = true, features = ["extract_propagation", "tonic", "sqlx"] }
 klyra-proto = { workspace = true, features = ["resource-recorder"] }
 
 async-trait = { workspace = true }
@@ -26,5 +28,5 @@ ulid = { workspace = true }
 portpicker = { workspace = true }
 pretty_assertions = { workspace = true }
 serde_json = { workspace = true }
-klyra-common = { workspace = true, features = ["test-utils"] }
+klyra-backends = { workspace = true, features = ["test-utils"] }
 klyra-common-tests = { workspace = true }

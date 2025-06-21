@@ -4,8 +4,9 @@ use axum::response::Response;
 use http::{HeaderMap, Method, Request, StatusCode, Uri};
 use hyper::Body;
 use serde::de::DeserializeOwned;
+use klyra_backends::project_name::ProjectName;
 use klyra_common::{
-    models::{deployment, error::ErrorKind, project::ProjectName, user::UserId},
+    models::{deployment, error::ErrorKind, user::UserId},
     resource,
 };
 use uuid::Uuid;

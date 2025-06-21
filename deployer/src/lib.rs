@@ -2,7 +2,8 @@ use std::sync::Arc;
 
 pub use persistence::Persistence;
 pub use runtime_manager::RuntimeManager;
-use klyra_common::{backends::client::ServicesApiClient, log::LogRecorder};
+use klyra_backends::client::ServicesApiClient;
+use klyra_common::log::LogRecorder;
 use klyra_proto::{logger, provisioner};
 use tokio::sync::Mutex;
 use tracing::info;

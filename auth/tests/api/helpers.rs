@@ -4,11 +4,10 @@ use hyper::http::{header::AUTHORIZATION, Request};
 use once_cell::sync::Lazy;
 use serde_json::{json, Value};
 use klyra_auth::{pgpool_init, ApiBuilder};
+use klyra_backends::{headers::X_klyra_ADMIN_SECRET, test_utils::gateway::PermissionsMock};
 use klyra_common::{
-    backends::headers::X_klyra_ADMIN_SECRET,
     claims::{AccountTier, Claim},
     models::user,
-    test_utils::PermissionsMock,
 };
 use klyra_common_tests::postgres::DockerInstance;
 use sqlx::query;

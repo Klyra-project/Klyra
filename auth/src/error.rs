@@ -4,7 +4,7 @@ use axum::http::StatusCode;
 use axum::response::{IntoResponse, Response};
 
 use serde::{ser::SerializeMap, Serialize};
-use klyra_common::backends::client;
+use klyra_backends::client;
 use klyra_common::models::error::ApiError;
 use stripe::StripeError;
 

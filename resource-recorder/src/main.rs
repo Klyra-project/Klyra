@@ -1,15 +1,12 @@
 use std::time::Duration;
 
 use clap::Parser;
-use klyra_common::{
-    backends::{
-        auth::{AuthPublicKey, JwtAuthenticationLayer},
-        client::ServicesApiClient,
-        trace::setup_tracing,
-    },
-    extract_propagation::ExtractPropagationLayer,
-    log::Backend,
+use klyra_backends::{
+    auth::{AuthPublicKey, JwtAuthenticationLayer},
+    client::ServicesApiClient,
+    trace::setup_tracing,
 };
+use klyra_common::{extract_propagation::ExtractPropagationLayer, log::Backend};
 use klyra_proto::resource_recorder::resource_recorder_server::ResourceRecorderServer;
 use klyra_resource_recorder::{args::Args, Service, Sqlite};
 use tonic::transport::Server;

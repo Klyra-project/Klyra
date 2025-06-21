@@ -1,8 +1,6 @@
 use clap::Parser;
-use klyra_common::{
-    backends::trace::setup_tracing,
-    log::{Backend, DeploymentLogLayer},
-};
+use klyra_backends::trace::setup_tracing;
+use klyra_common::log::{Backend, DeploymentLogLayer};
 use klyra_deployer::{start, Args, Persistence, RuntimeManager, StateChangeLayer};
 use klyra_proto::logger::{self, Batcher};
 use tracing::trace;

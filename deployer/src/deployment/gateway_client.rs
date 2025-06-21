@@ -1,7 +1,5 @@
-use klyra_common::{
-    backends::client::{Error, ServicesApiClient},
-    models,
-};
+use klyra_backends::client::{Error, ServicesApiClient};
+use klyra_common::models;
 use uuid::Uuid;
 
 /// A client that can communicate with the build queue
