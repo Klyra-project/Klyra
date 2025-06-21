@@ -18,7 +18,7 @@ where
 {
     global::set_text_map_propagator(TraceContextPropagator::new());
 
-    let klyra_env = std::env::var("klyra_ENV").unwrap_or("".to_string());
+    let klyra_env = std::env::var("klyra_ENV").unwrap_or_default();
     let filter_layer = EnvFilter::try_from_default_env()
         .or_else(|_| EnvFilter::try_new("info"))
         .unwrap();

@@ -21,6 +21,7 @@ async fn cargo_klyra_command(
                     name: None,
                 },
                 offline: false,
+                debug: false,
                 cmd,
             },
             false,

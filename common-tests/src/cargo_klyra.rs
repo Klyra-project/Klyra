@@ -42,6 +42,7 @@ pub async fn cargo_klyra_run(working_directory: &str, external: bool) -> String 
                 name: None,
             },
             offline: false,
+            debug: false,
             cmd: Command::Run(run_args),
         },
         false,
