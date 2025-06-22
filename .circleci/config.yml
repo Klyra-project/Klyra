@@ -649,6 +649,10 @@ workflows:
                 - klyra-common
       - test-workspace-member-with-integration:
           name: << matrix.crate >>
+          filters:
+            branches:
+              ignore:
+                - /pull\/.*/
           matrix:
             alias: test-workspace-member-with-integration-medium
             parameters:
@@ -680,6 +684,10 @@ workflows:
                 - klyra-deployer
       - test-workspace-member-with-integration-docker:
           name: << matrix.crate >> with docker
+          filters:
+            branches:
+              ignore:
+                - /pull\/.*/
           matrix:
             alias: test-workspace-member-with-integration-docker-medium
             parameters:
@@ -687,6 +695,7 @@ workflows:
                 - medium
               crate:
                 - klyra-auth
+                - klyra-backends
                 - klyra-provisioner
                 - klyra-logger
       - test-workspace-member-with-integration-docker:
