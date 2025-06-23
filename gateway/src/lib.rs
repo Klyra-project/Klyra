@@ -17,6 +17,7 @@ use hyper::client::HttpConnector;
 use hyper::Client;
 use once_cell::sync::Lazy;
 use service::ContainerSettings;
+use klyra_backends::client::permit;
 use klyra_backends::project_name::ProjectName;
 use klyra_common::models::error::{ApiError, ErrorKind};
 use klyra_common::models::user::UserId;
@@ -106,6 +107,12 @@ impl From<io::Error> for Error {
 
 impl From<AcmeClientError> for Error {
     fn from(error: AcmeClientError) -> Self {
+        Self::source(ErrorKind::Internal, error)
+    }
+}
+
+impl From<permit::Error> for Error {
+    fn from(error: permit::Error) -> Self {
         Self::source(ErrorKind::Internal, error)
     }
 }
