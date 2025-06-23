@@ -4,6 +4,7 @@ version = "0.43.0"
 edition = "2021"
 license = "Apache-2.0"
 description = "Klyra plugin for connecting to a Qdrant database"
+repository = "https://github.com/klyra-hq/klyra"
 keywords = ["klyra-service", "qdrant"]
 
 [dependencies]
