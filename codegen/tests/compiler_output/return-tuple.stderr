@@ -1,0 +1,15 @@
+error: klyra_runtime::main functions need to return a first class service or 'Result<impl klyra_service::Service, klyra_runtime::Error>
+
+         = help: See the docs for services with first class support
+         = note: https://docs.rs/klyra-runtime/latest/klyra_runtime/attr.main.html#klyra-supported-services
+
+ --> tests/compiler_output/return-tuple.rs:2:28
+  |
+2 | async fn return_tuple() -> (String, bool) {}
+  |                            ^^^^^^^^^^^^^^
+
+error[E0601]: `main` function not found in crate `$CRATE`
+ --> tests/compiler_output/return-tuple.rs:2:45
+  |
+2 | async fn return_tuple() -> (String, bool) {}
+  |                                             ^ consider adding a `main` function to `$DIR/tests/compiler_output/return-tuple.rs`
