@@ -1,16 +1,14 @@
 [package]
 name = "klyra-poem"
-version = "0.42.0"
+version = "0.43.0"
 edition = "2021"
 license = "Apache-2.0"
 description = "Service implementation to run a poem webserver on klyra"
+repository = "https://github.com/klyra-hq/klyra"
 keywords = ["klyra-service", "poem"]
 
 [workspace]
 
 [dependencies]
-poem = { version = "2.0.0" }
-klyra-runtime = { path = "../../runtime", version = "0.42.0", default-features = false }
-
-[dev-dependencies]
-tokio = { version = "1.26.0", features = ["macros", "rt-multi-thread"] }
+poem = "3.0.0"
+klyra-runtime = { path = "../../runtime", version = "0.43.0", default-features = false }

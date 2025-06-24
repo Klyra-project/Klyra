@@ -29,8 +29,8 @@ be a binary crate with a few dependencies including `klyra-runtime` and `klyra-a
 
 ```toml
 axum = "0.7.3"
-klyra-axum = "0.42.0"
-klyra-runtime = "0.42.0"
+klyra-axum = "0.43.0"
+klyra-runtime = "0.43.0"
 tokio = "1.28.2"
 ```
 
