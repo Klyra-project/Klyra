@@ -144,9 +144,7 @@ impl LocalProvisioner {
             Err(error) => {
                 error!("Got unexpected error while inspecting docker container: {error}");
                 error!(
-                    "Make sure Docker is installed and running. \
-                    If you're using Podman, view these instructions: \
-                    https://docs.rs/klyra-runtime/latest/klyra_runtime/#using-podman-instead-of-docker"
+                    "Make sure Docker is installed and running. For more help: https://docs.klyra.rs/getting-started/local-run#docker-engines"
                 );
                 Err(Status::internal(error.to_string()))
             }

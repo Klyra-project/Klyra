@@ -5173,6 +5173,7 @@ dependencies = [
  "reqwest",
  "serde",
  "serde_json",
+ "klyra-backends",
  "klyra-common",
  "tokio",
  "toml",
