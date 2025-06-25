@@ -7,7 +7,6 @@ use std::time::Duration;
 
 use async_posthog::ClientOptions;
 use clap::Parser;
-use futures::prelude::*;
 use klyra_backends::client::{permit, PermissionsDal};
 use klyra_backends::trace::setup_tracing;
 use klyra_common::log::Backend;
@@ -136,12 +135,7 @@ async fn start(
 
     let sender = worker.sender();
 
-    let worker_handle = tokio::spawn(
-        worker
-            .start()
-            .map_ok(|_| info!("worker terminated successfully"))
-            .map_err(|err| error!("worker error: {}", err)),
-    );
+    let worker_handle = tokio::spawn(worker.start());
 
     // Every 60 secs go over all `::Ready` projects and check their health.
     // Also syncs the state of all projects on startup
