@@ -1,5 +1,5 @@
 use async_trait::async_trait;
-use libsql::{Builder, Connection};
+use libsql::{Builder, Database};
 use serde::{Deserialize, Serialize};
 use klyra_service::{
     error::{CustomError, Error as KlyraError},
@@ -120,8 +120,8 @@ impl ResourceInputBuilder for Turso {
 }
 
 #[async_trait]
-impl IntoResource<Connection> for TursoOutput {
-    async fn into_resource(self) -> Result<Connection, klyra_service::Error> {
+impl IntoResource<Database> for TursoOutput {
+    async fn into_resource(self) -> Result<Database, klyra_service::Error> {
         let database = if self.remote {
             Builder::new_remote(
                 self.conn_url.to_string(),
@@ -136,10 +136,8 @@ impl IntoResource<Connection> for TursoOutput {
         } else {
             Builder::new_local(self.conn_url.to_string()).build().await
         };
-        database
-            .map_err(|err| KlyraError::Custom(err.into()))?
-            .connect()
-            .map_err(|err| KlyraError::Custom(err.into()))
+
+        database.map_err(|err| KlyraError::Custom(err.into()))
     }
 }
 
