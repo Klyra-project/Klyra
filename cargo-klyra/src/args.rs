@@ -40,7 +40,7 @@ pub struct KlyraArgs {
     #[arg(long, env = "klyra_DEBUG")]
     pub debug: bool,
     /// Target Klyra's development environment
-    #[arg(long, env = "klyra_BETA")]
+    #[arg(long, env = "klyra_BETA", hide = true)]
     pub beta: bool,
 
     #[command(subcommand)]
