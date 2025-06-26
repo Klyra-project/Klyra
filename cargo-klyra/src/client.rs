@@ -39,7 +39,7 @@ impl KlyraApiClient {
                     )]))
                     .unwrap(),
                 )
-                .timeout(Duration::from_secs(300)) // TODO: adjust
+                .timeout(Duration::from_secs(60))
                 .build()
                 .unwrap(),
             api_url,
