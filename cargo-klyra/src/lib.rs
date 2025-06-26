@@ -32,6 +32,7 @@ use ignore::overrides::OverrideBuilder;
 use ignore::WalkBuilder;
 use indicatif::ProgressBar;
 use indoc::{formatdoc, printdoc};
+use klyra_common::models::deployment::deployments_table_beta;
 use klyra_common::{
     constants::{
         API_URL_DEFAULT, DEFAULT_IDLE_MINUTES, EXAMPLES_REPO, EXECUTABLE_DIRNAME,
@@ -225,9 +226,6 @@ impl Klyra {
                 }
             }
             Command::Deployment(DeploymentCommand::List { page, limit, raw }) => {
-                if self.beta {
-                    unimplemented!();
-                }
                 self.deployments_list(page, limit, raw).await
             }
             Command::Deployment(DeploymentCommand::Status { id }) => {
@@ -970,21 +968,33 @@ impl Klyra {
         let limit = limit + 1;
 
         let proj_name = self.ctx.project_name();
-        let mut deployments = client
-            .get_deployments(proj_name, page, limit)
-            .await
-            .map_err(suggestions::deployment::get_deployments_list_failure)?;
-        let page_hint = if deployments.len() == limit as usize {
-            deployments.pop();
-            true
+
+        let deployments_len = if self.beta {
+            let deployments = client
+                .deployments_beta(proj_name)
+                .await
+                .map_err(suggestions::deployment::get_deployments_list_failure)?;
+            let table = deployments_table_beta(&deployments, proj_name, raw);
+            println!("{table}");
+            deployments.len()
         } else {
-            false
+            let mut deployments = client
+                .get_deployments(proj_name, page, limit)
+                .await
+                .map_err(suggestions::deployment::get_deployments_list_failure)?;
+            let page_hint = if deployments.len() == limit as usize {
+                deployments.pop();
+                true
+            } else {
+                false
+            };
+            let table = get_deployments_table(&deployments, proj_name, page, raw, page_hint);
+
+            println!("{table}");
+            deployments.len()
         };
-        let table = get_deployments_table(&deployments, proj_name, page, raw, page_hint);
 
-        println!("{table}");
-
-        if deployments.is_empty() {
+        if deployments_len == 0 {
             println!("Run `cargo klyra deploy` to deploy your project.");
         } else {
             println!("Run `cargo klyra logs <id>` to get logs for a given deployment.");
