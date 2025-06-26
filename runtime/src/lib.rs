@@ -7,7 +7,7 @@
 // Public API
 pub use klyra_codegen::main;
 pub use klyra_service::{
-    CustomError, DbInput, DeploymentMetadata, Error, IntoResource, ResourceFactory,
+    CustomError, DbInput, DeploymentMetadata, Environment, Error, IntoResource, ResourceFactory,
     ResourceInputBuilder, SecretStore, Service,
 };
 
