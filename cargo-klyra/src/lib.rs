@@ -132,7 +132,7 @@ impl Klyra {
             }
             if matches!(
                 args.cmd,
-                Command::Resource(..)
+                Command::Resource(ResourceCommand::Delete { .. })
                     | Command::Stop
                     | Command::Clean
                     | Command::Status
