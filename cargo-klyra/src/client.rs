@@ -9,7 +9,7 @@ use reqwest::{RequestBuilder, Response};
 use serde::{Deserialize, Serialize};
 use klyra_common::constants::headers::X_CARGO_klyra_VERSION;
 use klyra_common::log::LogsRange;
-use klyra_common::models::deployment::DeploymentRequest;
+use klyra_common::models::deployment::{DeploymentRequest, DeploymentRequestBeta};
 use klyra_common::models::team;
 use klyra_common::models::{deployment, project, service, ToJson};
 use klyra_common::{resource, ApiKey, LogItem, VersionInfo};
@@ -108,7 +108,7 @@ impl KlyraApiClient {
     pub async fn deploy_beta(
         &self,
         project: &str,
-        deployment_req: DeploymentRequest,
+        deployment_req: DeploymentRequestBeta,
     ) -> Result<deployment::EcsResponse> {
         let path = format!("/projects/{project}");
         let deployment_req = rmp_serde::to_vec(&deployment_req)
