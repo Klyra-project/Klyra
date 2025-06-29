@@ -168,6 +168,7 @@ pub mod tests {
     use ring::signature::{self, Ed25519KeyPair, KeyPair};
     use klyra_backends::auth::ConvertResponse;
     use klyra_backends::test_utils::gateway::PermissionsMock;
+    use klyra_backends::test_utils::provisioner::get_mocked_provisioner;
     use klyra_backends::test_utils::resource_recorder::get_mocked_resource_recorder;
     use klyra_common::claims::{AccountTier, Claim};
     use klyra_common::models::deployment::DeploymentRequest;
@@ -399,6 +400,7 @@ pub mod tests {
             let auth: SocketAddr = format!("0.0.0.0:{auth_port}").parse().unwrap();
             let auth_uri: Uri = format!("http://{auth}").parse().unwrap();
             let resource_recorder_port = get_mocked_resource_recorder().await;
+            let provisioner_port = get_mocked_provisioner().await;
 
             let auth_service = AuthService::new(auth);
             auth_service
@@ -418,8 +420,6 @@ pub mod tests {
             let network_name =
                 env::var("klyra_TESTS_NETWORK").unwrap_or_else(|_| "klyra_default".to_string());
 
-            let provisioner_host = "provisioner".to_string();
-
             let docker_host = "/var/run/docker.sock".to_string();
 
             let args = StartArgs {
@@ -432,9 +432,9 @@ pub mod tests {
                     docker_host,
                     image,
                     prefix,
-                    provisioner_host,
+                    provisioner_uri: format!("http://host.docker.internal:{provisioner_port}"),
                     // The started containers need to reach auth on the host.
-                    // For this to work, the firewall should not be blocking traffic on the `klyra_TEST_NETWORK` interface.
+                    // For this to work, the firewall should not be blocking traffic on the `klyra_TESTS_NETWORK` interface.
                     // The following command can be used on NixOs to allow traffic on the interface.
                     // ```
                     // sudo iptables -I nixos-fw -i <interface> -j nixos-fw-accept
