@@ -13,7 +13,9 @@ async fn not_klyra() {
 }
 
 #[tokio::test]
-#[should_panic(expected = "Your Klyra package must be a binary.")]
+#[should_panic(
+    expected = "Did not find any packages that Klyra can run. Make sure your crate has a binary target that uses `#[klyra_runtime::main]`."
+)]
 async fn not_bin() {
     let (tx, _) = tokio::sync::mpsc::channel::<String>(256);
     let project_path = format!("{}/tests/resources/not-bin", env!("CARGO_MANIFEST_DIR"));
