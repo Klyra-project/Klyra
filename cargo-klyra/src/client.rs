@@ -8,7 +8,7 @@ use reqwest::header::HeaderMap;
 use reqwest::{RequestBuilder, Response};
 use serde::{Deserialize, Serialize};
 use klyra_common::constants::headers::X_CARGO_klyra_VERSION;
-use klyra_common::log::LogsRange;
+use klyra_common::log::{LogsRange, LogsResponseBeta};
 use klyra_common::models::deployment::{DeploymentRequest, DeploymentRequestBeta};
 use klyra_common::models::team;
 use klyra_common::models::{deployment, project, service, ToJson};
@@ -250,7 +250,7 @@ impl KlyraApiClient {
     pub async fn get_logs(
         &self,
         project: &str,
-        deployment_id: &Uuid,
+        deployment_id: &str,
         range: LogsRange,
     ) -> Result<Vec<LogItem>> {
         let mut path = format!("/projects/{project}/deployments/{deployment_id}/logs");
@@ -260,11 +260,25 @@ impl KlyraApiClient {
             .await
             .context("Failed parsing logs. Is your cargo-klyra outdated?")
     }
+    pub async fn get_deployment_logs_beta(
+        &self,
+        project: &str,
+        deployment_id: &str,
+    ) -> Result<LogsResponseBeta> {
+        let path = format!("/projects/{project}/deployments/{deployment_id}/logs");
+
+        self.get(path).await.context("Failed parsing logs.")
+    }
+    pub async fn get_project_logs_beta(&self, project: &str) -> Result<LogsResponseBeta> {
+        let path = format!("/projects/{project}/logs");
+
+        self.get(path).await.context("Failed parsing logs.")
+    }
 
     pub async fn get_logs_ws(
         &self,
         project: &str,
-        deployment_id: &Uuid,
+        deployment_id: &str,
         range: LogsRange,
     ) -> Result<WebSocketStream<MaybeTlsStream<TcpStream>>> {
         let mut path = format!("/projects/{project}/ws/deployments/{deployment_id}/logs");
@@ -287,12 +301,6 @@ impl KlyraApiClient {
         };
     }
 
-    pub async fn deployments_beta(&self, project: &str) -> Result<Vec<deployment::EcsResponse>> {
-        let path = format!("/projects/{project}/deployments",);
-
-        self.get(path).await
-    }
-
     pub async fn get_deployments(
         &self,
         project: &str,
@@ -304,6 +312,22 @@ impl KlyraApiClient {
             page.saturating_sub(1),
             limit,
         );
+
+        self.get(path).await
+    }
+    pub async fn get_deployments_beta(
+        &self,
+        project: &str,
+    ) -> Result<Vec<deployment::EcsResponse>> {
+        let path = format!("/projects/{project}/deployments");
+
+        self.get(path).await
+    }
+    pub async fn _get_current_deployment_beta(
+        &self,
+        project: &str,
+    ) -> Result<deployment::EcsResponse> {
+        let path = format!("/projects/{project}/deployments/current");
 
         self.get(path).await
     }
