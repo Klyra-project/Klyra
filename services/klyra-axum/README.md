@@ -6,7 +6,7 @@ Axum 0.6 is supported by using these feature flags:
 
 ```toml,ignore
 axum = "0.6.0"
-klyra-axum = { version = "0.45.0", default-features = false, features = ["axum-0-6"] }
+klyra-axum = { version = "0.46.0", default-features = false, features = ["axum-0-6"] }
 ```
 
 ### Example
