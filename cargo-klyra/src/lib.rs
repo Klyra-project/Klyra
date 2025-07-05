@@ -1372,6 +1372,7 @@ impl Klyra {
                     *bytes = serde_json::to_vec(&KlyraResourceOutput {
                         output: res,
                         custom: klyra_resource.custom,
+                        state: None
                     })
                     .unwrap();
                 }
@@ -1385,6 +1386,7 @@ impl Klyra {
                     *bytes = serde_json::to_vec(&KlyraResourceOutput {
                         output: secrets.clone(),
                         custom: klyra_resource.custom,
+                        state: None
                     })
                     .unwrap();
                 }
@@ -1403,6 +1405,7 @@ impl Klyra {
                     *bytes = serde_json::to_vec(&KlyraResourceOutput {
                         output: res,
                         custom: klyra_resource.custom,
+                        state: None
                     })
                     .unwrap();
                 }

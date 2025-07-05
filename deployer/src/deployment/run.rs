@@ -536,6 +536,7 @@ async fn provision(
                 *bytes = serde_json::to_vec(&KlyraResourceOutput {
                     output,
                     custom: klyra_resource.custom,
+                    state: None
                 })
                 .expect("to serialize struct");
             }
@@ -549,6 +550,7 @@ async fn provision(
                 *bytes = serde_json::to_vec(&KlyraResourceOutput {
                     output: new_secrets.clone(),
                     custom: klyra_resource.custom,
+                    state: None
                 })
                 .expect("to serialize struct");
             }
