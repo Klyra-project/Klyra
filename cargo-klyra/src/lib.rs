@@ -33,7 +33,7 @@ use ignore::WalkBuilder;
 use indicatif::ProgressBar;
 use indoc::{formatdoc, printdoc};
 use klyra_common::models::deployment::{
-    BuildMetaBeta, DeploymentRequestBuildArchiveBeta, DeploymentRequestImageBeta,
+    BuildArgsBeta, BuildMetaBeta, DeploymentRequestBuildArchiveBeta, DeploymentRequestImageBeta,
 };
 use klyra_common::{
     constants::{
@@ -1821,6 +1821,8 @@ impl Klyra {
         };
 
         if self.beta {
+            let mut build_args = BuildArgsBeta::default();
+
             let metadata = async_cargo_metadata(manifest_path.as_path()).await?;
             let packages = find_klyra_packages(&metadata)?;
             // TODO: support overriding this
@@ -1828,16 +1830,22 @@ impl Klyra {
                 .first()
                 .expect("at least one klyra crate in the workspace");
             let package_name = package.name.to_owned();
-            deployment_req_buildarch_beta.package_name = package_name;
+            build_args.package_name = Some(package_name);
 
-            // TODO: add these to the request and builder
-            let (_no_default_features, _features) = if package.features.contains_key("klyra") {
-                (true, vec!["klyra".to_owned()])
+            // activate klyra feature is present
+            let (no_default_features, features) = if package.features.contains_key("klyra") {
+                (true, Some(vec!["klyra".to_owned()]))
             } else {
-                (false, vec![])
+                (false, None)
             };
+            build_args.no_default_features = no_default_features;
+            build_args.features = features.map(|v| v.join(","));
+
             // TODO: determine which (one) binary to build
-            // TODO: have the above be configurable in CLI and Klyra.toml
+
+            deployment_req_buildarch_beta.build_args = Some(build_args);
+
+            // TODO: have all of the above be configurable in CLI and Klyra.toml
         }
 
         if let Ok(repo) = Repository::discover(working_directory) {
