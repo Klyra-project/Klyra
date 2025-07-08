@@ -1847,7 +1847,7 @@ impl Klyra {
             let package_name = package.name.to_owned();
             build_args.package_name = Some(package_name);
 
-            // activate klyra feature is present
+            // activate klyra feature if present
             let (no_default_features, features) = if package.features.contains_key("klyra") {
                 (true, Some(vec!["klyra".to_owned()]))
             } else {
@@ -1893,7 +1893,8 @@ impl Klyra {
         }
 
         deployment_req.data = self.make_archive(args.secret_args.secrets.clone(), self.beta)?;
-        if deployment_req.data.len() > CREATE_SERVICE_BODY_LIMIT {
+        // TODO: Make size warning server-side on beta.
+        if !self.beta && deployment_req.data.len() > CREATE_SERVICE_BODY_LIMIT {
             bail!(
                 r#"The project is too large - the limit is {} MB. \
                 Your project archive is {:.1} MB. \
@@ -1905,7 +1906,10 @@ impl Klyra {
 
         // End early for beta
         if self.beta {
-            deployment_req_buildarch_beta.data = deployment_req.data;
+            let arch = client
+                .upload_archive_beta(self.ctx.project_name(), deployment_req.data)
+                .await?;
+            deployment_req_buildarch_beta.archive_version_id = arch.archive_version_id;
             deployment_req_buildarch_beta.build_meta = Some(BuildMetaBeta {
                 git_commit_id: deployment_req.git_commit_id,
                 git_commit_msg: deployment_req.git_commit_msg,
