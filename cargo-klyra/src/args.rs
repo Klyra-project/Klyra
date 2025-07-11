@@ -35,7 +35,7 @@ pub struct KlyraArgs {
     /// Disable network requests that are not strictly necessary. Limits some features.
     #[arg(long, env = "klyra_OFFLINE")]
     pub offline: bool,
-    /// Turn on tracing output for cargo-klyra and klyra libraries.
+    /// Turn on tracing output for Klyra libraries. (WARNING: can print sensitive data)
     #[arg(long, env = "klyra_DEBUG")]
     pub debug: bool,
     /// Target Klyra's development environment
