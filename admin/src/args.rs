@@ -1,12 +1,12 @@
 use std::{fs, io, path::PathBuf};
 
 use clap::{Error, Parser, Subcommand};
-use klyra_common::models::user::UserId;
+use klyra_common::{constants::API_URL_PRODUCTION, models::user::UserId};
 
 #[derive(Parser, Debug)]
 pub struct Args {
     /// run this command against the api at the supplied url
-    #[arg(long, default_value = "https://api.klyra.rs", env = "klyra_API")]
+    #[arg(long, default_value = API_URL_PRODUCTION, env = "klyra_API")]
     pub api_url: String,
 
     #[command(subcommand)]
@@ -39,6 +39,13 @@ pub enum Command {
 
     /// Forcefully idle CCH projects.
     IdleCch,
+
+    SetBetaAccess {
+        user_id: String,
+    },
+    UnsetBetaAccess {
+        user_id: String,
+    },
 }
 
 #[derive(Subcommand, Debug)]

@@ -1,5 +1,4 @@
 mod args;
-mod client;
 pub mod config;
 mod init;
 mod provisioner_server;
@@ -32,11 +31,14 @@ use ignore::overrides::OverrideBuilder;
 use ignore::WalkBuilder;
 use indicatif::ProgressBar;
 use indoc::{formatdoc, printdoc};
+use reqwest::header::HeaderMap;
+use klyra_api_client::KlyraApiClient;
 use klyra_common::{
     constants::{
-        API_URL_DEFAULT, DEFAULT_IDLE_MINUTES, EXAMPLES_REPO, EXECUTABLE_DIRNAME,
-        RESOURCE_SCHEMA_VERSION, RUNTIME_NAME, klyra_GH_ISSUE_URL, klyra_IDLE_DOCS_URL,
-        klyra_INSTALL_DOCS_URL, klyra_LOGIN_URL, STORAGE_DIRNAME, TEMPLATES_SCHEMA_VERSION,
+        headers::X_CARGO_klyra_VERSION, API_URL_DEFAULT, DEFAULT_IDLE_MINUTES, EXAMPLES_REPO,
+        EXECUTABLE_DIRNAME, RESOURCE_SCHEMA_VERSION, RUNTIME_NAME, klyra_GH_ISSUE_URL,
+        klyra_IDLE_DOCS_URL, klyra_INSTALL_DOCS_URL, klyra_LOGIN_URL, STORAGE_DIRNAME,
+        TEMPLATES_SCHEMA_VERSION,
     },
     deployment::{EcsState, DEPLOYER_END_MESSAGES_BAD, DEPLOYER_END_MESSAGES_GOOD},
     log::LogsRange,
@@ -79,7 +81,6 @@ use crate::args::{
     DeployArgs, DeploymentCommand, InitArgs, LoginArgs, LogoutArgs, LogsArgs, ProjectCommand,
     ProjectStartArgs, ResourceCommand, TemplateLocation,
 };
-use crate::client::KlyraApiClient;
 use crate::provisioner_server::LocalProvisioner;
 
 const VERSION: &str = env!("CARGO_PKG_VERSION");
@@ -188,8 +189,17 @@ impl Klyra {
                 | Command::Clean
                 | Command::Project(..)
         ) {
-            let client =
-                KlyraApiClient::new(self.ctx.api_url(self.beta), self.ctx.api_key().ok());
+            let client = KlyraApiClient::new(
+                self.ctx.api_url(self.beta),
+                self.ctx.api_key().ok().map(|s| s.as_ref().to_owned()),
+                Some(
+                    HeaderMap::try_from(&HashMap::from([(
+                        X_CARGO_klyra_VERSION.clone(),
+                        crate::VERSION.to_owned(),
+                    )]))
+                    .unwrap(),
+                ),
+            );
             self.client = Some(client);
             if !args.offline && !self.beta {
                 self.check_api_versions().await?;
@@ -731,7 +741,7 @@ impl Klyra {
         self.ctx.set_api_key(api_key.clone())?;
 
         if let Some(client) = self.client.as_mut() {
-            client.set_api_key(api_key);
+            client.api_key = Some(api_key.as_ref().to_string());
 
             if self.beta {
                 if offline {

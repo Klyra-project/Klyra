@@ -2,6 +2,7 @@
 resolver = "2"
 members = [
   "admin",
+  "api-client",
   "auth",
   "backends",
   "cargo-klyra",
@@ -31,6 +32,7 @@ repository = "https://github.com/klyra-hq/klyra"
 
 # https://doc.rust-lang.org/cargo/reference/workspaces.html#the-workspacedependencies-table
 [workspace.dependencies]
+klyra-api-client = { path = "api-client", version = "0.46.0" }
 klyra-backends = { path = "backends", version = "0.46.0" }
 klyra-codegen = { path = "codegen", version = "0.46.0" }
 klyra-common = { path = "common", version = "0.46.0" }
@@ -94,6 +96,9 @@ test-context = "0.3.0"
 thiserror = "1.0.37"
 tokio = "1.22.0"
 tokio-stream = "0.1.11"
+tokio-tungstenite = { version = "0.20.1", features = [
+  "rustls-tls-webpki-roots",
+] }
 tokio-util = "0.7.10"
 toml = "0.8.2"
 toml_edit = "0.20.2"
