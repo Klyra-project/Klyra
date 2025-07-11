@@ -8,6 +8,7 @@ pub const STORAGE_DIRNAME: &str = ".klyra-storage";
 // URLs
 pub const API_URL_LOCAL: &str = "http://localhost:8001";
 pub const API_URL_PRODUCTION: &str = "https://api.klyra.rs";
+pub const API_URL_BETA: &str = "https://api.internal.klyra.rs";
 #[cfg(debug_assertions)]
 pub const API_URL_DEFAULT: &str = API_URL_LOCAL;
 #[cfg(not(debug_assertions))]

@@ -186,7 +186,8 @@ impl Klyra {
                 | Command::Clean
                 | Command::Project(..)
         ) {
-            let client = KlyraApiClient::new(self.ctx.api_url(), self.ctx.api_key().ok());
+            let client =
+                KlyraApiClient::new(self.ctx.api_url(self.beta), self.ctx.api_key().ok());
             self.client = Some(client);
             if !args.offline && !self.beta {
                 self.check_api_versions().await?;
