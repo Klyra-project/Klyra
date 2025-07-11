@@ -6,6 +6,7 @@ klyra-runtime = { path = "BASE/runtime" }
 klyra-service = { path = "BASE/service" }
 
 klyra-aws-rds = { path = "BASE/resources/aws-rds" }
+klyra-openai = { path = "BASE/resources/openai" }
 klyra-opendal = { path = "BASE/resources/opendal" }
 klyra-persist = { path = "BASE/resources/persist" }
 klyra-qdrant = { path = "BASE/resources/qdrant" }
