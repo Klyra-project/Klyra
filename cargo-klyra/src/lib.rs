@@ -35,7 +35,7 @@ use indoc::{formatdoc, printdoc};
 use klyra_common::{
     constants::{
         API_URL_DEFAULT, DEFAULT_IDLE_MINUTES, EXAMPLES_REPO, EXECUTABLE_DIRNAME,
-        RESOURCE_SCHEMA_VERSION, klyra_GH_ISSUE_URL, klyra_IDLE_DOCS_URL,
+        RESOURCE_SCHEMA_VERSION, RUNTIME_NAME, klyra_GH_ISSUE_URL, klyra_IDLE_DOCS_URL,
         klyra_INSTALL_DOCS_URL, klyra_LOGIN_URL, STORAGE_DIRNAME, TEMPLATES_SCHEMA_VERSION,
     },
     deployment::{EcsState, DEPLOYER_END_MESSAGES_BAD, DEPLOYER_END_MESSAGES_GOOD},
@@ -1897,7 +1897,7 @@ impl Klyra {
             // TODO: support overriding this
             let package = packages
                 .first()
-                .expect("at least one klyra crate in the workspace");
+                .expect("Expected at least one crate with klyra-runtime in the workspace");
             let package_name = package.name.to_owned();
             rust_build_args.package_name = Some(package_name);
 
@@ -1909,6 +1909,17 @@ impl Klyra {
             };
             rust_build_args.no_default_features = no_default_features;
             rust_build_args.features = features.map(|v| v.join(","));
+
+            rust_build_args.klyra_runtime_version = package
+                .dependencies
+                .iter()
+                .find(|dependency| dependency.name == RUNTIME_NAME)
+                .expect("klyra package to have runtime dependency")
+                .req
+                .comparators
+                .first()
+                // is "^0.X.0" when `klyra-runtime = "0.X.0"` is in Cargo.toml
+                .and_then(|c| c.to_string().strip_prefix('^').map(ToOwned::to_owned));
 
             // TODO: determine which (one) binary to build
 
