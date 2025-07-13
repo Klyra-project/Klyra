@@ -8,7 +8,7 @@ description = "A cargo command for the Klyra platform (https://www.klyra.rs/)"
 homepage = "https://www.klyra.rs"
 
 [dependencies]
-klyra-api-client = { workspace = true }
+klyra-api-client = { workspace = true, default-features = true }
 klyra-common = { workspace = true, features = ["models"] }
 klyra-proto = { workspace = true, features = ["provisioner", "runtime-client"] }
 klyra-service = { workspace = true, features = ["builder", "runner"] }

@@ -5,7 +5,7 @@ edition = "2021"
 publish = false
 
 [dependencies]
-klyra-api-client = { workspace = true }
+klyra-api-client = { workspace = true, default-features = true }
 klyra-common = { workspace = true, features = ["models"] }
 klyra-backends = { workspace = true }
 

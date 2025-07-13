@@ -10,6 +10,7 @@ description = "Runtime to start and manage any service that runs on klyra"
 doctest = false
 
 [dependencies]
+klyra-api-client = { workspace = true }
 klyra-codegen = { workspace = true }
 klyra-common = { workspace = true, features = ["extract_propagation"] }
 klyra-proto = { workspace = true, features = ["runtime"] }
@@ -18,6 +19,7 @@ klyra-service = { workspace = true }
 anyhow = { workspace = true }
 async-trait = { workspace = true }
 colored = { workspace = true, optional = true }
+hyper = { workspace = true, features = ["http1", "server", "tcp"] }
 serde = { workspace = true }
 serde_json = { workspace = true }
 strfmt = { workspace = true }
@@ -35,9 +37,10 @@ uuid = { workspace = true }
 
 [features]
 default = ["setup-tracing"]
+api-client-tracing = ["klyra-api-client/tracing"]
 
 setup-tracing = [
     "tracing-subscriber/default",
     "tracing-subscriber/env-filter",
-    "colored",
+    "dep:colored",
 ]
