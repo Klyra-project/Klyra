@@ -12,7 +12,7 @@ use klyra_common::log::{LogsRange, LogsResponseBeta};
 use klyra_common::models::deployment::{
     DeploymentRequest, DeploymentRequestBeta, UploadArchiveResponseBeta,
 };
-use klyra_common::models::{deployment, project, service, team, user, ToJson};
+use klyra_common::models::{deployment, project, service, team, user};
 use klyra_common::resource::{ProvisionResourceRequest, KlyraResourceOutput};
 use klyra_common::{resource, LogItem, VersionInfo};
 use tokio::net::TcpStream;
@@ -26,6 +26,9 @@ mod middleware;
 use crate::middleware::LoggingMiddleware;
 #[cfg(feature = "tracing")]
 use tracing::{debug, error};
+
+mod util;
+use util::ToJson;
 
 #[derive(Clone)]
 pub struct KlyraApiClient {
