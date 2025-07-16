@@ -122,6 +122,8 @@ pub enum Command {
     Resource(ResourceCommand),
     /// Remove cargo build artifacts in the Klyra environment
     Clean,
+    /// BETA: Show info about your Klyra account
+    Account,
     /// Login to the Klyra platform
     Login(LoginArgs),
     /// Log out of the Klyra platform
