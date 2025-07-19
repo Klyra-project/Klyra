@@ -13,10 +13,10 @@ use hyper::{
 };
 use klyra_api_client::KlyraApiClient;
 use klyra_common::{
-    resource::{ResourceInput, ResourceState, Type},
+    resource::{ProvisionResourceRequestBeta, ResourceInput, ResourceState, ResourceTypeBeta},
     secrets::Secret,
 };
-use klyra_service::{Environment, ResourceFactory, Service, KlyraResourceOutput};
+use klyra_service::{Environment, ResourceFactory, Service};
 
 use crate::__internals::{Loader, Runner};
 
@@ -110,7 +110,7 @@ pub async fn start(loader: impl Loader + Send + 'static, runner: impl Runner + S
     let secrets: BTreeMap<String, String> = match client
         .get_secrets_beta(&project_id)
         .await
-        .and_then(|r| serde_json::from_value(r.data).context("failed to deserialize secrets"))
+        .and_then(|r| serde_json::from_value(r.output).context("failed to deserialize secrets"))
     {
         Ok(s) => s,
         Err(e) => {
@@ -151,37 +151,34 @@ pub async fn start(loader: impl Loader + Send + 'static, runner: impl Runner + S
         .zip(values)
         // ignore non-Klyra resource items
         .filter_map(|(bytes, value)| match value {
-            ResourceInput::Klyra(klyra_resource) => Some((bytes, klyra_resource)),
+            ResourceInput::Klyra(klyra_resource) => {
+                Some((bytes, ProvisionResourceRequestBeta::from(klyra_resource)))
+            }
             ResourceInput::Custom(_) => None,
         })
     {
         // Secrets don't need to be requested here since we already got them above.
-        if klyra_resource.r#type == Type::Secrets {
-            *bytes = serde_json::to_vec(&KlyraResourceOutput {
-                output: serde_json::to_value(&secrets).unwrap(),
-                custom: serde_json::Value::Null,
-                state: Some(ResourceState::Ready),
-            })
-            .expect("to serialize struct");
+        if klyra_resource.r#type == ResourceTypeBeta::Secrets {
+            *bytes = serde_json::to_vec(&secrets).expect("to serialize struct");
             continue;
         }
-        println!("Provisioning {}", klyra_resource.r#type);
+        println!("Provisioning {:?}", klyra_resource.r#type);
         loop {
             match client
                 .provision_resource_beta(&project_id, klyra_resource.clone())
                 .await
             {
-                Ok(output) => match output.state.clone().expect("resource to have a state") {
+                Ok(res) => match res.state.clone() {
                     ResourceState::Provisioning | ResourceState::Authorizing => {
                         tokio::time::sleep(tokio::time::Duration::from_millis(2000)).await;
                     }
                     ResourceState::Ready => {
-                        *bytes = serde_json::to_vec(&output).expect("to serialize struct");
+                        *bytes = serde_json::to_vec(&res.output).expect("to serialize struct");
                         break;
                     }
                     bad_state => {
                         eprintln!(
-                            "Runtime Provisioning phase failed: Received '{}' resource with state '{}'.",
+                            "Runtime Provisioning phase failed: Received '{:?}' resource with state '{}'.",
                             klyra_resource.r#type,
                             bad_state
                         );
