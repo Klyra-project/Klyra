@@ -11,7 +11,7 @@ use klyra_backends::client::{
     permit::{self, Error, ResponseContent},
     PermissionsDal,
 };
-use klyra_common::{claims::AccountTier, ApiKey};
+use klyra_common::{models::user::AccountTier, ApiKey};
 use sqlx::{query, PgPool};
 use tracing::info;
 pub use user::User;

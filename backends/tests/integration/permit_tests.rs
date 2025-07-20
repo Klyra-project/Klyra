@@ -11,7 +11,7 @@ mod needs_docker {
         permit::{Client, Error, Owner, ResponseContent, Team},
         PermissionsDal,
     };
-    use klyra_common::{claims::AccountTier, models::team};
+    use klyra_common::models::{team, user::AccountTier};
     use klyra_common_tests::permit_pdp::DockerInstance;
     use test_context::{test_context, AsyncTestContext};
     use uuid::Uuid;

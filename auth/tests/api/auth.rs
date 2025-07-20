@@ -3,7 +3,7 @@ mod needs_docker {
     use http::{Request, StatusCode};
     use hyper::Body;
     use serde_json::Value;
-    use klyra_common::claims::AccountTier;
+    use klyra_common::models::user::AccountTier;
 
     use crate::helpers::{app, ADMIN_KEY};
 

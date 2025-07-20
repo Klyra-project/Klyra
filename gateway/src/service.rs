@@ -24,13 +24,12 @@ use opentelemetry_http::HeaderInjector;
 use klyra_backends::client::{permit, PermissionsDal};
 use klyra_backends::headers::XKlyraAdminSecret;
 use klyra_backends::project_name::ProjectName;
-use klyra_common::claims::AccountTier;
 use klyra_common::constants::klyra_IDLE_DOCS_URL;
 use klyra_common::models::error::{
     ApiError, ProjectNotFound, ProjectNotReady, ProjectUnavailable,
 };
 use klyra_common::models::project::State;
-use klyra_common::models::user::UserId;
+use klyra_common::models::user::{AccountTier, UserId};
 use sqlx::error::DatabaseError;
 use sqlx::migrate::Migrator;
 use sqlx::sqlite::SqlitePool;

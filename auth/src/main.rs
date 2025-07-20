@@ -1,6 +1,6 @@
 use clap::Parser;
 use klyra_backends::trace::setup_tracing;
-use klyra_common::{claims::AccountTier, log::Backend};
+use klyra_common::{log::Backend, models::user::AccountTier};
 use tracing::trace;
 
 use klyra_auth::{copy_environment, init, pgpool_init, start, sync, Args, Commands};

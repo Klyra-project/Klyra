@@ -34,10 +34,7 @@ fn cleanup() {
 
 mod needs_docker {
     use serde_json::json;
-    use klyra_common::{
-        claims::{AccountTier, Claim},
-        limits::Limits,
-    };
+    use klyra_common::{claims::Claim, limits::Limits, models::user::AccountTier};
     use klyra_common_tests::ClaimTestsExt;
     use klyra_proto::{
         provisioner::{

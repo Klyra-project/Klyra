@@ -483,7 +483,10 @@ mod tests {
     use serde_json::json;
     use tower::{ServiceBuilder, ServiceExt};
 
-    use klyra_common::claims::{AccountTier, Claim, Scope};
+    use klyra_common::{
+        claims::{Claim, Scope},
+        models::user::AccountTier,
+    };
 
     use super::{JwtAuthenticationLayer, ScopedLayer};
 

@@ -4,7 +4,10 @@ pub mod permit_pdp;
 pub mod postgres;
 pub mod provisioner;
 
-use klyra_common::claims::{AccountTier, Claim, Scope};
+use klyra_common::{
+    claims::{Claim, Scope},
+    models::user::AccountTier,
+};
 
 /// Layer to set JwtScopes on a request.
 /// For use in other tests

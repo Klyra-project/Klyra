@@ -6,8 +6,8 @@ use serde_json::{json, Value};
 use klyra_auth::{pgpool_init, ApiBuilder};
 use klyra_backends::{headers::X_klyra_ADMIN_SECRET, test_utils::gateway::PermissionsMock};
 use klyra_common::{
-    claims::{AccountTier, Claim},
-    models::user,
+    claims::Claim,
+    models::user::{self, AccountTier},
 };
 use klyra_common_tests::postgres::DockerInstance;
 use sqlx::query;

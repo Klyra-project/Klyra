@@ -170,8 +170,9 @@ pub mod tests {
     use klyra_backends::test_utils::gateway::PermissionsMock;
     use klyra_backends::test_utils::provisioner::get_mocked_provisioner;
     use klyra_backends::test_utils::resource_recorder::get_mocked_resource_recorder;
-    use klyra_common::claims::{AccountTier, Claim};
+    use klyra_common::claims::Claim;
     use klyra_common::models::deployment::DeploymentRequest;
+    use klyra_common::models::user::AccountTier;
     use klyra_common::models::{project, service};
     use sqlx::sqlite::SqliteConnectOptions;
     use sqlx::{query, SqlitePool};
