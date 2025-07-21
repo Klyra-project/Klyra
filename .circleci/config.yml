@@ -167,6 +167,7 @@ commands:
           command: |
             mkdir $BIN_DIR
             mv target/<< parameters.target >>/release/cargo-klyra<< parameters.suffix >> $BIN_DIR/cargo-klyra<< parameters.suffix >>
+            mv target/<< parameters.target >>/release/klyra<< parameters.suffix >> $BIN_DIR/klyra<< parameters.suffix >>
             mv LICENSE $BIN_DIR/
             mv README.md $BIN_DIR/
             mkdir -p artifacts/<< parameters.target >>

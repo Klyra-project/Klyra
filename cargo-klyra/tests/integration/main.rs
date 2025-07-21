@@ -1,17 +1,14 @@
 mod init;
 mod run;
 
-use cargo_klyra::{Command, CommandOutcome, ProjectArgs, Klyra, KlyraArgs};
+use cargo_klyra::{Command, ProjectArgs, Klyra, KlyraArgs};
 use std::path::Path;
 
 /// creates a `cargo-klyra` run instance with some reasonable defaults set.
-async fn cargo_klyra_command(
-    cmd: Command,
-    working_directory: &str,
-) -> anyhow::Result<CommandOutcome> {
+async fn cargo_klyra_command(cmd: Command, working_directory: &str) -> anyhow::Result<()> {
     let working_directory = Path::new(working_directory).to_path_buf();
 
-    Klyra::new()
+    Klyra::new(cargo_klyra::Binary::CargoKlyra)
         .unwrap()
         .run(
             KlyraArgs {
