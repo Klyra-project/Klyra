@@ -72,6 +72,7 @@ Please file an issue if you encounter any problems!
         New-Item -ItemType Directory -Force "$TempDir\cargo-klyra"
         tar.exe -xzf "$TempDir\cargo-klyra.tar.gz" -C "$TempDir\cargo-klyra"
         Move-Item -Force "$TempDir\cargo-klyra\cargo-klyra-x86_64-pc-windows-msvc-$LatestRelease\cargo-klyra.exe" "$CargoHome\bin\cargo-klyra.exe"
+        Move-Item -Force "$TempDir\cargo-klyra\cargo-klyra-x86_64-pc-windows-msvc-$LatestRelease\klyra.exe" "$CargoHome\bin\klyra.exe"
         Remove-Item -Recurse -Force -ErrorAction SilentlyContinue "$TempDir\cargo-klyra.tar.gz", "$TempDir\cargo-klyra"
         Write-Host "Installed cargo-klyra, try running ``cargo klyra --help``" -ForegroundColor Green
         return
