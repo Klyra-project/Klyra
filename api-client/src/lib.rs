@@ -14,7 +14,7 @@ use klyra_common::log::{LogsRange, LogsResponseBeta};
 use klyra_common::models::deployment::{
     DeploymentListResponseBeta, DeploymentRequest, DeploymentRequestBeta, UploadArchiveResponseBeta,
 };
-use klyra_common::models::project::ProjectListResponseBeta;
+use klyra_common::models::project::{ProjectCreateRequestBeta, ProjectListResponseBeta};
 use klyra_common::models::{deployment, project, service, team, user};
 use klyra_common::resource::{
     ProvisionResourceRequestBeta, ResourceListResponseBeta, ResourceResponseBeta,
@@ -265,8 +265,13 @@ impl KlyraApiClient {
             .context("failed to make create project request")
     }
     pub async fn create_project_beta(&self, name: &str) -> Result<project::ProjectResponseBeta> {
-        self.post_json(format!("/projects/{name}"), None::<()>)
-            .await
+        self.post_json(
+            "/projects",
+            Some(ProjectCreateRequestBeta {
+                name: name.to_string(),
+            }),
+        )
+        .await
     }
 
     pub async fn clean_project(&self, project: &str) -> Result<String> {

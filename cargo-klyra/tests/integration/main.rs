@@ -15,7 +15,7 @@ async fn cargo_klyra_command(cmd: Command, working_directory: &str) -> anyhow::R
                 api_url: Some("http://klyra.invalid:80".to_string()),
                 project_args: ProjectArgs {
                     working_directory,
-                    name: None,
+                    name_or_id: None,
                 },
                 offline: false,
                 debug: false,
