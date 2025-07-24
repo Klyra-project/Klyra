@@ -181,10 +181,15 @@ impl Klyra {
             bail!("This command is not supported on the OLD platform (klyra.rs).");
         }
 
-        if self.beta {
-            eprintln!("{}", "INFO: Using NEW platform API (klyra.dev)".green());
-        } else {
-            eprintln!("{}", "INFO: Using OLD platform API (klyra.rs)".blue());
+        if !matches!(
+            args.cmd,
+            Command::Feedback | Command::Generate(_) | Command::Upgrade { .. }
+        ) {
+            if self.beta {
+                eprintln!("{}", "INFO: Using NEW platform API (klyra.dev)".green());
+            } else {
+                eprintln!("{}", "INFO: Using OLD platform API (klyra.rs)".blue());
+            }
         }
         if let Some(ref url) = args.api_url {
             if (!self.beta && url != API_URL_DEFAULT) || (self.beta && url != API_URL_BETA) {
