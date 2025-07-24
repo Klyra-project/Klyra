@@ -16,6 +16,7 @@ pub const API_URL_DEFAULT: &str = API_URL_PRODUCTION;
 
 pub const klyra_STATUS_URL: &str = "https://status.klyra.rs";
 pub const klyra_LOGIN_URL: &str = "https://console.klyra.rs/new-project";
+pub const klyra_LOGIN_URL_BETA: &str = "https://console.klyra.dev/new-project";
 pub const klyra_GH_REPO_URL: &str = "https://github.com/klyra-hq/klyra";
 pub const klyra_GH_ISSUE_URL: &str = "https://github.com/klyra-hq/klyra/issues/new/choose";
 pub const klyra_INSTALL_DOCS_URL: &str = "https://docs.klyra.rs/getting-started/installation";

@@ -91,21 +91,20 @@ iwr "https://www.klyra.rs/install-win" | iex
 After installing, log in with:
 
 ```sh
-cargo klyra login
+klyra login
 ```
 
 To initialize your project, simply write:
 
 ```bash
-cargo klyra init --template axum hello-world
+klyra init --template axum hello-world
 ```
 
 And to deploy it, write:
 
 ```bash
 cd hello-world
-cargo klyra project start  # Only needed if project has not already been created during init
-cargo klyra deploy --allow-dirty
+klyra deploy
 ```
 
 And... that's it!
@@ -163,7 +162,7 @@ async fn main() -> klyra_axum::KlyraAxum {
 }
 ```
 
-Now, with just `cargo klyra deploy`, you can see your application live. But let's enhance it further by adding a shared Postgres database:
+Now, with just `klyra deploy`, you can see your application live. But let's enhance it further by adding a shared Postgres database:
 
 ```rust
 use axum::{routing::get, Router};
@@ -187,7 +186,7 @@ async fn main(
 }
 ```
 
-Now, if we run `cargo klyra deploy`, we'll have an up and running project with a database inside & ready to use.
+Now, if we run `klyra deploy`, we'll have an up and running project with a database inside & ready to use.
 <br>
 <br>
 

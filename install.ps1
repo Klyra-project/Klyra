@@ -50,7 +50,7 @@ Please file an issue if you encounter any problems!
         Write-Host "Installing cargo-klyra using cargo binstall"
         cargo-binstall.exe cargo-klyra --no-confirm
         if ($?) {
-            Write-Host "Installed cargo-klyra, try running ``cargo klyra --help``" -ForegroundColor Green
+            Write-Host "Installed cargo-klyra" -ForegroundColor Green
             return
         }
         else {
@@ -74,7 +74,7 @@ Please file an issue if you encounter any problems!
         Move-Item -Force "$TempDir\cargo-klyra\cargo-klyra-x86_64-pc-windows-msvc-$LatestRelease\cargo-klyra.exe" "$CargoHome\bin\cargo-klyra.exe"
         Move-Item -Force "$TempDir\cargo-klyra\cargo-klyra-x86_64-pc-windows-msvc-$LatestRelease\klyra.exe" "$CargoHome\bin\klyra.exe"
         Remove-Item -Recurse -Force -ErrorAction SilentlyContinue "$TempDir\cargo-klyra.tar.gz", "$TempDir\cargo-klyra"
-        Write-Host "Installed cargo-klyra, try running ``cargo klyra --help``" -ForegroundColor Green
+        Write-Host "Installed cargo-klyra" -ForegroundColor Green
         return
     }
     elseif ($Arch -ne "AMD64") {
@@ -89,7 +89,7 @@ Please file an issue if you encounter any problems!
         Write-Host "Installing cargo-klyra using cargo install (from source)"
         cargo.exe install cargo-klyra --locked
         if ($?) {
-            Write-Host "Installed cargo-klyra, try running ``cargo klyra --help``" -ForegroundColor Green
+            Write-Host "Installed cargo-klyra" -ForegroundColor Green
             return
         }
         else {

@@ -44,7 +44,7 @@ cargo install cargo-klyra
 
 ## Documentation
 
-Run `cargo klyra help` to see the basic usage.
+Run `klyra help` to see the basic usage.
 
 Full list of commands and more documentation can be viewed on the [CLI docs](https://docs.klyra.rs/getting-started/klyra-commands).
 

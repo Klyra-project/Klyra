@@ -60,7 +60,7 @@ pub async fn start(loader: impl Loader + Send + 'static, runner: impl Runner + S
         Ok(args) => args,
         Err(e) => {
             eprintln!("ERROR: Runtime failed to parse args: {e}");
-            let help_str = "[HINT]: Run your Klyra app with `cargo klyra run`";
+            let help_str = "[HINT]: Run your Klyra app with `klyra run` or `cargo klyra run`";
             let wrapper_str = "-".repeat(help_str.len());
             eprintln!("{wrapper_str}\n{help_str}\n{wrapper_str}");
             return;
@@ -82,9 +82,11 @@ pub async fn start(loader: impl Loader + Send + 'static, runner: impl Runner + S
             )
             .init();
 
-        warn!(
-            "Default tracing subscriber initialized (https://docs.klyra.rs/configuration/logs)"
-        );
+        if args.beta {
+            warn!("Default tracing subscriber initialized (https://docs.klyra.dev/docs/logs)");
+        } else {
+            warn!("Default tracing subscriber initialized (https://docs.klyra.rs/configuration/logs)");
+        }
     }
 
     if args.beta {

@@ -36,7 +36,7 @@ pub struct TemplateDefinition {
     /// URL to a live instance of the template (if relevant)
     pub live_demo: Option<String>,
 
-    /// If this template is available in the `cargo klyra init --template` short-hand options, add that name here
+    /// If this template is available in the `klyra init --template` short-hand options, add that name here
     pub template: Option<String>,
 
     ////// Fields for community templates

@@ -21,7 +21,7 @@ cargo install cargo-klyra
 Now that Klyra is installed, you can initialize a project with Axum boilerplate:
 
 ```bash
-cargo klyra init --template axum my-axum-app
+klyra init --template axum my-axum-app
 ```
 
 By looking at the `Cargo.toml` file of the generated `my-axum-app` project you will see it has been made to
@@ -59,7 +59,7 @@ our [examples](https://github.com/klyra-hq/klyra-examples) if you prefer that fo
 To test your app locally before deploying, use:
 
 ```bash
-cargo klyra run
+klyra run
 ```
 
 You should see your app build and start on the default port 8000. You can test this using;
@@ -71,23 +71,15 @@ curl http://localhost:8000/
 
 ## Deploying
 
-Before you can deploy, you have to create a project. This will start a deployer container for your
-project under the hood, ensuring isolation from other users' projects. PS. you don't have to do this
-now if you did in in the `cargo klyra init` flow.
+Deploy the service with:
 
 ```bash
-cargo klyra project start
+klyra deploy
 ```
 
-Then, deploy the service with:
+Your service will then be made available under a subdomain of `*.klyra.app`. For example:
 
 ```bash
-cargo klyra deploy
-```
-
-Your service will immediately be available at `https://{project_name}.klyraapp.rs/`. For example:
-
-```bash
-curl https://my-axum-app.klyraapp.rs/
+curl https://my-axum-app-0000.klyra.app/
 # Hello, world!
 ```
