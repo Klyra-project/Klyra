@@ -141,6 +141,7 @@ ARG RUSTUP_TOOLCHAIN
 FROM bookworm-20230904-slim-plus AS klyra-provisioner
 ARG klyra_SERVICE_VERSION
 ENV klyra_SERVICE_VERSION=${klyra_SERVICE_VERSION}
+RUN apt update && apt install -y postgresql-client-15; rm -rf /var/lib/apt/lists/*
 ARG CARGO_PROFILE
 COPY --from=chef-builder /build/target/${CARGO_PROFILE}/klyra-provisioner /usr/local/bin
 ENTRYPOINT ["/usr/local/bin/klyra-provisioner"]
