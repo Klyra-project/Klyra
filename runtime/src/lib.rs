@@ -4,10 +4,12 @@
     html_favicon_url = "https://raw.githubusercontent.com/klyra-hq/klyra/main/assets/favicon.ico"
 )]
 
+/// klyra.rs runtime
 mod alpha;
-mod beta;
 /// Built-in plugins
 mod plugins;
+/// klyra.dev runtime
+mod rt;
 mod start;
 
 // Public API
@@ -22,11 +24,7 @@ pub use klyra_service::{
 pub use async_trait::async_trait;
 pub use tokio;
 
-const NAME: &str = env!("CARGO_PKG_NAME");
-const VERSION: &str = env!("CARGO_PKG_VERSION");
-fn version() -> String {
-    format!("{} {}", crate::NAME, crate::VERSION)
-}
+const VERSION_STRING: &str = concat!(env!("CARGO_PKG_NAME"), " ", env!("CARGO_PKG_VERSION"));
 
 // Not part of public API
 #[doc(hidden)]
