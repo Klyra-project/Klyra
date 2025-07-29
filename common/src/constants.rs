@@ -7,20 +7,23 @@ pub const STORAGE_DIRNAME: &str = ".klyra-storage";
 
 // URLs
 pub const API_URL_LOCAL: &str = "http://localhost:8001";
-pub const API_URL_PRODUCTION: &str = "https://api.klyra.rs";
-pub const API_URL_BETA: &str = "https://api.klyra.dev";
+pub const API_URL_RS: &str = "https://api.klyra.rs";
+pub const API_URL_DEFAULT_BETA: &str = "https://api.klyra.dev";
 #[cfg(debug_assertions)]
 pub const API_URL_DEFAULT: &str = API_URL_LOCAL;
 #[cfg(not(debug_assertions))]
-pub const API_URL_DEFAULT: &str = API_URL_PRODUCTION;
+pub const API_URL_DEFAULT: &str = API_URL_RS;
 
 pub const klyra_STATUS_URL: &str = "https://status.klyra.rs";
-pub const klyra_LOGIN_URL: &str = "https://console.klyra.rs/new-project";
-pub const klyra_LOGIN_URL_BETA: &str = "https://console.klyra.dev/new-project";
+
+pub const klyra_LEGACY_NEW_PROJECT: &str = "https://console.klyra.rs/new-project";
+pub const klyra_CONSOLE_URL: &str = "https://console.klyra.dev";
+
+pub const klyra_INSTALL_DOCS_URL: &str = "https://docs.klyra.dev/getting-started/installation";
+pub const klyra_IDLE_DOCS_URL: &str = "https://docs.klyra.rs/getting-started/idle-projects";
+
 pub const klyra_GH_REPO_URL: &str = "https://github.com/klyra-hq/klyra";
 pub const klyra_GH_ISSUE_URL: &str = "https://github.com/klyra-hq/klyra/issues/new/choose";
-pub const klyra_INSTALL_DOCS_URL: &str = "https://docs.klyra.rs/getting-started/installation";
-pub const klyra_IDLE_DOCS_URL: &str = "https://docs.klyra.rs/getting-started/idle-projects";
 pub const EXAMPLES_REPO: &str = "https://github.com/klyra-hq/klyra-examples";
 pub const EXAMPLES_README: &str =
     "https://github.com/klyra-hq/klyra-examples#how-to-clone-run-and-deploy-an-example";
