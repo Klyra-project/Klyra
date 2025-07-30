@@ -1,6 +1,6 @@
 [package]
 name = "klyra-serenity"
-version = "0.48.0"
+version = "0.49.0"
 edition = "2021"
 license = "Apache-2.0"
 description = "Service implementation to run a serenity server on klyra"
@@ -12,7 +12,7 @@ keywords = ["klyra-service", "serenity"]
 [dependencies]
 serenity = { version = "0.12", default-features = false, features = ["client", "gateway", "model"], optional = true }
 serenity-0-11 = { package = "serenity", version = "0.11.7", default-features = false, features = ["client", "gateway", "model"], optional = true }
-klyra-runtime = { path = "../../runtime", version = "0.48.0", default-features = false }
+klyra-runtime = { path = "../../runtime", version = "0.49.0", default-features = false }
 
 [features]
 default = ["rustls_backend"]
