@@ -49,7 +49,7 @@ mod klyra_main;
 /// ```
 ///
 /// More [klyra managed resources can be found here](https://github.com/klyra-hq/klyra/tree/main/resources)
-#[proc_macro_error::proc_macro_error]
+#[proc_macro_error2::proc_macro_error]
 #[proc_macro_attribute]
 pub fn main(
     attr: proc_macro::TokenStream,
