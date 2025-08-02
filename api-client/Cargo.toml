@@ -5,7 +5,7 @@ edition.workspace = true
 license.workspace = true
 repository.workspace = true
 description = "A library for interacting with the Klyra platform API"
-homepage = "https://www.klyra.rs"
+homepage = "https://www.klyra.dev"
 
 [dependencies]
 klyra-common = { workspace = true, features = ["models"] }

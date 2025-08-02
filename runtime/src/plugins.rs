@@ -31,7 +31,7 @@ impl ResourceInputBuilder for Metadata {
 
 /// ## Klyra Secrets
 ///
-/// Plugin for getting secrets in your [Klyra](https://www.klyra.rs) service.
+/// Plugin for getting secrets in your [Klyra](https://www.klyra.dev) service.
 ///
 /// ### Usage
 ///

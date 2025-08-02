@@ -6,7 +6,7 @@ function Install-Cargo-Klyra {
 \__ \ | | | |_| | |_| |_| |  __/
 |___/_| |_|\__,_|\__|\__|_|\___|
 
-https://www.klyra.rs
+https://www.klyra.dev
 https://github.com/klyra-hq/klyra
 
 Please file an issue if you encounter any problems!

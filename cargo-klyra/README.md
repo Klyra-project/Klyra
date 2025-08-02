@@ -1,10 +1,10 @@
 <!-- markdownlint-disable -->
 <div align="center">
 
-# cargo-klyra
+# Klyra CLI
 
 <p align=center>
-  <a href="https://docs.klyra.rs/">
+  <a href="https://docs.klyra.dev/">
     <img alt="docs" src="https://img.shields.io/badge/docs-reference-orange">
   </a>
   <a href="https://github.com/klyra-hq/klyra/search?l=rust">
@@ -16,24 +16,24 @@
 </p>
 <!-- markdownlint-restore -->
 
-`cargo-klyra` is the command line tool for deploying Rust apps on [Klyra](https://www.klyra.rs/), the Rust-native cloud deployment platform.
+This is the command line tool for deploying Rust apps on [Klyra](https://www.klyra.dev/), the Rust-native cloud deployment platform.
 
 </div>
 
 ## Installation
 
-For the full list of installation options, refer to the [Installation docs](https://docs.klyra.rs/getting-started/installation).
+For the full list of installation options, refer to the [Installation docs](https://docs.klyra.dev/getting-started/installation).
 
 Linux and macOS:
 
 ```sh
-curl -sSfL https://www.klyra.rs/install | bash
+curl -sSfL https://www.klyra.dev/install | bash
 ```
 
 Windows (powershell):
 
 ```powershell
-iwr https://www.klyra.rs/install-win | iex
+iwr https://www.klyra.dev/install-win | iex
 ```
 
 Build from source:
@@ -46,10 +46,8 @@ cargo install cargo-klyra
 
 Run `klyra help` to see the basic usage.
 
-Full list of commands and more documentation can be viewed on the [CLI docs](https://docs.klyra.rs/getting-started/klyra-commands).
+Full list of commands and more documentation can be viewed on the [CLI docs](https://docs.klyra.dev/guides/cli).
 
 ## Development
-
-Thanks for using `cargo-klyra`! We’re very happy to have you with us!
 
 To contribute to `cargo-klyra` or stay updated with our development, please [open an issue, discussion or PR on Github](https://github.com/klyra-hq/klyra) and [join our Discord](https://discord.gg/klyra)! 🚀

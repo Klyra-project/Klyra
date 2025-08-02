@@ -4,9 +4,9 @@
 <img src="https://raw.githubusercontent.com/klyra-hq/klyra/main/assets/logo-rectangle-transparent.png" width="400px" style="margin-left: auto; margin-right: auto;"/>
 </div>
 
-[Klyra](https://www.klyra.rs/) is a Rust-native cloud development platform that lets you deploy your Rust apps for free.
+[Klyra](https://www.klyra.dev/) is a Rust-native cloud development platform that lets you deploy your Rust apps for free.
 
-📖 Check out our documentation to get started quickly: [docs.klyra.rs](https://docs.klyra.rs)
+📖 Check out our documentation to get started quickly: [docs.klyra.dev](https://docs.klyra.dev)
 
 🙋‍♂️ If you have any questions, join our [Discord](https://discord.gg/klyra) server.
 
@@ -51,7 +51,7 @@ async fn main() -> klyra_axum::KlyraAxum {
 }
 ```
 
-Check out [our docs](https://docs.klyra.rs/introduction/welcome) to see all the frameworks we support, or
+Check out [our docs](https://docs.klyra.dev) to see all the frameworks we support, or
 our [examples](https://github.com/klyra-hq/klyra-examples) if you prefer that format.
 
 ## Running locally
