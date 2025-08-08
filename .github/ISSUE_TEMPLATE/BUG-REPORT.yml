@@ -20,7 +20,7 @@ body:
     attributes:
       label: Version
       description: What version of `cargo-klyra` are you running (`klyra --version`)?
-      placeholder: "v0.49.0"
+      placeholder: "v0.50.0"
     validations:
       required: true
   - type: dropdown
