@@ -253,6 +253,7 @@ impl Klyra {
                     )]))
                     .unwrap(),
                 ),
+                None,
             );
             self.client = Some(client);
             if !args.offline && !self.beta {
