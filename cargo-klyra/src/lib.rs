@@ -2155,6 +2155,20 @@ impl Klyra {
             run_args.port,
         );
 
+        let mut envs = vec![
+            ("klyra_BETA", "true".to_owned()),
+            ("klyra_PROJECT_ID", "proj_LOCAL".to_owned()),
+            ("klyra_PROJECT_NAME", project_name),
+            ("klyra_ENV", Environment::Local.to_string()),
+            ("klyra_RUNTIME_IP", ip.to_string()),
+            ("klyra_RUNTIME_PORT", run_args.port.to_string()),
+            ("klyra_API", format!("http://127.0.0.1:{}", api_port)),
+        ];
+        // Use a nice debugging tracing level if user does not provide their own
+        if debug && std::env::var("RUST_LOG").is_err() {
+            envs.push(("RUST_LOG", "info,klyra=trace,reqwest=debug".to_owned()));
+        }
+
         info!(
             path = %runtime_executable.display(),
             "Spawning runtime process",
@@ -2163,26 +2177,7 @@ impl Klyra {
             dunce::canonicalize(runtime_executable).context("canonicalize path of executable")?,
         )
         .current_dir(&service.workspace_path)
-        .envs([
-            ("klyra_BETA", "true"),
-            ("klyra_PROJECT_ID", "proj_LOCAL"),
-            ("klyra_PROJECT_NAME", project_name.as_str()),
-            ("klyra_ENV", Environment::Local.to_string().as_str()),
-            ("klyra_RUNTIME_IP", ip.to_string().as_str()),
-            ("klyra_RUNTIME_PORT", run_args.port.to_string().as_str()),
-            (
-                "klyra_API",
-                format!("http://127.0.0.1:{}", api_port).as_str(),
-            ),
-            (
-                "RUST_LOG",
-                if debug {
-                    "info,klyra=trace,reqwest=debug"
-                } else {
-                    "info"
-                },
-            ),
-        ])
+        .envs(envs)
         .stdout(std::process::Stdio::piped())
         .stderr(std::process::Stdio::piped())
         .kill_on_drop(true)
