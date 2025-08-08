@@ -7,7 +7,7 @@ publish = false
 
 [dependencies]
 klyra-backends = { workspace = true, features = ["sqlx"] }
-klyra-common = { workspace = true, features = ["models", "persist"] }
+klyra-common = { workspace = true, features = ["models"] }
 klyra-proto = { workspace = true, features = ["provisioner-client"] }
 
 async-trait = { workspace = true }

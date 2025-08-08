@@ -16,9 +16,8 @@ use once_cell::sync::Lazy;
 use opentelemetry::global;
 use opentelemetry_http::HeaderInjector;
 use klyra_backends::{
-    auth::ConvertResponse, cache::CacheManagement, headers::XKlyraAdminSecret,
+    auth::ConvertResponse, cache::CacheManagement, headers::XKlyraAdminSecret, key::ApiKey,
 };
-use klyra_common::ApiKey;
 use tower::{Layer, Service};
 use tracing::{error, trace, Span};
 use tracing_opentelemetry::OpenTelemetrySpanExt;

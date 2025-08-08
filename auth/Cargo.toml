@@ -8,7 +8,7 @@ publish = false
 
 [dependencies]
 klyra-backends = { workspace = true }
-klyra-common = { workspace = true, features = ["models", "persist"] }
+klyra-common = { workspace = true, features = ["models"] }
 
 anyhow = { workspace = true }
 async-stripe = { version = "0.25.1", default-features = false, features = ["checkout", "runtime-tokio-hyper-rustls"] }
