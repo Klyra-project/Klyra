@@ -2,7 +2,9 @@
 use klyra_runtime::{CustomError, Error};
 use std::net::SocketAddr;
 
-/// A wrapper type for [tide::Server<T] so we can implement [klyra_runtime::Service] for it.
+pub use tide;
+
+/// A wrapper type for [tide::Server<T>] so we can implement [klyra_runtime::Service] for it.
 pub struct TideService<T>(pub tide::Server<T>);
 
 #[klyra_runtime::async_trait]

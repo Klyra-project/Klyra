@@ -3,6 +3,8 @@ use salvo::Listener;
 use klyra_runtime::Error;
 use std::net::SocketAddr;
 
+pub use salvo;
+
 /// A wrapper type for [salvo::Router] so we can implement [klyra_runtime::Service] for it.
 pub struct SalvoService(pub salvo::Router);
 

@@ -3,6 +3,8 @@ use klyra_runtime::Error;
 use std::net::SocketAddr;
 use std::ops::Deref;
 
+pub use warp;
+
 /// A wrapper type for [warp::Filter] so we can implement [klyra_runtime::Service] for it.
 pub struct WarpService<T>(pub T);
 

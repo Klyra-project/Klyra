@@ -2,6 +2,8 @@
 use klyra_runtime::{CustomError, Error};
 use std::net::SocketAddr;
 
+pub use tower;
+
 /// A wrapper type for [tower::Service] so we can implement [klyra_runtime::Service] for it.
 pub struct TowerService<T>(pub T);
 
