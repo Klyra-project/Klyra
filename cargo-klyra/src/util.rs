@@ -89,7 +89,7 @@ pub async fn check_and_warn_runtime_version(path: &Path) -> Result<Option<String
                 writedoc! {
                     &mut warning,
                     "
-                    Hint: A newer version of cargo-klyra is available.
+                    Hint: A newer version of Klyra CLI is available.
                           Check out the installation docs for how to update: {}
                     ",
                     klyra_INSTALL_DOCS_URL,
@@ -168,7 +168,7 @@ pub async fn check_version(runtime_path: &Path) -> Result<()> {
             klyra_runtime: runtime_version,
             cargo_klyra: my_version,
         })
-        .context("klyra-runtime and cargo-klyra have incompatible versions")
+        .context("klyra-runtime and Klyra CLI have incompatible versions")
     }
 }
 
@@ -182,7 +182,7 @@ impl std::fmt::Display for VersionMismatchError {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         write!(
             f,
-            "klyra-runtime {} and cargo-klyra {} are incompatible",
+            "klyra-runtime {} and Klyra CLI {} are incompatible",
             self.klyra_runtime, self.cargo_klyra
         )
     }

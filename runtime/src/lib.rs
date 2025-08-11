@@ -4,8 +4,6 @@
     html_favicon_url = "https://raw.githubusercontent.com/klyra-hq/klyra/main/assets/favicon.ico"
 )]
 
-/// klyra.rs runtime
-mod alpha;
 /// Built-in plugins
 mod plugins;
 /// klyra.dev runtime

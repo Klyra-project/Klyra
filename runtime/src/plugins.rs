@@ -1,7 +1,7 @@
 use crate::async_trait;
 use serde::{Deserialize, Serialize};
 use klyra_service::{
-    resource::{ProvisionResourceRequest, KlyraResourceOutput, Type},
+    resource::{ProvisionResourceRequestBeta, ResourceTypeBeta},
     DeploymentMetadata, Error, IntoResource, ResourceFactory, ResourceInputBuilder, SecretStore,
 };
 
@@ -61,32 +61,25 @@ impl ResourceInputBuilder for Metadata {
 pub struct Secrets;
 
 #[derive(Serialize, Deserialize)]
-#[serde(untagged)]
-pub enum SecretsOutputWrapper {
-    Alpha(KlyraResourceOutput<SecretStore>),
-    Beta(SecretStore),
-}
+#[serde(transparent)]
+pub struct SecretsOutputWrapper(SecretStore);
 
 #[async_trait]
 impl ResourceInputBuilder for Secrets {
-    type Input = ProvisionResourceRequest;
+    type Input = ProvisionResourceRequestBeta;
     type Output = SecretsOutputWrapper;
 
     async fn build(self, _factory: &ResourceFactory) -> Result<Self::Input, Error> {
-        Ok(ProvisionResourceRequest::new(
-            Type::Secrets,
-            serde_json::Value::Null,
-            serde_json::Value::Null,
-        ))
+        Ok(ProvisionResourceRequestBeta {
+            r#type: ResourceTypeBeta::Secrets,
+            config: serde_json::Value::Null,
+        })
     }
 }
 
 #[async_trait]
 impl IntoResource<SecretStore> for SecretsOutputWrapper {
     async fn into_resource(self) -> Result<SecretStore, Error> {
-        Ok(match self {
-            Self::Alpha(o) => o.output,
-            Self::Beta(o) => o,
-        })
+        Ok(self.0)
     }
 }

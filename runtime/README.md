@@ -1,4 +1,4 @@
-# Klyra - Deploy Rust apps with a single Cargo subcommand
+# Klyra - Deploy Rust apps with a single command
 
 <div style="display: flex; margin-top: 30px; margin-bottom: 30px;">
 <img src="https://raw.githubusercontent.com/klyra-hq/klyra/main/assets/logo-rectangle-transparent.png" width="400px" style="margin-left: auto; margin-right: auto;"/>
@@ -12,7 +12,7 @@
 
 ## Usage
 
-Start by installing the [`cargo klyra`](https://docs.rs/crate/cargo-klyra/latest) subcommand by running the following in a terminal:
+Start by installing the Klyra CLI by running the following in a terminal:
 
 ```bash
 cargo install cargo-klyra
