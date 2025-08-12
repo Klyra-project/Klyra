@@ -1,6 +1,6 @@
 use anyhow::Result;
 use klyra_api_client::KlyraApiClient;
-use klyra_common::models::project::{ComputeTier, ProjectResponseBeta, ProjectUpdateRequestBeta};
+use klyra_common::models::project::{ComputeTier, ProjectResponse, ProjectUpdateRequest};
 
 pub struct Client {
     pub inner: KlyraApiClient,
@@ -23,11 +23,11 @@ impl Client {
         &self,
         project_id: &str,
         compute_tier: ComputeTier,
-    ) -> Result<ProjectResponseBeta> {
+    ) -> Result<ProjectResponse> {
         self.inner
             .put_json(
                 format!("/projects/{project_id}"),
-                Some(ProjectUpdateRequestBeta {
+                Some(ProjectUpdateRequest {
                     compute_tier: Some(compute_tier),
                     ..Default::default()
                 }),
