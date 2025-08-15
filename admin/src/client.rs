@@ -1,6 +1,9 @@
 use anyhow::Result;
 use klyra_api_client::KlyraApiClient;
-use klyra_common::models::project::{ComputeTier, ProjectResponse, ProjectUpdateRequest};
+use klyra_common::models::{
+    project::{ComputeTier, ProjectResponse, ProjectUpdateRequest},
+    user::UserResponse,
+};
 
 pub struct Client {
     pub inner: KlyraApiClient,
@@ -69,5 +72,9 @@ impl Client {
     pub async fn gc_shuttlings(&self, minutes: u32) -> Result<Vec<String>> {
         let path = format!("/admin/gc/shuttlings/{minutes}");
         self.inner.get_json(&path).await
+    }
+
+    pub async fn get_user(&self, user_id: &str) -> Result<UserResponse> {
+        self.inner.get_json(format!("/admin/users/{user_id}")).await
     }
 }
