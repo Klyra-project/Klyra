@@ -1152,21 +1152,26 @@ impl Klyra {
     fn get_secrets(
         args: &SecretsArgs,
         workspace_root: &Path,
+        dev: bool,
     ) -> Result<Option<HashMap<String, String>>> {
         // Look for a secrets file, first in the command args, then in the root of the workspace.
-        let secrets_file = args.secrets.clone().or_else(|| {
-            let secrets_file = workspace_root.join("Secrets.toml");
-
-            if secrets_file.exists() && secrets_file.is_file() {
-                Some(secrets_file)
-            } else {
-                None
-            }
+        let files: &[PathBuf] = if dev {
+            &[
+                workspace_root.join("Secrets.dev.toml"),
+                workspace_root.join("Secrets.toml"),
+            ]
+        } else {
+            &[workspace_root.join("Secrets.toml")]
+        };
+        let secrets_file = args.secrets.as_ref().or_else(|| {
+            files
+                .iter()
+                .find(|&secrets_file| secrets_file.exists() && secrets_file.is_file())
         });
 
         Ok(if let Some(secrets_file) = secrets_file {
             trace!("Loading secrets from {}", secrets_file.display());
-            if let Ok(secrets_str) = read_to_string(&secrets_file) {
+            if let Ok(secrets_str) = read_to_string(secrets_file) {
                 let secrets = toml::from_str::<HashMap<String, String>>(&secrets_str)?;
 
                 trace!(keys = ?secrets.keys(), "available secrets");
@@ -1232,8 +1237,8 @@ impl Klyra {
 
         trace!(path = ?service.executable_path, "runtime executable");
 
-        let secrets =
-            Klyra::get_secrets(&run_args.secret_args, working_directory)?.unwrap_or_default();
+        let secrets = Klyra::get_secrets(&run_args.secret_args, working_directory, true)?
+            .unwrap_or_default();
         Klyra::find_available_port(&mut run_args);
         if let Some(warning) = check_and_warn_runtime_version(&service.executable_path).await? {
             eprint!("{}", warning);
@@ -1411,7 +1416,7 @@ impl Klyra {
         let working_directory = self.ctx.working_directory();
         let manifest_path = working_directory.join("Cargo.toml");
 
-        let secrets = Klyra::get_secrets(&args.secret_args, working_directory)?;
+        let secrets = Klyra::get_secrets(&args.secret_args, working_directory, false)?;
 
         // Image deployment mode
         if let Some(image) = args.image {
