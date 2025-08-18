@@ -4,7 +4,7 @@
 pub const STORAGE_DIRNAME: &str = ".klyra-storage";
 
 // URLs
-pub const API_URL_DEFAULT_BETA: &str = "https://api.klyra.dev";
+pub const klyra_API_URL: &str = "https://api.klyra.dev";
 pub const klyra_CONSOLE_URL: &str = "https://console.klyra.dev";
 
 pub const klyra_INSTALL_DOCS_URL: &str = "https://docs.klyra.dev/getting-started/installation";

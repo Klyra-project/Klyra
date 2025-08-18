@@ -12,10 +12,7 @@ use clap::{
     Args, Parser, Subcommand, ValueEnum,
 };
 use clap_complete::Shell;
-use klyra_common::{
-    constants::{EXAMPLES_REPO, klyra_CONSOLE_URL},
-    models::resource::ResourceType,
-};
+use klyra_common::{constants::EXAMPLES_REPO, models::resource::ResourceType};
 
 #[derive(Parser)]
 #[command(
@@ -300,8 +297,8 @@ pub struct LoginArgs {
     #[arg(long)]
     pub api_key: Option<String>,
     /// URL to the Klyra Console for automatic login
-    #[arg(long, env = "klyra_CONSOLE", default_value = klyra_CONSOLE_URL, hide_default_value = true)]
-    pub console_url: String,
+    #[arg(long, env = "klyra_CONSOLE", hide = true)]
+    pub console_url: Option<String>,
 }
 
 #[derive(Args, Clone, Debug)]

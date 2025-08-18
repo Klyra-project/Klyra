@@ -1,10 +1,10 @@
 use clap::{Parser, Subcommand};
-use klyra_common::{constants::API_URL_DEFAULT_BETA, models::project::ComputeTier};
+use klyra_common::{constants::klyra_API_URL, models::project::ComputeTier};
 
 #[derive(Parser, Debug)]
 pub struct Args {
     /// run this command against the api at the supplied url
-    #[arg(long, default_value = API_URL_DEFAULT_BETA, env = "klyra_API")]
+    #[arg(long, env = "klyra_API", default_value = klyra_API_URL)]
     pub api_url: String,
 
     #[command(subcommand)]
