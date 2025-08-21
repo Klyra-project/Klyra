@@ -826,7 +826,7 @@ impl Klyra {
             )
         });
         let _ = webbrowser::open(&url);
-        eprintln!("Complete login in Klyra Console to authenticate CLI.");
+        eprintln!("Complete login in Klyra Console to authenticate the Klyra CLI.");
         eprintln!("If your browser did not automatically open, go to {url}");
         eprintln!();
         eprintln!("{}", format!("Token: {token}").bold());
