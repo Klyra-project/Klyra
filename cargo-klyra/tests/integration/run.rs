@@ -30,6 +30,7 @@ async fn klyra_run(working_directory: &str, external: bool) -> String {
     let runner = Klyra::new(cargo_klyra::Binary::Klyra).unwrap().run(
         KlyraArgs {
             api_url: Some("http://klyra.invalid:80".to_string()),
+            admin: false,
             project_args: ProjectArgs {
                 working_directory: working_directory.clone(),
                 name_or_id: None,

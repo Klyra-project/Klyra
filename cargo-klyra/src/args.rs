@@ -29,6 +29,9 @@ pub struct KlyraArgs {
     /// URL for the Klyra API to target (mainly for development)
     #[arg(global = true, long, env = "klyra_API", hide = true)]
     pub api_url: Option<String>,
+    /// Modify Klyra API URL to use admin endpoints
+    #[arg(global = true, long, env = "klyra_ADMIN", hide = true)]
+    pub admin: bool,
     /// Disable network requests that are not strictly necessary. Limits some features.
     #[arg(global = true, long, env = "klyra_OFFLINE")]
     pub offline: bool,
