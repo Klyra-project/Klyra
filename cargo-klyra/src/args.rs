@@ -94,6 +94,7 @@ impl ProjectArgs {
     }
 }
 
+#[allow(rustdoc::bare_urls)]
 /// CLI for the Klyra platform (https://www.klyra.dev/)
 ///
 /// See the CLI docs for more information: https://docs.klyra.dev/guides/cli

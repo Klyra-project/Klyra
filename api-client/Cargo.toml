@@ -8,7 +8,7 @@ description = "A library for interacting with the Klyra platform API (https://ww
 homepage = "https://www.klyra.dev"
 
 [dependencies]
-klyra-common = { workspace = true, features = ["models"] }
+klyra-common = { workspace = true, features = ["models", "unknown-variants"] }
 
 anyhow = { workspace = true }
 async-trait = { workspace = true }

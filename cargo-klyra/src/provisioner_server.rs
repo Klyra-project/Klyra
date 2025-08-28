@@ -533,7 +533,7 @@ async fn provision(
                         .context("deserializing resource config")?;
                     let res = prov.get_db_connection_string(
                             &state.project_name,
-                            klyra_resource.r#type,
+                            klyra_resource.r#type.clone(),
                             config.db_name,
                         )
                         .await
@@ -564,6 +564,7 @@ async fn provision(
                     config: klyra_resource.config,
                     output: serde_json::to_value(&state.secrets).unwrap(),
                 },
+                ResourceType::Unknown(s) => bail!("request for unknown resource type {s} recieved"),
             };
 
             let table = get_resource_tables(&[response.clone()], "local service", false, true);
