@@ -26,7 +26,11 @@ use klyra_common::{constants::EXAMPLES_REPO, models::resource::ResourceType};
         .hide(true))
 )]
 pub struct KlyraArgs {
-    /// URL for the Klyra API to target (mainly for development)
+    /// Target a different Klyra API env (use a separate global config) (default: None (= prod = production))
+    // ("klyra_ENV" is used for user-facing environments (agnostic of Klyra API env))
+    #[arg(global = true, long, env = "klyra_API_ENV", hide = true)]
+    pub api_env: Option<String>,
+    /// URL for the Klyra API to target (overrides inferred URL from api_env)
     #[arg(global = true, long, env = "klyra_API", hide = true)]
     pub api_url: Option<String>,
     /// Modify Klyra API URL to use admin endpoints
