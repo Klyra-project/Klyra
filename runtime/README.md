@@ -28,7 +28,7 @@ By looking at the `Cargo.toml` file of the generated `my-axum-app` project you w
 be a binary crate with a few dependencies including `klyra-runtime` and `klyra-axum`.
 
 ```toml
-axum = "0.7.3"
+axum = "0.8.1"
 klyra-axum = "0.54.0"
 klyra-runtime = "0.54.0"
 tokio = "1.28.2"

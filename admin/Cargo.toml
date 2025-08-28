@@ -6,7 +6,7 @@ publish = false
 
 [dependencies]
 klyra-api-client = { workspace = true, default-features = true }
-klyra-common = { workspace = true, features = ["models"] }
+klyra-common = { workspace = true, features = ["models", "config"] }
 
 anyhow = { workspace = true }
 clap = { workspace = true, features = ["env"] }
