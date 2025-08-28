@@ -191,10 +191,10 @@ Now, if we run `klyra deploy`, we'll have an up and running project with a datab
 
 | Name | Description |
 |-|-|
-| [klyra](https://github.com/klyra-hq/klyra) 🚀 (This repo) | The core Klyra product. Contains all crates that users interact with. |
-| [klyra-examples](https://github.com/klyra-hq/klyra-examples) 👨‍🏫 | Officially maintained examples of projects that can be deployed on Klyra. Also has a list of [community examples](https://github.com/klyra-hq/klyra-examples#community-examples). |
+| [klyra](https://github.com/klyra-hq/klyra) 🚀 (This repo) | All library crates and the Klyra CLI. |
+| [klyra-examples](https://github.com/klyra-hq/klyra-examples) 👨‍🏫 | Officially maintained examples of projects that can be deployed on Klyra. |
 | [klyra-docs](https://github.com/klyra-hq/klyra-docs) 📃 | Documentation hosted on [docs.klyra.dev](https://docs.klyra.dev/). |
-| [www](https://github.com/klyra-hq/www) 🌍 | Our website [klyra.dev](https://www.klyra.dev/), including the [blog](https://www.klyra.dev/blog/tags/all) and [Launchpad newsletter](https://www.klyra.dev/launchpad). |
+| [www](https://github.com/klyra-hq/www) 🌍 | Our website [klyra.dev](https://www.klyra.dev/), including the [blog](https://www.klyra.dev/blog/tags/all) and more. |
 | [deploy-action](https://github.com/klyra-hq/deploy-action) ⚙ | GitHub Action for continuous deployments. |
 | [awesome-klyra](https://github.com/klyra-hq/awesome-klyra) 🌟 | An awesome list of Klyra-hosted projects and resources that users can add to. |
 | [shuttlings](https://github.com/klyra-hq/shuttlings) ⚔️ | A collection of Rust code challenges. A great way to get started with using Rust and Klyra. |
@@ -213,19 +213,6 @@ For development of this repo, check the [development docs](./DEVELOPING.md).
 
 To offload work from the engineering team on low-priority issues, we will sometimes add a cash bounty to issues.
 Sign up to the [Algora Console](https://console.algora.io/org/klyra/bounties?status=open) to find open issues with bounties.
-
-## Project Status
-
-We are currently in Public Beta.
-Watch "releases" of this repo to get notified of major updates!
-
-- [x] Alpha: We are testing Klyra, API and deployments may be unstable
-- [x] Public Alpha: Anyone can sign up, but go easy on us,
-  there are a few kinks
-- [x] Public Beta: Stable enough for most non-enterprise use-cases
-- [ ] Public: Production-ready!
-<br>
-<br>
 
 ## Contributors ✨
 
