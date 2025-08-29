@@ -3,6 +3,7 @@ resolver = "2"
 members = [
   "admin",
   "api-client",
+  "builder",
   "cargo-klyra",
   "codegen",
   "common",
@@ -19,11 +20,13 @@ repository = "https://github.com/klyra-hq/klyra"
 
 [workspace.dependencies]
 klyra-api-client = { path = "api-client", version = "0.54.0", default-features = false }
+klyra-builder = { path = "builder", version = "0.54.0" }
 klyra-codegen = { path = "codegen", version = "0.54.0" }
 klyra-common = { path = "common", version = "0.54.0" }
 klyra-service = { path = "service", version = "0.54.0" }
 
 anyhow = "1.0.66"
+askama = "0.14.0"
 assert_cmd = "2.0.6"
 async-trait = "0.1.58"
 axum = { version = "0.8.1", default-features = false }

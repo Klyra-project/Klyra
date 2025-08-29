@@ -1,0 +1,16 @@
+[package]
+name = "klyra-builder"
+version = "0.54.0"
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+description = "Docker build recipes for the Klyra platform (klyra.dev)"
+homepage = "https://www.klyra.dev"
+
+[dependencies]
+klyra-common = { workspace = true, features = ["models"] }
+
+askama = { workspace = true }
+
+[dev-dependencies]
+pretty_assertions = { workspace = true }
