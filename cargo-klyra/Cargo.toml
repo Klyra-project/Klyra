@@ -10,6 +10,7 @@ default-run = "klyra"
 
 [dependencies]
 klyra-api-client = { workspace = true, default-features = true }
+klyra-builder = { workspace = true }
 klyra-common = { workspace = true, features = ["models", "tables", "config"] }
 
 anyhow = { workspace = true }
