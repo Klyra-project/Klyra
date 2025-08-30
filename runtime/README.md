@@ -12,10 +12,14 @@
 
 ## Usage
 
-Start by installing the Klyra CLI by running the following in a terminal:
+Start by installing the [Klyra CLI](https://crates.io/crates/cargo-klyra) by running the following in a terminal ([more installation options](https://docs.klyra.dev/getting-started/installation)):
 
 ```bash
-cargo install cargo-klyra
+# Linux / macOS
+curl -sSfL https://www.klyra.dev/install | bash
+
+# Windows (Powershell)
+iwr https://www.klyra.dev/install-win | iex
 ```
 
 Now that Klyra is installed, you can initialize a project with Axum boilerplate:
