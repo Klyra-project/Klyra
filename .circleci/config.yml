@@ -388,6 +388,7 @@ workflows:
                 - services/klyra-actix-web
                 - services/klyra-axum
                 - services/klyra-poem
+                - services/klyra-rama
                 - services/klyra-rocket
                 - services/klyra-salvo
                 - services/klyra-serenity
@@ -558,6 +559,7 @@ workflows:
                 - services/klyra-actix-web
                 - services/klyra-axum
                 - services/klyra-poem
+                - services/klyra-rama
                 - services/klyra-rocket
                 - services/klyra-salvo
                 - services/klyra-serenity
