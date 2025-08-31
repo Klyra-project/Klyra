@@ -7,7 +7,7 @@ async fn main() -> Result<()> {
 
     setup_tracing(args.debug);
 
-    Klyra::new(Binary::Klyra)?
+    Klyra::new(Binary::Klyra, args.api_env.clone())?
         .run(args, provided_path_to_init)
         .await
 }

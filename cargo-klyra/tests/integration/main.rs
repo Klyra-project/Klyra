@@ -9,12 +9,13 @@ use std::path::Path;
 async fn klyra_command(cmd: Command, working_directory: &str) -> anyhow::Result<()> {
     let working_directory = Path::new(working_directory).to_path_buf();
 
-    Klyra::new(cargo_klyra::Binary::Klyra)
+    Klyra::new(cargo_klyra::Binary::Klyra, None)
         .unwrap()
         .run(
             KlyraArgs {
                 api_url: Some("http://klyra.invalid:80".to_string()),
                 admin: false,
+                api_env: None,
                 project_args: ProjectArgs {
                     working_directory,
                     name_or_id: None,

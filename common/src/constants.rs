@@ -7,6 +7,10 @@ pub const STORAGE_DIRNAME: &str = ".klyra-storage";
 pub const klyra_API_URL: &str = "https://api.klyra.dev";
 pub const klyra_CONSOLE_URL: &str = "https://console.klyra.dev";
 
+pub fn other_env_api_url(env: &str) -> String {
+    format!("https://api.{env}.klyra.dev")
+}
+
 pub const klyra_INSTALL_DOCS_URL: &str = "https://docs.klyra.dev/getting-started/installation";
 
 pub const klyra_GH_REPO_URL: &str = "https://github.com/klyra-hq/klyra";

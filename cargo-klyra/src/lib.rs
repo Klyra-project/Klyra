@@ -30,8 +30,8 @@ use reqwest::header::HeaderMap;
 use klyra_api_client::KlyraApiClient;
 use klyra_common::{
     constants::{
-        headers::X_CARGO_klyra_VERSION, EXAMPLES_REPO, RUNTIME_NAME, klyra_API_URL,
-        klyra_CONSOLE_URL, STORAGE_DIRNAME, TEMPLATES_SCHEMA_VERSION,
+        headers::X_CARGO_klyra_VERSION, other_env_api_url, EXAMPLES_REPO, RUNTIME_NAME,
+        klyra_API_URL, klyra_CONSOLE_URL, STORAGE_DIRNAME, TEMPLATES_SCHEMA_VERSION,
     },
     models::{
         auth::{KeyMessage, TokenMessage},
@@ -74,13 +74,22 @@ const VERSION: &str = env!("CARGO_PKG_VERSION");
 /// Returns the args and whether the PATH arg of the init command was explicitly given
 pub fn parse_args() -> (KlyraArgs, bool) {
     let matches = KlyraArgs::command().get_matches();
-    let args =
+    let mut args =
         KlyraArgs::from_arg_matches(&matches).expect("args to already be parsed successfully");
     let provided_path_to_init = matches
         .subcommand_matches("init")
         .is_some_and(|init_matches| {
             init_matches.value_source("path") == Some(ValueSource::CommandLine)
         });
+
+    // don't use an override if production is targetted
+    if args
+        .api_env
+        .as_ref()
+        .is_some_and(|e| e == "prod" || e == "production")
+    {
+        args.api_env = None;
+    }
 
     (args, provided_path_to_init)
 }
@@ -124,8 +133,13 @@ pub struct Klyra {
 }
 
 impl Klyra {
-    pub fn new(bin: Binary) -> Result<Self> {
-        let ctx = RequestContext::load_global()?;
+    pub fn new(bin: Binary, env_override: Option<String>) -> Result<Self> {
+        let ctx = RequestContext::load_global(env_override.inspect(|e| {
+            eprintln!(
+                "{}",
+                format!("INFO: Using non-default global config file: {e}").yellow(),
+            )
+        }))?;
         Ok(Self {
             ctx,
             client: None,
@@ -158,6 +172,9 @@ impl Klyra {
         ) {
             let api_url = args
                 .api_url
+                // calculate env-specific url if no explicit url given but an env was given
+                .or_else(|| args.api_env.as_ref().map(|env| other_env_api_url(env)))
+                // add /admin prefix if in admin mode
                 .map(|u| if args.admin { format!("{u}/admin") } else { u });
             if let Some(ref url) = api_url {
                 if url != klyra_API_URL {
@@ -538,7 +555,7 @@ impl Klyra {
         eprintln!();
 
         // 6. Confirm that the user wants to create the project environment on Klyra
-        let should_create_environment = if !interactive {
+        let should_create_project = if !interactive {
             args.create_env
         } else if args.create_env {
             true
@@ -558,7 +575,7 @@ impl Klyra {
             should_create
         };
 
-        if should_create_environment {
+        if should_create_project {
             // Set the project working directory path to the init path,
             // so `load_project` is ran with the correct project path
             project_args.working_directory.clone_from(&path);
@@ -569,10 +586,7 @@ impl Klyra {
         if std::env::current_dir().is_ok_and(|d| d != path) {
             eprintln!("You can `cd` to the directory, then:");
         }
-        eprintln!("Run `klyra run` to run the app locally.");
-        if !should_create_environment {
-            eprintln!("Run `klyra deploy` to deploy it to Klyra.");
-        }
+        eprintln!("Run `klyra deploy` to deploy it to Klyra.");
 
         Ok(())
     }
@@ -594,8 +608,8 @@ impl Klyra {
                 // If API error contains message regarding format of error name, print that error and prompt again
                 if let Ok(api_error) = e.downcast::<ApiError>() {
                     // If the returned error string changes, this could break
-                    if api_error.message.contains("Invalid project name") {
-                        eprintln!("{}", api_error.message.yellow());
+                    if api_error.message().contains("Invalid project name") {
+                        eprintln!("{}", api_error.message().yellow());
                         eprintln!("{}", "Try a different name.".yellow());
                         return false;
                     }
@@ -904,7 +918,7 @@ impl Klyra {
                     DeploymentState::Building // a building deployment should take it back to InProgress then Running, so don't follow that sequence
                     | DeploymentState::Failed
                     | DeploymentState::Stopped
-                    | DeploymentState::Unknown => Ok(Some(cleanup)),
+                    | DeploymentState::Unknown(_) => Ok(Some(cleanup)),
                 }
         })
         .await?;
@@ -1038,10 +1052,9 @@ impl Klyra {
             println!("{}", deployment.to_string_colored());
             return Ok(());
         }
-        self.track_deployment_status_and_print_logs_on_fail(pid, &deployment.id, tracking_args.raw)
-            .await?;
 
-        Ok(())
+        self.track_deployment_status_and_print_logs_on_fail(pid, &deployment.id, tracking_args.raw)
+            .await
     }
 
     async fn resources_list(&self, table_args: TableArgs, show_secrets: bool) -> Result<()> {
@@ -1473,14 +1486,13 @@ impl Klyra {
                 return Ok(());
             }
 
-            self.track_deployment_status_and_print_logs_on_fail(
-                pid,
-                &deployment.id,
-                args.tracking_args.raw,
-            )
-            .await?;
-
-            return Ok(());
+            return self
+                .track_deployment_status_and_print_logs_on_fail(
+                    pid,
+                    &deployment.id,
+                    args.tracking_args.raw,
+                )
+                .await;
         }
 
         // Build archive deployment mode
@@ -1591,9 +1603,7 @@ impl Klyra {
             &deployment.id,
             args.tracking_args.raw,
         )
-        .await?;
-
-        Ok(())
+        .await
     }
 
     /// Returns true if the deployment failed
@@ -1616,7 +1626,7 @@ impl Klyra {
                 DeploymentState::Running
                 | DeploymentState::Stopped
                 | DeploymentState::Stopping
-                | DeploymentState::Unknown
+                | DeploymentState::Unknown(_)
                 | DeploymentState::Failed => Ok(Some(cleanup)),
             }
         })
@@ -1632,7 +1642,8 @@ impl Klyra {
         raw: bool,
     ) -> Result<()> {
         let client = self.client.as_ref().unwrap();
-        if self.track_deployment_status(proj_id, depl_id).await? {
+        let failed = self.track_deployment_status(proj_id, depl_id).await?;
+        if failed {
             for log in client.get_deployment_logs(proj_id, depl_id).await?.logs {
                 if raw {
                     println!("{}", log.line);
@@ -1640,6 +1651,7 @@ impl Klyra {
                     println!("{log}");
                 }
             }
+            return Err(anyhow!("Deployment failed"));
         }
 
         Ok(())
@@ -1935,7 +1947,7 @@ mod tests {
         project_args: ProjectArgs,
         deploy_args: DeployArgs,
     ) -> Vec<String> {
-        let mut klyra = Klyra::new(crate::Binary::Klyra).unwrap();
+        let mut klyra = Klyra::new(crate::Binary::Klyra, None).unwrap();
         klyra
             .load_project(&project_args, false, false)
             .await

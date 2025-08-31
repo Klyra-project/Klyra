@@ -1,6 +1,6 @@
 [package]
 name = "klyra-qdrant"
-version = "0.53.0"
+version = "0.55.0"
 edition = "2021"
 license = "Apache-2.0"
 description = "Klyra plugin for connecting to a Qdrant database"
@@ -12,4 +12,4 @@ async-trait = "0.1.56"
 qdrant-client = "1.10.1"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
-klyra-service = { path = "../../service", version = "0.53.0" }
+klyra-service = { path = "../../service", version = "0.55.0" }

@@ -130,29 +130,28 @@ pub async fn check_version(runtime_path: &Path) -> Result<()> {
         runtime_path.display()
     );
 
-    // should always be a valid semver
-    let my_version = semver::Version::from_str(crate::VERSION).unwrap();
+    let cli_version =
+        semver::Version::from_str(crate::VERSION).expect("crate version to be a valid semver");
 
     if !runtime_path.try_exists()? {
         bail!("klyra-runtime binary not found");
     }
 
     // Get runtime version from klyra-runtime cli
-    // It should print the version and exit immediately, so a timeout is used to not launch servers with non-Klyra setups
+    // It should print the version and exit immediately, so a timeout is used
+    // to not get blocked by blocking programs that don't use the Klyra runtime.
     let stdout = tokio::time::timeout(Duration::from_millis(3000), async move {
         tokio::process::Command::new(runtime_path)
             .arg("--version")
             .kill_on_drop(true) // if the binary does not halt on its own, not killing it will leak child processes
             .output()
             .await
-            .context("Failed to run the klyra-runtime binary to check its version")
+            .context("Failed to run the binary with klyra-runtime to check its version")
             .map(|o| o.stdout)
     })
     .await
-    .context("Checking the version of klyra-runtime timed out. Make sure the executable is using #[klyra-runtime::main].")??;
+    .context("Checking the version of klyra-runtime timed out. Make sure the executable is using #[klyra_runtime::main].")??;
 
-    // Parse the version, splitting the version from the name and
-    // and pass it to `to_semver()`.
     let runtime_version = semver::Version::from_str(
         std::str::from_utf8(&stdout)
             .context("klyra-runtime version should be valid utf8")?
@@ -161,14 +160,14 @@ pub async fn check_version(runtime_path: &Path) -> Result<()> {
             .1
             .trim(),
     )
-    .context("failed to convert user's runtime version to semver")?;
+    .context("failed to convert runtime version to semver")?;
 
-    if semvers_are_compatible(&my_version, &runtime_version) {
+    if semvers_are_compatible(&cli_version, &runtime_version) {
         Ok(())
     } else {
         Err(VersionMismatchError {
             klyra_runtime: runtime_version,
-            cargo_klyra: my_version,
+            cargo_klyra: cli_version,
         })
         .context("klyra-runtime and Klyra CLI have incompatible versions")
     }

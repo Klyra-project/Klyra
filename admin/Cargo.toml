@@ -1,12 +1,12 @@
 [package]
 name = "klyra-admin"
-version = "0.53.0"
+version = "0.55.0"
 edition = "2021"
 publish = false
 
 [dependencies]
 klyra-api-client = { workspace = true, default-features = true }
-klyra-common = { workspace = true, features = ["models"] }
+klyra-common = { workspace = true, features = ["models", "config"] }
 
 anyhow = { workspace = true }
 clap = { workspace = true, features = ["env"] }
