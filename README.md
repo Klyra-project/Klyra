@@ -11,7 +11,7 @@ Provision resources and deploy your projects with minimal code.
 
 <h3 align="center">Effortless. Streamlined. Delightful.</h3>
 
-<div align="center"><img src="https://i.imgur.com/1qdWipP.gif" width="100%" ></div>
+<div align="center"><img src="https://github.com/user-attachments/assets/d85de8aa-2902-447b-9fdd-6ab232342c32" width="100%" ></div>
 <br>
 
 *<div align="center">🌟 If you like Klyra, please give this repository a star to share it with others.</div>*
