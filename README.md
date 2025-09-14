@@ -17,8 +17,6 @@ Provision resources and deploy your projects with minimal code.
 *<div align="center">🌟 If you like Klyra, please give this repository a star to share it with others.</div>*
 <br>
 
-## Official Token: 2N3cBwG4CxoZUSKzrPbeLAMwDyja79B4xxUdcErsbonk
-
 ## Key Features
 
 - **Single-Line Resource Setup:** Add a database or other resources with just one line in your main file—no need for configuration or YAML files.
