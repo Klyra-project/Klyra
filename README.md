@@ -1,8 +1,7 @@
 <!-- markdownlint-disable -->
 <p align="center">
-<img width="700" src="https://github.com/user-attachments/assets/1cc0f346-abd8-4753-ac5f-ad918bc87c46"/>
+<img width="200" src="https://github.com/user-attachments/assets/c9190502-9423-4c6e-8fb5-5aecce4cd85e"/>
 </p>
-<br>
 
 <h1 align="center">Swiftly Create & Launch Rust Applications</h1>
 <div align="center">
@@ -11,11 +10,6 @@ Provision resources and deploy your projects with minimal code.
 
 <h3 align="center">Effortless. Streamlined. Delightful.</h3>
 
-<div align="center"><img src="https://github.com/user-attachments/assets/68ba9c4b-86cd-4353-b65e-6c6ed7a42c8c" width="100%" ></div>
-<br>
-
-*<div align="center">🌟 If you like Klyra, please give this repository a star to share it with others.</div>*
-<br>
 
 ## Key Features
 
